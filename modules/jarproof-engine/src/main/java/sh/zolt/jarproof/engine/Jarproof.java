@@ -39,6 +39,8 @@ public final class Jarproof {
      * @throws IllegalArgumentException when an artifact or classpath entry cannot be read, or when
      *     the target release has no bundled platform symbols
      * @throws IllegalStateException when the input exceeds one of the engine's resource ceilings
+     * @throws java.io.UncheckedIOException when an archive that opened cleanly betrays its own
+     *     declared contents mid-read, such as a stored nested entry whose checksum lies
      */
     public static VerificationResult verify(VerificationRequest request) {
         Objects.requireNonNull(request, "A verification needs a request");
