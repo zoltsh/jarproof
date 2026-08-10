@@ -30,9 +30,26 @@ final class InspectionTest {
 
         assertEquals(5, summary.entryCount());
         assertEquals(3, summary.classCount());
+        assertEquals(0, summary.nestedArchiveCount());
         assertEquals(List.of("52:1", "61:1", "65:1"), summary.bytecodeLevels());
         assertEquals(List.of(CODEC), summary.declaredServices());
         assertEquals(List.of(11, 21), summary.multiReleaseVersions());
+    }
+
+    @Test
+    void countsTheArchivesAnApplicationCarriesWithoutOpeningAnyOfThem() {
+        Path application = BootLayoutFixture.archive()
+                .with(BootLayoutFixture.CLASSES_ROOT + BASE_CLASS, EngineFixture.classFile("com/acme/app/Modern"))
+                .withLibrary(BootLayoutFixture.LIBRARY_DIRECTORY + "codec.jar",
+                        EngineFixture.entries("com/acme/lib/Codec.class", EngineFixture.classFile("com/acme/lib/Codec")))
+                .with("BOOT-INF/lib/notes.zip", new byte[0])
+                .write(workspace, "fat.jar");
+
+        ArtifactSummary summary = Jarproof.inspect(application);
+
+        assertEquals(3, summary.entryCount());
+        assertEquals(2, summary.nestedArchiveCount());
+        assertEquals(1, summary.classCount(), "a class inside a nested archive is not an entry of this one");
     }
 
     @Test
