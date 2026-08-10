@@ -17,6 +17,13 @@ import java.util.zip.ZipFile;
 
 /** Reads the manifest facts that change how a classpath behaves, without interpreting anything else. */
 final class ArchiveManifest {
+    /**
+     * How the engine refuses a classpath entry that is not a readable archive. It is stated once and
+     * shared, so opening an archive to read its manifest and opening the same archive to see whether it
+     * carries its own dependencies cannot report the same unreadable file two different ways.
+     */
+    static final String UNREADABLE = "Cannot read this JAR archive or its manifest: ";
+
     private static final Pattern SEPARATOR = Pattern.compile("\\s+");
     private static final char PACKAGE_SECTION_END = '/';
 
@@ -47,7 +54,7 @@ final class ArchiveManifest {
         try (ZipFile opened = new ZipFile(archive.toFile())) {
             return of(opened);
         } catch (IOException exception) {
-            throw new IllegalArgumentException("Cannot read this JAR archive or its manifest: " + display);
+            throw new IllegalArgumentException(UNREADABLE + display);
         }
     }
 

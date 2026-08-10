@@ -137,7 +137,8 @@ final class RelativePathResolutionTest {
         Path declaring = chainingJar("declaring.jar", "chained.jar");
 
         List<ClasspathEntry> entries = ClasspathExpander.expand(
-                EngineFixture.request(List.of(application), List.of(declaring), 17)).entries();
+                EngineFixture.request(List.of(application), List.of(declaring), 17), new ResourceBudget())
+                .entries();
 
         assertEquals(
                 List.of(application.toString(), declaring.toString(), chained.toString()),

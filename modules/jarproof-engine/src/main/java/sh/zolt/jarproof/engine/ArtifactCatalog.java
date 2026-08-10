@@ -56,16 +56,29 @@ final class ArtifactCatalog {
     static ArtifactCatalog of(EffectiveClasspath classpath, TargetRuntime runtime, ResourceBudget budget) {
         List<IndexedArtifact> read = new ArrayList<>();
         for (ClasspathEntry entry : classpath.entries()) {
-            read.add(entry.kind() == EntryKind.DIRECTORY
-                    ? DirectoryArtifactReader.read(entry, budget)
-                    : ArchiveArtifactReader.read(entry, budget, runtime.javaRelease()));
+            read.add(indexed(entry, runtime, budget));
         }
         return new ArtifactCatalog(classpath, read);
     }
 
     /** Reads the whole classpath of one request. */
     static ArtifactCatalog read(VerificationRequest request, ResourceBudget budget) {
-        return of(ClasspathExpander.expand(request), request.targetRuntime(), budget);
+        return of(ClasspathExpander.expand(request, budget), request.targetRuntime(), budget);
+    }
+
+    /**
+     * Reads one position with the reader its kind calls for. A directory is walked, a library nested
+     * inside an application archive is read out of that archive's bytes, and every other position is a
+     * real archive opened on its own — including the two positions that address only part of one.
+     */
+    private static IndexedArtifact indexed(
+            ClasspathEntry entry, TargetRuntime runtime, ResourceBudget budget) {
+        return switch (entry.kind()) {
+            case DIRECTORY -> DirectoryArtifactReader.read(entry, budget);
+            case NESTED_ARCHIVE -> NestedArchiveReader.read(entry, budget, runtime.javaRelease());
+            case ARCHIVE, NESTED_CLASSES, HOST_ARCHIVE ->
+                    ArchiveArtifactReader.read(entry, budget, runtime.javaRelease());
+        };
     }
 
     /** Returns the indexed artifacts in classpath order. */

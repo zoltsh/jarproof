@@ -144,7 +144,7 @@ final class ClasspathExpanderTest {
     }
 
     private EffectiveClasspath expand(List<Path> applications, List<Path> classpath) {
-        return ClasspathExpander.expand(EngineFixture.request(applications, classpath, 17));
+        return ClasspathExpander.expand(EngineFixture.request(applications, classpath, 17), new ResourceBudget());
     }
 
     private static List<String> displays(List<ClasspathEntry> entries) {

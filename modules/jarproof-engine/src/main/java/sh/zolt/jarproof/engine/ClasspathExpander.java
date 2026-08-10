@@ -26,35 +26,57 @@ import sh.zolt.jarproof.api.VerificationRequest;
  * path keeps its earliest position: identity is the normalized absolute path, so the first
  * appearance wins. That same normalized absolute path is the handle every later read of the entry
  * opens, while every report of it keeps the caller's own text.
+ *
+ * <p>An application root that carries its own dependencies expands into the several positions its
+ * launcher would search instead of the single position it occupies on disk — see
+ * {@link NestedApplication} for the order and for why only an application root is expanded that way.
  */
 final class ClasspathExpander {
     private final List<ClasspathEntry> entries = new ArrayList<>();
     private final Set<Path> visited = new LinkedHashSet<>();
     private final List<Finding> findings = new ArrayList<>();
+    private final ResourceBudget budget;
 
-    private ClasspathExpander() {
+    private ClasspathExpander(ResourceBudget budget) {
+        this.budget = budget;
     }
 
     /**
      * Builds the effective classpath for one request.
      *
      * @param request the verification request
+     * @param budget the run's resource budget, which bounds reading a nested layout
      * @return the ordered classpath and what assembling it proved
      * @throws IllegalArgumentException when a supplied entry does not exist or cannot be read
      */
-    static EffectiveClasspath expand(VerificationRequest request) {
-        ClasspathExpander expander = new ClasspathExpander();
+    static EffectiveClasspath expand(VerificationRequest request, ResourceBudget budget) {
+        ClasspathExpander expander = new ClasspathExpander(budget);
         request.applications().forEach(expander::addApplication);
         request.classpath().forEach(expander::addSupplied);
         return new EffectiveClasspath(expander.entries, expander.findings);
     }
 
     private void addApplication(Path application) {
-        if (!Files.isReadable(readHandle(application))) {
+        Path handle = readHandle(application);
+        if (!Files.isReadable(handle)) {
             throw new IllegalArgumentException(
                     "This application artifact does not exist or cannot be read: " + application);
         }
-        add(application.toString(), application, ClasspathOrigin.APPLICATION, Optional.empty());
+        Optional<NestedApplication> carried = carriedDependencies(handle, application.toString());
+        if (carried.isEmpty()) {
+            add(application.toString(), application, ClasspathOrigin.APPLICATION, Optional.empty());
+            return;
+        }
+        if (visited.add(handle)) {
+            findings.addAll(carried.get().findings());
+            carried.get().entries().forEach(this::record);
+        }
+    }
+
+    private Optional<NestedApplication> carriedDependencies(Path handle, String display) {
+        return Files.isDirectory(handle)
+                ? Optional.empty()
+                : NestedApplication.of(handle, display, budget);
     }
 
     private void addSupplied(Path supplied) {
@@ -100,9 +122,17 @@ final class ClasspathExpander {
             return;
         }
         EntryKind kind = Files.isDirectory(handle) ? EntryKind.DIRECTORY : EntryKind.ARCHIVE;
-        ClasspathEntry entry = new ClasspathEntry(display, handle, kind, origin, wildcardSource);
+        record(new ClasspathEntry(display, handle, kind, origin, wildcardSource, Optional.empty()));
+    }
+
+    /**
+     * Records one settled position and chains from it. A manifest {@code Class-Path} is followed from
+     * whichever position occupies the archive itself, so an expanded application archive chains from
+     * its own top level rather than from a position derived inside it.
+     */
+    private void record(ClasspathEntry entry) {
         entries.add(entry);
-        if (kind == EntryKind.ARCHIVE) {
+        if (entry.kind() == EntryKind.ARCHIVE || entry.kind() == EntryKind.HOST_ARCHIVE) {
             addManifestChain(entry);
         }
     }

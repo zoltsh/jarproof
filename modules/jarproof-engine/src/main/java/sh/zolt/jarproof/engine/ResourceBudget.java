@@ -16,6 +16,14 @@ final class ResourceBudget {
     /** Largest number of bytes one class file may occupy. */
     static final int MAXIMUM_CLASS_FILE_BYTES = 33554432;
 
+    /**
+     * Largest number of bytes one entry of a nested layout may occupy: a library archive an application
+     * carries inside itself, or the index that orders those libraries. Such an entry is read whole,
+     * because bytes that never became a file cannot be addressed any other way, so it needs a ceiling of
+     * its own rather than the one a single class file answers to.
+     */
+    static final int MAXIMUM_NESTED_ENTRY_BYTES = 268435456;
+
     /** Largest number of bytes one run may read out of all archives together. */
     static final long MAXIMUM_EXPANDED_BYTES = 4294967296L;
 
@@ -24,6 +32,9 @@ final class ResourceBudget {
 
     /** Largest number of findings one run may report. */
     static final int MAXIMUM_FINDINGS = 20000;
+
+    /** How every ceiling on the size of a single entry names the entry that broke it. */
+    private static final String EXCEEDED_BY = " bytes, exceeded by ";
 
     private long expandedBytes;
 
@@ -39,7 +50,15 @@ final class ResourceBudget {
     void checkClassFileBytes(long bytes, String entryName) {
         if (bytes > MAXIMUM_CLASS_FILE_BYTES) {
             throw new IllegalStateException(
-                    "A class file may occupy at most " + MAXIMUM_CLASS_FILE_BYTES + " bytes, exceeded by " + entryName);
+                    "A class file may occupy at most " + MAXIMUM_CLASS_FILE_BYTES + EXCEEDED_BY + entryName);
+        }
+    }
+
+    /** Rejects a nested layout entry larger than the ceiling allows; a negative size is simply unknown. */
+    void checkNestedEntryBytes(long bytes, String entryName) {
+        if (bytes > MAXIMUM_NESTED_ENTRY_BYTES) {
+            throw new IllegalStateException("A nested layout entry may occupy at most "
+                    + MAXIMUM_NESTED_ENTRY_BYTES + EXCEEDED_BY + entryName);
         }
     }
 
