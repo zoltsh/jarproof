@@ -30,7 +30,7 @@ final class FixtureCorpus {
     private static final String TARGET = "target";
     private static final String ARTIFACT_PREFIX = "jarproof-fixture-";
     private static final String COMMAND_LINE_PREFIX = "jarproof-cli";
-    private static final String ARTIFACT_SUFFIX = "-0.1.0-alpha.1-SNAPSHOT.jar";
+    private static final String ARTIFACT_SUFFIX = "-0.0.1-SNAPSHOT.jar";
     private static final String NOT_PACKAGED = "Packaged artifact is missing: ";
     private static final String PACKAGE_FIRST = "\nRun `zolt package --workspace --all` before"
             + " `zolt integration-test`; corpus artifacts are test data, not dependencies.";

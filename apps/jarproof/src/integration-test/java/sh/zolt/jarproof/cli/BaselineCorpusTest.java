@@ -38,7 +38,7 @@ final class BaselineCorpusTest {
     private static final String NOTHING_NEW = "no findings\n";
     private static final String FINGERPRINTS = "fingerprints";
     private static final String RECORDED = "JP1003|fixtures/missing-method-consumer/target/"
-            + "jarproof-fixture-missing-method-consumer-0.1.0-alpha.1-SNAPSHOT.jar"
+            + "jarproof-fixture-missing-method-consumer-0.0.1-SNAPSHOT.jar"
             + "|sh/zolt/jarproof/fixtures/missingmethod/consumer/OrderReport.class"
             + "|sh/zolt/jarproof/fixtures/missingmethod/OrderPolicy#describe(Ljava/lang/String;I)Ljava/lang/String;";
 

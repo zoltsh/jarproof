@@ -61,7 +61,7 @@ final class CheckCommandTest {
                   "jarproofJsonVersion": "1",
                   "tool": {
                     "name": "jarproof",
-                    "version": "0.1.0-alpha.1-dev"
+                    "version": "0.0.1-SNAPSHOT"
                   },
                   "request": {
                     "targetJava": 17,

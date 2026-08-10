@@ -316,7 +316,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-api"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -327,7 +327,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-api"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "test"
 direct = true
@@ -338,7 +338,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-engine"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -349,7 +349,7 @@ dependencies = ["org.ow2.asm:asm:9.9:jar:compile"]
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-class-to-interface-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -360,7 +360,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-inaccessible-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -371,7 +371,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-lambda-target-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -382,7 +382,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-missing-class-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -393,7 +393,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-missing-field-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -404,7 +404,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-missing-method-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -415,7 +415,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-service-api"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -426,7 +426,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-static-instance-flip-api-v1"
-version = "0.1.0-alpha.1-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 source = "workspace"
 scope = "compile"
 direct = true
