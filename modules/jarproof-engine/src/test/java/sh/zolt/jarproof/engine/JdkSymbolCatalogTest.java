@@ -92,11 +92,11 @@ final class JdkSymbolCatalogTest {
     @Test
     void unsupportedReleasesNameTheBundledSet() {
         IllegalArgumentException failure =
-                assertThrows(IllegalArgumentException.class, () -> JdkSymbolCatalog.forRelease(11));
+                assertThrows(IllegalArgumentException.class, () -> JdkSymbolCatalog.forRelease(20));
 
-        assertTrue(failure.getMessage().contains("Java 11"), failure::getMessage);
+        assertTrue(failure.getMessage().contains("Java 20"), failure::getMessage);
         assertTrue(failure.getMessage().contains(String.valueOf(BUNDLED_RELEASE)), failure::getMessage);
-        assertThrows(IllegalArgumentException.class, () -> JdkSymbolCatalog.forRelease(25));
+        assertThrows(IllegalArgumentException.class, () -> JdkSymbolCatalog.forRelease(24));
     }
 
     @Test

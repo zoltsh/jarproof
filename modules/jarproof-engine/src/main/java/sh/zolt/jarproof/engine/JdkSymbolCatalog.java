@@ -76,7 +76,7 @@ import java.util.zip.GZIPInputStream;
  */
 final class JdkSymbolCatalog {
     private static final Set<Integer> BUNDLED_RELEASES =
-            Collections.unmodifiableSortedSet(new TreeSet<>(Set.of(17, 21)));
+            Collections.unmodifiableSortedSet(new TreeSet<>(Set.of(8, 11, 17, 21, 25)));
     private static final String RESOURCE_PREFIX = "jdk-symbols-";
     private static final String RESOURCE_SUFFIX = ".bin";
 

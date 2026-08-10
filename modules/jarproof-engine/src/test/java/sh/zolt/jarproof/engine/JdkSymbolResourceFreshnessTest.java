@@ -36,6 +36,21 @@ final class JdkSymbolResourceFreshnessTest {
     }
 
     @Test
+    void bundledJavaEightSymbolsMatchTheToolchain() throws IOException {
+        assertResourceIsFresh(8);
+    }
+
+    @Test
+    void bundledJavaElevenSymbolsMatchTheToolchain() throws IOException {
+        assertResourceIsFresh(11);
+    }
+
+    @Test
+    void bundledJavaTwentyFiveSymbolsMatchTheToolchain() throws IOException {
+        assertResourceIsFresh(25);
+    }
+
+    @Test
     void theToolchainShipsTheSignatureArchiveTheGeneratorNeeds() {
         Path ctSym = JdkSymbolResourceGenerator.toolchainCtSym();
 

@@ -58,7 +58,7 @@ final class RelativePathResolutionTest {
     private static final String SIGNATURE_DIRECTORY = "lib";
     private static final String SIGNATURE_FILE = "ct.sym";
     /** A release with no bundled symbols, so only the supplied archive can answer for it. */
-    private static final int UNBUNDLED_RELEASE = 11;
+    private static final int UNBUNDLED_RELEASE = 20;
 
     @TempDir
     Path elsewhere;
