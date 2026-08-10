@@ -1,9 +1,11 @@
 package sh.zolt.jarproof.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import sh.zolt.jarproof.api.ArtifactLocation;
 import sh.zolt.jarproof.api.Evidence;
@@ -98,6 +100,39 @@ final class JsonReportTest {
     }
 
     @Test
+    void addsTheOptionalSourceMembersAfterTheClassEntry() {
+        String document = JsonReport.render(SampleFindings.request(), located(SampleFindings.SOURCE_LINE));
+
+        assertTrue(document.contains("""
+                      "artifact": {
+                        "artifact": "app.jar",
+                        "classEntry": "com/acme/orders/OrderValidator.class",
+                        "sourceFile": "OrderValidator.java",
+                        "line": 42
+                      },
+                """), document);
+    }
+
+    @Test
+    void omitsTheLineMemberWhenTheClassFileRecordedNone() {
+        String document = JsonReport.render(
+                SampleFindings.request(),
+                SampleFindings.result(SampleFindings.missingMethodInSource(Optional.empty())));
+
+        assertTrue(document.contains("\"sourceFile\": \"OrderValidator.java\"\n"), document);
+        assertFalse(document.contains("\"line\""), document);
+    }
+
+    @Test
+    void leavesBothSourceMembersOutOfAFindingThatNamesNoSourceFile() {
+        String document = JsonReport.render(
+                SampleFindings.request(), SampleFindings.result(SampleFindings.missingMethod()));
+
+        assertFalse(document.contains("\"sourceFile\""), document);
+        assertFalse(document.contains("\"line\""), document);
+    }
+
+    @Test
     void countsEverySeverityIncludingTheOnesThatDidNotOccur() {
         String document = JsonReport.render(
                 SampleFindings.request(), SampleFindings.result(SampleFindings.missingMethod()));
@@ -144,5 +179,9 @@ final class JsonReportTest {
         assertEquals(
                 JsonReport.render(SampleFindings.request(), result),
                 JsonReport.render(SampleFindings.request(), result));
+    }
+
+    private static VerificationResult located(int line) {
+        return SampleFindings.result(SampleFindings.missingMethodInSource(Optional.of(line)));
     }
 }

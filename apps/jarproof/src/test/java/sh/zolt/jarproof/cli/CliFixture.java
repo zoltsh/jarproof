@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -33,7 +34,10 @@ final class CliFixture {
     static final String FORMAT = "--format";
     static final String JSON = "json";
     static final String CLASS_SUFFIX = ".class";
+    static final String SOURCE_FILE = "OrderValidator.java";
+    static final String SOURCE_PATH = "com/acme/app/OrderValidator.java";
     static final int JAVA_17_MAJOR = 61;
+    static final int CALL_LINE = 31;
 
     private static final int PREVIEW_MINOR_VERSION = 0xFFFF;
 
@@ -80,6 +84,29 @@ final class CliFixture {
     /** A class whose one method calls the descriptor the library does not declare. */
     static byte[] breakingCaller(String internalName) {
         return caller(internalName, "validate", POLICY, CHECK, TAKES_TEXT);
+    }
+
+    /**
+     * The same broken application, compiled the way a compiler does by default: the class file names
+     * the file it came from and the line its one call is written on.
+     *
+     * @param workspace directory the archive is written to
+     * @return the application archive
+     */
+    static Path tracedApplication(Path workspace) {
+        ClassWriter writer = newClass(VALIDATOR, Opcodes.V17);
+        writer.visitSource(SOURCE_FILE, null);
+        MethodVisitor method = writer.visitMethod(Opcodes.ACC_PUBLIC, "validate", NO_ARGUMENTS, null, null);
+        method.visitCode();
+        Label at = new Label();
+        method.visitLabel(at);
+        method.visitLineNumber(CALL_LINE, at);
+        method.visitMethodInsn(Opcodes.INVOKEVIRTUAL, POLICY, CHECK, TAKES_TEXT, false);
+        method.visitInsn(Opcodes.RETURN);
+        method.visitMaxs(4, 2);
+        method.visitEnd();
+        writer.visitEnd();
+        return jar(workspace, "app.jar", entries(VALIDATOR + CLASS_SUFFIX, writer.toByteArray()));
     }
 
     /** The library that declares the same method name with a different descriptor. */

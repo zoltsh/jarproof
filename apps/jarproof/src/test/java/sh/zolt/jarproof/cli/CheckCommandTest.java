@@ -2,11 +2,14 @@ package sh.zolt.jarproof.cli;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,7 @@ import sh.zolt.jarproof.cli.CliFixture.Invocation;
 final class CheckCommandTest {
     private static final String PATH_ROOT = "--path-root";
     private static final String OUTPUT = "--output";
+    private static final String SOURCE_ROOT = "--source-root";
     private static final String REPORTED_ARTIFACT = "app.jar";
 
     @TempDir
@@ -144,6 +148,51 @@ final class CheckCommandTest {
     }
 
     @Test
+    void locatesSarifResultsInTheSourceTreeTheCallerNames() throws Exception {
+        Path sources = sourceTree();
+        Path application = CliFixture.tracedApplication(workspace);
+
+        Invocation mapped = sarif(application, SOURCE_ROOT, sources.toString());
+        Invocation unmapped = sarif(application);
+
+        Map<?, ?> located = firstResult(mapped.out());
+        assertEquals(CliFixture.SOURCE_PATH, uriOf(located), mapped.out());
+        assertEquals(CliFixture.CALL_LINE, startLineOf(located), mapped.out());
+        assertEquals(REPORTED_ARTIFACT, uriOf(firstResult(unmapped.out())), unmapped.out());
+        assertFalse(unmapped.out().contains("region"), unmapped.out());
+    }
+
+    @Test
+    void reportsTheSourceLineAPersonAndAMachineBothRead() {
+        Path application = CliFixture.tracedApplication(workspace);
+
+        Invocation human = CliFixture.invoke(CliFixture.checkArgs(application, CliFixture.library(workspace)));
+        Invocation json = CliFixture.invoke(CliFixture.checkArgs(
+                application,
+                CliFixture.library(workspace),
+                CliFixture.FORMAT,
+                CliFixture.JSON,
+                PATH_ROOT,
+                workspace.toString()));
+
+        assertTrue(human.out().contains("  source:      " + CliFixture.SOURCE_FILE + ":" + CliFixture.CALL_LINE),
+                human.out());
+        assertTrue(json.out().contains("\"sourceFile\": \"" + CliFixture.SOURCE_FILE + "\""), json.out());
+        assertTrue(json.out().contains("\"line\": " + CliFixture.CALL_LINE), json.out());
+    }
+
+    @Test
+    void rendersTheSameSarifBytesEveryRunWithMappingActive() throws Exception {
+        String root = sourceTree().toString();
+        Path application = CliFixture.tracedApplication(workspace);
+
+        byte[] first = sarif(application, SOURCE_ROOT, root).out().getBytes(StandardCharsets.UTF_8);
+        byte[] second = sarif(application, SOURCE_ROOT, root).out().getBytes(StandardCharsets.UTF_8);
+
+        assertArrayEquals(first, second, new String(first, StandardCharsets.UTF_8));
+    }
+
+    @Test
     void writesTheReportWhereItWasAsked() throws Exception {
         Path report = workspace.resolve("report.json");
 
@@ -165,6 +214,32 @@ final class CheckCommandTest {
     private Invocation check(String... extra) {
         return CliFixture.invoke(CliFixture.checkArgs(
                 CliFixture.brokenApplication(workspace), CliFixture.library(workspace), extra));
+    }
+
+    private Invocation sarif(Path application, String... extra) {
+        List<String> flags = new ArrayList<>(List.of(CliFixture.FORMAT, "sarif", PATH_ROOT, workspace.toString()));
+        flags.addAll(List.of(extra));
+        return CliFixture.invoke(CliFixture.checkArgs(
+                application, CliFixture.library(workspace), flags.toArray(new String[0])));
+    }
+
+    /** A source tree holding the application's source file where its package path says it should be. */
+    private Path sourceTree() throws IOException {
+        Path root = workspace.resolve("src/main/java");
+        Path source = root.resolve(CliFixture.SOURCE_PATH);
+        Files.createDirectories(source.getParent());
+        Files.writeString(source, "package com.acme.app;\n");
+        return root;
+    }
+
+    private static Map<?, ?> firstResult(String document) {
+        Map<?, ?> run = object(array(object(JsonScanner.parse(document)).get("runs")).get(0));
+        return object(array(run.get("results")).get(0));
+    }
+
+    private static int startLineOf(Map<?, ?> result) {
+        Map<?, ?> location = object(array(result.get("locations")).get(0));
+        return (Integer) object(object(location.get("physicalLocation")).get("region")).get("startLine");
     }
 
     private byte[] machineBytes() {

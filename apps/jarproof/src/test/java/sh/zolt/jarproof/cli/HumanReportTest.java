@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import sh.zolt.jarproof.api.Finding;
 import sh.zolt.jarproof.api.VerificationResult;
@@ -34,6 +35,38 @@ final class HumanReportTest {
     }
 
     @Test
+    void citesTheSourceFileAndLineTheClassFileRecorded() {
+        String report = HumanReport.render(SampleFindings.result(
+                SampleFindings.missingMethodInSource(Optional.of(SampleFindings.SOURCE_LINE))));
+
+        assertEquals(
+                """
+                error JP1003: missing method
+                  symbol:      com.google.common.base.Preconditions.checkArgument(boolean, String, Object)
+                  class:       com/acme/orders/OrderValidator.class
+                  source:      OrderValidator.java:42
+                  from:        app.jar
+                  at runtime:  NoSuchMethodError
+                  cause:       guava-18.0.jar declares no checkArgument(boolean, String, Object) on Preconditions.
+                  observed:    selected guava-18.0.jar from lib/*
+                               app.jar was compiled against a newer guava
+
+                next: align the runtime classpath with the version used to compile app.jar
+
+                1 error, 1 finding
+                """,
+                report);
+    }
+
+    @Test
+    void citesTheSourceFileAloneWhenTheClassFileRecordedNoLine() {
+        String report = HumanReport.render(
+                SampleFindings.result(SampleFindings.missingMethodInSource(Optional.empty())));
+
+        assertTrue(report.contains("\n  source:      OrderValidator.java\n"), report);
+    }
+
+    @Test
     void separatesFindingsAndEndsWithOneCountLine() {
         String report = HumanReport.render(SampleFindings.result(
                 SampleFindings.missingMethod(), SampleFindings.duplicateClass(), SampleFindings.splitPackage()));
@@ -46,6 +79,13 @@ final class HumanReportTest {
     @Test
     void saysSoWhenNothingWasFound() {
         assertEquals("no findings\n", HumanReport.render(SampleFindings.result()));
+    }
+
+    @Test
+    void omitsTheSourceLineForAClassCompiledWithoutDebugInformation() {
+        String report = HumanReport.render(SampleFindings.result(SampleFindings.missingMethod()));
+
+        assertFalse(report.contains("source:"), report);
     }
 
     @Test

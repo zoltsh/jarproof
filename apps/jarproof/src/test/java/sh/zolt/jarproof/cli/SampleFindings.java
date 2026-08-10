@@ -2,6 +2,7 @@ package sh.zolt.jarproof.cli;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import sh.zolt.jarproof.api.ArtifactLocation;
 import sh.zolt.jarproof.api.Evidence;
 import sh.zolt.jarproof.api.Finding;
@@ -16,6 +17,21 @@ import sh.zolt.jarproof.api.VerificationResult;
 
 /** Canned findings shared by the reporting tests, modelled on the diagnostics in DESIGN.md. */
 final class SampleFindings {
+    /** The application every specimen is reported against. */
+    static final String APPLICATION = "app.jar";
+
+    /** The class entry the missing-method specimen is located in. */
+    static final String CLASS_ENTRY = "com/acme/orders/OrderValidator.class";
+
+    /** The {@code SourceFile} attribute that class entry would carry, compiled with debug information. */
+    static final String SOURCE_FILE = "OrderValidator.java";
+
+    /** Where that source file sits relative to a source root, which is the class's package directory. */
+    static final String SOURCE_PATH = "com/acme/orders/OrderValidator.java";
+
+    /** The line the specimen's broken call is written on. */
+    static final int SOURCE_LINE = 42;
+
     private SampleFindings() {
     }
 
@@ -25,7 +41,7 @@ final class SampleFindings {
                 FindingCode.of("JP1003"),
                 Severity.ERROR,
                 PredictedError.NO_SUCH_METHOD_ERROR,
-                ArtifactLocation.ofClassEntry("app.jar", "com/acme/orders/OrderValidator.class"),
+                ArtifactLocation.ofClassEntry(APPLICATION, CLASS_ENTRY),
                 "com/google/common/base/Preconditions#checkArgument(ZLjava/lang/String;Ljava/lang/Object;)V",
                 "missing method",
                 "guava-18.0.jar declares no checkArgument(boolean, String, Object) on Preconditions.",
@@ -35,6 +51,26 @@ final class SampleFindings {
                 List.of(
                         new Remediation("align the runtime classpath with the version used to compile app.jar"),
                         new Remediation("or recompile app.jar against guava-18.0.jar")));
+    }
+
+    /**
+     * The same missing method, from a class file that recorded where it was compiled from.
+     *
+     * @param line the source line the call is written on, absent when no line table covers it
+     * @return the specimen finding, located in source as far as the class file allows
+     */
+    static Finding missingMethodInSource(Optional<Integer> line) {
+        Finding located = missingMethod();
+        return new Finding(
+                located.code(),
+                located.severity(),
+                located.predictedError(),
+                ArtifactLocation.ofSource(APPLICATION, CLASS_ENTRY, Optional.of(SOURCE_FILE), line),
+                located.subject(),
+                located.summary(),
+                located.explanation(),
+                located.evidence(),
+                located.remediation());
     }
 
     /** A library-only duplicate: warning severity, no predicted throwable, no class entry. */
