@@ -10,12 +10,20 @@ import org.junit.jupiter.api.Test;
 
 final class JdkSymbolLinesTest {
     @Test
-    void headerCarriesVersionReleaseAndCount() {
-        String header = JdkSymbolLines.header(17, 4692);
+    void headerCarriesVersionReleaseCountAndSourceRuntime() {
+        String header = JdkSymbolLines.header(17, 4692, "25.0.2+10-jvmci-b01");
 
-        assertEquals("#jarproof-jdk-symbols\t1\t17\t4692", header);
+        assertEquals("#jarproof-jdk-symbols\t2\t17\t4692\t25.0.2+10-jvmci-b01", header);
         assertEquals(17, JdkSymbolLines.releaseOf(header));
         assertEquals(4692, JdkSymbolLines.classCountOf(header));
+        assertEquals("25.0.2+10-jvmci-b01", JdkSymbolLines.sourceRuntimeOf(header));
+    }
+
+    @Test
+    void aHeaderWithABlankSourceRuntimeIsRejected() {
+        String header = JdkSymbolLines.header(17, 1, "");
+
+        assertThrows(IllegalStateException.class, () -> JdkSymbolLines.sourceRuntimeOf(header));
     }
 
     @Test
@@ -96,9 +104,9 @@ final class JdkSymbolLinesTest {
     void anUnknownFormatVersionIsRejected() {
         IllegalStateException failure = assertThrows(
                 IllegalStateException.class,
-                () -> JdkSymbolLines.classCountOf("#jarproof-jdk-symbols\t2\t17\t0"));
+                () -> JdkSymbolLines.classCountOf("#jarproof-jdk-symbols\t3\t17\t0\ttest-runtime"));
 
-        assertTrue(failure.getMessage().contains("version 2"), failure::getMessage);
+        assertTrue(failure.getMessage().contains("version 3"), failure::getMessage);
     }
 
     @Test

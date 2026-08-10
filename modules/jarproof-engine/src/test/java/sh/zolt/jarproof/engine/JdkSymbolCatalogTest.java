@@ -143,14 +143,14 @@ final class JdkSymbolCatalogTest {
     void aResourceForAnotherReleaseIsRejected() {
         IllegalStateException failure = assertThrows(
                 IllegalStateException.class,
-                () -> read(JdkSymbolLines.header(21, 0) + "\n", BUNDLED_RELEASE));
+                () -> read(JdkSymbolLines.header(21, 0, "test-runtime") + "\n", BUNDLED_RELEASE));
 
         assertTrue(failure.getMessage().contains("declares Java 21"), failure::getMessage);
     }
 
     @Test
     void aResourceWhoseClassCountDisagreesIsRejected() {
-        String text = JdkSymbolLines.header(BUNDLED_RELEASE, 7) + "\n"
+        String text = JdkSymbolLines.header(BUNDLED_RELEASE, 7, "test-runtime") + "\n"
                 + JdkSymbolLines.encode(entry()) + "\n";
 
         IllegalStateException failure =
@@ -160,7 +160,7 @@ final class JdkSymbolCatalogTest {
 
     @Test
     void aHandBuiltResourceRoundTrips() {
-        String text = JdkSymbolLines.header(BUNDLED_RELEASE, 1) + "\n"
+        String text = JdkSymbolLines.header(BUNDLED_RELEASE, 1, "test-runtime") + "\n"
                 + JdkSymbolLines.encode(entry()) + "\n";
 
         JdkSymbolCatalog catalog = read(text, BUNDLED_RELEASE);

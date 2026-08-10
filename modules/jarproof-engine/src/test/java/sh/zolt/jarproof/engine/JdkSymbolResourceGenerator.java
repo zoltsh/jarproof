@@ -32,7 +32,8 @@ final class JdkSymbolResourceGenerator {
     static byte[] resourceBytes(int javaRelease) {
         JdkSymbolCatalog catalog = catalogOf(javaRelease);
         StringBuilder text = new StringBuilder();
-        text.append(JdkSymbolLines.header(javaRelease, catalog.classCount())).append('\n');
+        text.append(JdkSymbolLines.header(javaRelease, catalog.classCount(),
+                System.getProperty("java.runtime.version"))).append('\n');
         for (JdkSymbolEntry entry : catalog.entries()) {
             text.append(JdkSymbolLines.encode(entry)).append('\n');
         }

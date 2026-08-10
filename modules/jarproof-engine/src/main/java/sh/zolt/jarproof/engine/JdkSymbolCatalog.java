@@ -43,7 +43,7 @@ import java.util.zip.GZIPInputStream;
  * because the tab separator sorts below every character a class name can hold.
  *
  * <pre>
- * header    = "#jarproof-jdk-symbols" TAB formatVersion TAB javaRelease TAB classCount
+ * header    = "#jarproof-jdk-symbols" TAB formatVersion TAB javaRelease TAB classCount TAB sourceRuntime
  * classLine = internalName TAB module TAB access TAB superName TAB interfaces TAB nestHost
  *             TAB nestMembers *( TAB memberName TAB memberDescriptor TAB memberAccess )
  * </pre>

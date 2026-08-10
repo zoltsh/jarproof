@@ -15,8 +15,8 @@ final class JdkSymbolLines {
     private static final String MAGIC = "#jarproof-jdk-symbols";
     private static final String FIELD_SEPARATOR = "\t";
     private static final String LIST_SEPARATOR = ",";
-    private static final int FORMAT_VERSION = 1;
-    private static final int HEADER_FIELDS = 4;
+    private static final int FORMAT_VERSION = 2;
+    private static final int HEADER_FIELDS = 5;
     private static final int CLASS_FIELDS = 7;
     private static final int MEMBER_FIELDS = 3;
     private static final int DECIMAL = 10;
@@ -25,10 +25,10 @@ final class JdkSymbolLines {
     private JdkSymbolLines() {
     }
 
-    /** Builds the first line of a resource. */
-    static String header(int javaRelease, int classCount) {
+    /** Builds the first line of a resource, stamping the runtime the data was generated from. */
+    static String header(int javaRelease, int classCount, String sourceRuntime) {
         return MAGIC + FIELD_SEPARATOR + FORMAT_VERSION + FIELD_SEPARATOR + javaRelease
-                + FIELD_SEPARATOR + classCount;
+                + FIELD_SEPARATOR + classCount + FIELD_SEPARATOR + sourceRuntime;
     }
 
     /** Returns the Java release a header line declares. */
@@ -39,6 +39,15 @@ final class JdkSymbolLines {
     /** Returns the class count a header line declares. */
     static int classCountOf(String headerLine) {
         return number(headerFields(headerLine)[3], DECIMAL);
+    }
+
+    /** Returns the runtime version of the JDK whose signature archive produced the resource. */
+    static String sourceRuntimeOf(String headerLine) {
+        String stamped = headerFields(headerLine)[4];
+        if (stamped.isBlank()) {
+            throw new IllegalStateException("A JDK symbol resource must name its source runtime");
+        }
+        return stamped;
     }
 
     /** Writes one class as a single line, without its terminating newline. */
