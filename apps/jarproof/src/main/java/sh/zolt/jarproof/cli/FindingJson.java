@@ -12,6 +12,11 @@ import sh.zolt.jarproof.api.Remediation;
  * {@code remediation}. {@code classEntry} appears inside {@code artifact} only when the finding
  * concerns a single class, because an absent entry and an empty entry mean different things.
  * {@code predictedError} is always present and names the throwable, or {@code None}.
+ *
+ * <p>{@code sourceFile} and {@code line} follow {@code classEntry} when the class file carried them.
+ * They are optional members of a version that already exists, which the format allows: a consumer of
+ * JSON v1 tolerates a key it has not seen and tolerates its absence, and only a change to a member it
+ * already reads is a new version.
  */
 final class FindingJson {
     /** Member holding the summary of a finding, and of a whole run. */
@@ -24,6 +29,8 @@ final class FindingJson {
     private static final String SEVERITY = "severity";
     private static final String PREDICTED_ERROR = "predictedError";
     private static final String CLASS_ENTRY = "classEntry";
+    private static final String SOURCE_FILE = "sourceFile";
+    private static final String LINE = "line";
     private static final String SUBJECT = "subject";
     private static final String EXPLANATION = "explanation";
     private static final String EVIDENCE = "evidence";
@@ -64,6 +71,8 @@ final class FindingJson {
         json.name(ARTIFACT).beginObject();
         json.name(ARTIFACT).value(finding.artifact().artifact());
         finding.artifact().classEntry().ifPresent(entry -> json.name(CLASS_ENTRY).value(entry));
+        finding.artifact().sourceFile().ifPresent(source -> json.name(SOURCE_FILE).value(source));
+        finding.artifact().line().ifPresent(line -> json.name(LINE).value(line));
         json.endObject();
     }
 }

@@ -2,6 +2,8 @@ package sh.zolt.jarproof.cli;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import sh.zolt.jarproof.api.ArtifactLocation;
 import sh.zolt.jarproof.api.Evidence;
 import sh.zolt.jarproof.api.Finding;
 import sh.zolt.jarproof.api.PredictedError;
@@ -20,6 +22,7 @@ import sh.zolt.jarproof.api.VerificationResult;
  * error JP1003: missing method
  *   symbol:      com.google.common.base.Preconditions.checkArgument(boolean, String, Object)
  *   class:       com/acme/orders/OrderValidator.class
+ *   source:      OrderValidator.java:42
  *   from:        app.jar
  *   at runtime:  NoSuchMethodError
  *   cause:       &lt;the finding's explanation&gt;
@@ -30,14 +33,18 @@ import sh.zolt.jarproof.api.VerificationResult;
  * </pre>
  *
  * <p>A line is omitted rather than emitted empty: there is no {@code class} line for a finding
- * about a whole artifact, no {@code at runtime} line when nothing is predicted, no
- * {@code observed} lines without evidence, and no {@code next} line without a remediation. Blocks
- * are separated by a blank line and the report ends with one line of counts. Nothing here reads a
- * clock, a locale, or the file system, so the same findings always render the same bytes.
+ * about a whole artifact, no {@code source} line for a class compiled without debug information, no
+ * {@code at runtime} line when nothing is predicted, no {@code observed} lines without evidence, and
+ * no {@code next} line without a remediation. The {@code source} line names the file the class was
+ * compiled from and, when the class file records one, the line the reference is written on; it is the
+ * class file's own word, so no path and no source root take part in it. Blocks are separated by a
+ * blank line and the report ends with one line of counts. Nothing here reads a clock, a locale, or the
+ * file system, so the same findings always render the same bytes.
  */
 final class HumanReport {
     private static final String SYMBOL = "symbol";
     private static final String CLASS = "class";
+    private static final String SOURCE = "source";
     private static final String ORIGIN = "from";
     private static final String RUNTIME = "at runtime";
     private static final String CAUSE = "cause";
@@ -47,7 +54,6 @@ final class HumanReport {
     private static final String NOTHING_FOUND = "no findings";
     private static final String INDENT = "  ";
     private static final int VALUE_COLUMN = 15;
-    private static final String CONTINUATION = " ".repeat(VALUE_COLUMN);
 
     private HumanReport() {
     }
@@ -77,6 +83,7 @@ final class HumanReport {
                 .append('\n');
         appendDetail(out, SYMBOL, SymbolText.readable(finding.subject()));
         finding.artifact().classEntry().ifPresent(entry -> appendDetail(out, CLASS, entry));
+        cited(finding.artifact()).ifPresent(source -> appendDetail(out, SOURCE, source));
         appendDetail(out, ORIGIN, finding.artifact().artifact());
         if (!finding.predictedError().equals(PredictedError.NONE)) {
             appendDetail(out, RUNTIME, finding.predictedError().value());
@@ -86,13 +93,25 @@ final class HumanReport {
         appendNext(out, finding);
     }
 
+    /**
+     * The source coordinates as a reader would cite them.
+     *
+     * @param location where the finding lives
+     * @return the file and its line, the file alone when no line is recorded, or nothing at all
+     */
+    private static Optional<String> cited(ArtifactLocation location) {
+        return location.sourceFile()
+                .map(file -> location.line().map(line -> file + ':' + line).orElse(file));
+    }
+
     private static void appendEvidence(StringBuilder out, List<Evidence> evidence) {
+        String continuation = " ".repeat(VALUE_COLUMN);
         for (int index = 0; index < evidence.size(); index++) {
             String detail = evidence.get(index).detail();
             if (index == 0) {
                 appendDetail(out, OBSERVED, detail);
             } else {
-                out.append(CONTINUATION).append(detail).append('\n');
+                out.append(continuation).append(detail).append('\n');
             }
         }
     }

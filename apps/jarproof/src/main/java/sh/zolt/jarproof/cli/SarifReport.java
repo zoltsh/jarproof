@@ -1,5 +1,6 @@
 package sh.zolt.jarproof.cli;
 
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,10 @@ import sh.zolt.jarproof.api.VerificationResult;
  * rule's short description is the summary of the first finding that raised it, so the rule text
  * comes from the same words the human report shows. Every string obeys the canonical rules in
  * {@link JsonText}, which is what lets the native binary and the JVM be compared byte for byte.
+ *
+ * <p>Source roots reach the document here and nowhere else, because SARIF is the only format that
+ * resolves them ({@link SarifResult}). A run rendered without roots keeps every result at artifact
+ * level, which is what the format promised before source mapping existed.
  */
 final class SarifReport {
     private static final String SARIF_VERSION = "2.1.0";
@@ -30,12 +35,23 @@ final class SarifReport {
     }
 
     /**
-     * Renders one verification run as a SARIF 2.1.0 document.
+     * Renders one verification run whose results stay at artifact level.
      *
      * @param result the findings the run produced
      * @return the complete document, terminated by a single LF
      */
     static String render(VerificationResult result) {
+        return render(result, List.of());
+    }
+
+    /**
+     * Renders one verification run as a SARIF 2.1.0 document.
+     *
+     * @param result the findings the run produced
+     * @param sourceRoots roots a result's source path may be resolved against, in caller order
+     * @return the complete document, terminated by a single LF
+     */
+    static String render(VerificationResult result, List<Path> sourceRoots) {
         JsonText json = new JsonText();
         json.beginObject();
         json.name(ToolJson.VERSION).value(SARIF_VERSION);
@@ -48,7 +64,7 @@ final class SarifReport {
         appendRules(json, result.findings());
         json.endObject();
         json.endObject();
-        SarifResult.appendResults(json, result.findings());
+        SarifResult.appendResults(json, result.findings(), sourceRoots);
         json.endObject();
         json.endArray();
         json.endObject();

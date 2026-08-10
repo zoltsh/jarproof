@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
@@ -66,6 +67,13 @@ final class CheckCommand implements Callable<Integer> {
     @Option(names = FlagName.OUTPUT, description = "Write the report to this file instead of stdout.")
     private Path output;
 
+    @Option(
+            names = "--source-root",
+            description = "Root a SARIF result's source path is resolved against. Repeatable, and the"
+                    + " first root that really holds the file wins. A finding whose source file no root"
+                    + " holds stays an artifact-level result, and no other format reads these roots.")
+    private List<Path> sourceRoots = List.of();
+
     @Spec
     private CommandSpec spec;
 
@@ -88,8 +96,26 @@ final class CheckCommand implements Callable<Integer> {
         VerificationResult rendered =
                 format.rootsArtifactPaths() ? options.pathRoot().rewrite(reported) : reported;
         OutputTarget.of(Optional.ofNullable(output), spec.commandLine().getOut())
-                .write(format.render(request, rendered));
+                .write(report(request, rendered));
         return failOn.verdict(reported);
+    }
+
+    /**
+     * Renders the report in the requested format.
+     *
+     * <p>SARIF is handed the source roots directly because it is the only format that resolves them:
+     * a root is a render-time input read from the file system, not a fact the analysis produced, so it
+     * has no place in the vocabulary every format shares. Passing none is the same as having none,
+     * which is what every other format does with them.
+     *
+     * @param request the request the run answered
+     * @param rendered the findings as they will be reported
+     * @return the complete report text
+     */
+    private String report(VerificationRequest request, VerificationResult rendered) {
+        return format == ReportFormat.SARIF
+                ? SarifReport.render(rendered, sourceRoots)
+                : format.render(request, rendered);
     }
 
     /** Refuses a prune that has no file to rewrite, before any analysis is done for it. */
