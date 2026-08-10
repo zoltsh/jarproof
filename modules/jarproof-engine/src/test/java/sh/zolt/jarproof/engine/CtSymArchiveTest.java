@@ -1,0 +1,190 @@
+package sh.zolt.jarproof.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+
+final class CtSymArchiveTest {
+    private static final int PUBLIC_SUPER = Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER;
+
+    @TempDir
+    Path workspace;
+
+    @Test
+    void readsTheToolchainArchiveForABundledRelease() {
+        JdkSymbolCatalog catalog = new CtSymArchive(JdkSymbolResourceGenerator.toolchainCtSym()).catalog(17);
+
+        assertEquals(17, catalog.javaRelease());
+        assertTrue(catalog.classCount() > 4000, () -> "Only " + catalog.classCount() + " classes");
+        assertEquals(Optional.of("java.base"), catalog.owningModule("java/lang/Object"));
+    }
+
+    @Test
+    void theToolchainArchiveCoversTheReleasesItDeclares() {
+        Set<Integer> releases = new CtSymArchive(JdkSymbolResourceGenerator.toolchainCtSym()).releases();
+
+        assertTrue(releases.contains(8), () -> "Missing Java 8 in " + releases);
+        assertTrue(releases.contains(17), () -> "Missing Java 17 in " + releases);
+    }
+
+    @Test
+    void oneEntryServesEveryReleaseItsCodeNames() throws IOException {
+        Path archive = archive(Map.of(
+                "89AL/example.base/com/example/Shared.sig", nestedClass("com/example/Shared"),
+                "89AL/example.base/module-info.sig", nestedClass("module-info")));
+
+        for (int release : List.of(8, 9, 10, 21)) {
+            JdkSymbolCatalog catalog = new CtSymArchive(archive).catalog(release);
+
+            assertEquals(1, catalog.classCount(), () -> "Java " + release);
+            assertEquals(Optional.of("example.base"), catalog.owningModule("com/example/Shared"));
+        }
+    }
+
+    @Test
+    void declarationsSurviveTheRoundTripThroughAsm() throws IOException {
+        Path archive = archive(Map.of("H/example.base/com/example/Shared.sig", nestedClass("com/example/Shared")));
+
+        ClassShape shape = new CtSymArchive(archive).catalog(17)
+                .classShape("com/example/Shared")
+                .orElseThrow();
+
+        assertEquals(PUBLIC_SUPER, shape.accessFlags());
+        assertEquals(Optional.of("java/lang/Object"), shape.superInternalName());
+        assertEquals(List.of("java/io/Serializable"), shape.interfaceInternalNames());
+        assertEquals(Optional.of("com/example/Outer"), shape.nestHostInternalName());
+        assertEquals(
+                List.of(
+                        new MemberShape("<init>", "()V", Opcodes.ACC_PUBLIC),
+                        new MemberShape("count", "I", Opcodes.ACC_PRIVATE)),
+                shape.members());
+    }
+
+    @Test
+    void nestMembersAreSortedByName() throws IOException {
+        Path archive = archive(Map.of("H/example.base/com/example/Outer.sig", hostClass()));
+
+        ClassShape shape = new CtSymArchive(archive).catalog(17).classShape("com/example/Outer").orElseThrow();
+
+        assertEquals(
+                List.of("com/example/Outer$Alpha", "com/example/Outer$Beta", "com/example/Outer$Gamma"),
+                shape.nestMemberInternalNames());
+    }
+
+    @Test
+    void aReleaseWithoutSignaturesNamesWhatTheArchiveCovers() throws IOException {
+        Path archive = archive(Map.of("H/example.base/com/example/Shared.sig", nestedClass("com/example/Shared")));
+
+        IllegalArgumentException failure =
+                assertThrows(IllegalArgumentException.class, () -> new CtSymArchive(archive).catalog(21));
+
+        assertTrue(failure.getMessage().contains("Java 21"), failure::getMessage);
+        assertTrue(failure.getMessage().contains("[17]"), failure::getMessage);
+    }
+
+    @Test
+    void releasesOutsideTheCodedRangeAreRejected() {
+        Path archive = JdkSymbolResourceGenerator.toolchainCtSym();
+
+        assertThrows(IllegalArgumentException.class, () -> new CtSymArchive(archive).catalog(7));
+        assertThrows(IllegalArgumentException.class, () -> new CtSymArchive(archive).catalog(36));
+    }
+
+    @Test
+    void signaturesOutsideAReleaseDirectoryAreIgnored() throws IOException {
+        Path archive = archive(Map.of(
+                "Loose.sig", nestedClass("Loose"),
+                "H/example.base/com/example/Shared.sig", nestedClass("com/example/Shared")));
+
+        CtSymArchive ctSym = new CtSymArchive(archive);
+
+        assertEquals(1, ctSym.catalog(17).classCount());
+        assertEquals(Set.of(17), ctSym.releases());
+    }
+
+    @Test
+    void anEntryWithoutAModuleSegmentIsRejected() throws IOException {
+        Path archive = archive(Map.of("H/Stray.sig", nestedClass("Stray")));
+
+        assertThrows(IllegalStateException.class, () -> new CtSymArchive(archive).catalog(17));
+    }
+
+    @Test
+    void aFileThatIsNotAZipIsReportedWithItsPath() throws IOException {
+        Path notAnArchive = Files.writeString(workspace.resolve("ct.sym"), "plain text");
+
+        UncheckedIOException failure =
+                assertThrows(UncheckedIOException.class, () -> new CtSymArchive(notAnArchive).catalog(17));
+
+        assertTrue(failure.getMessage().contains(notAnArchive.toString()), failure::getMessage);
+        assertThrows(UncheckedIOException.class, () -> new CtSymArchive(notAnArchive).releases());
+    }
+
+    @Test
+    void aMissingArchiveIsReported() {
+        Path absent = workspace.resolve("absent.sym");
+
+        assertThrows(UncheckedIOException.class, () -> new CtSymArchive(absent).catalog(17));
+    }
+
+    private Path archive(Map<String, byte[]> entries) throws IOException {
+        Path archive = workspace.resolve("synthetic-ct.sym");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(archive))) {
+            for (Map.Entry<String, byte[]> entry : entries.entrySet()) {
+                zip.putNextEntry(new ZipEntry(entry.getKey()));
+                zip.write(entry.getValue());
+                zip.closeEntry();
+            }
+            zip.putNextEntry(new ZipEntry("H/system-modules"));
+            zip.write("example.base\n".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        return archive;
+    }
+
+    private static byte[] nestedClass(String internalName) {
+        ClassWriter writer = newClass(internalName);
+        writer.visitNestHost("com/example/Outer");
+        writer.visitField(Opcodes.ACC_PRIVATE, "count", "I", null, null).visitEnd();
+        writer.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).visitEnd();
+        writer.visitEnd();
+        return writer.toByteArray();
+    }
+
+    private static byte[] hostClass() {
+        ClassWriter writer = newClass("com/example/Outer");
+        writer.visitNestMember("com/example/Outer$Gamma");
+        writer.visitNestMember("com/example/Outer$Alpha");
+        writer.visitNestMember("com/example/Outer$Beta");
+        writer.visitEnd();
+        return writer.toByteArray();
+    }
+
+    private static ClassWriter newClass(String internalName) {
+        ClassWriter writer = new ClassWriter(0);
+        writer.visit(
+                Opcodes.V17,
+                PUBLIC_SUPER,
+                internalName,
+                null,
+                "java/lang/Object",
+                new String[] {"java/io/Serializable"});
+        return writer;
+    }
+}
