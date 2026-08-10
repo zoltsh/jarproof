@@ -6,10 +6,10 @@ import picocli.CommandLine.Spec;
 
 /** Root command; analysis commands land as complete vertical slices. */
 @Command(
-        name = "jarproof",
+        name = ProductIdentity.TOOL_NAME,
         description = "Find JAR hell before production.",
         mixinStandardHelpOptions = true,
-        version = "jarproof 0.1.0-alpha.1-dev")
+        version = ProductIdentity.VERSION_BANNER)
 final class RootCommand implements Runnable {
     @Spec
     private CommandSpec spec;
