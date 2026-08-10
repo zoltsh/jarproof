@@ -18,6 +18,18 @@ enum InspectFormat {
     JSON;
 
     /**
+     * Returns whether this format reports the artifact path relative to {@code --path-root}.
+     *
+     * <p>The same split the report formats make, for the same reason: a person reads the path they
+     * typed, and a machine consumer reads one that does not change with the checkout directory.
+     *
+     * @return whether the artifact path is measured from the path root
+     */
+    boolean rootsArtifactPaths() {
+        return this != HUMAN;
+    }
+
+    /**
      * Renders one artifact's facts in this format.
      *
      * @param summary the facts the inspection read

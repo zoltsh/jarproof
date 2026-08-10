@@ -21,9 +21,12 @@ import sh.zolt.jarproof.api.VerificationRequest;
  *
  * <p>Paths reach the engine exactly as the caller wrote them. Nothing is absolutized and nothing is
  * normalised, because the report repeats that text and two machines have to produce the same bytes
- * from the same command line.
+ * from the same command line. Measuring a path against {@code --path-root} happens at render time,
+ * where it belongs: what a machine format prints is a presentation decision, not an analysis input.
  */
 final class RequestOptions {
+    private static final String NOT_A_NUMBER = "Target Java release must be a number: ";
+
     @Option(
             names = "--application",
             required = true,
@@ -37,8 +40,11 @@ final class RequestOptions {
                     + " @file holding one entry per line. Repeatable, and the order decides which copy wins.")
     private List<String> classpath = List.of();
 
-    @Option(names = "--target-java", required = true, description = "Java release the classpath will run on.")
-    private int targetJava;
+    @Option(
+            names = "--target-java",
+            required = true,
+            description = "Java release the classpath will run on. Required.")
+    private String targetJava;
 
     @Option(
             names = "--enable-preview",
@@ -59,9 +65,9 @@ final class RequestOptions {
     private Path jdk;
 
     @Option(
-            names = "--path-root",
-            description = "Root that machine output measures artifact paths from."
-                    + " Defaults to the working directory.")
+            names = FlagName.PATH_ROOT,
+            description = "Root that machine output and baseline fingerprints measure artifact paths"
+                    + " from. Defaults to the working directory.")
     private Path pathRoot = Path.of("");
 
     /**
@@ -83,15 +89,36 @@ final class RequestOptions {
 
     /** Returns the identity of the runtime symbol profile this run measures against. */
     String profile() {
-        return ProfileIdentity.of(targetJava, jdkHome());
+        return ProfileIdentity.of(targetRelease(), jdkHome());
     }
 
-    /** Returns the root machine output measures artifact paths from. */
+    /**
+     * Returns the root machine output measures artifact paths from.
+     *
+     * @throws IllegalArgumentException when the named root is not a directory that exists
+     */
     PathRoot pathRoot() {
         return PathRoot.of(pathRoot);
     }
 
+    /**
+     * The target release as a number.
+     *
+     * <p>The flag is taken as text and converted here rather than by the parser, so text that is not
+     * a number is refused in the same one-line voice as a number no runtime ever had. A parser
+     * conversion failure would instead print a usage dump about a type the caller never mentioned.
+     *
+     * @throws IllegalArgumentException when the value is not a number
+     */
+    private int targetRelease() {
+        try {
+            return Integer.parseInt(targetJava);
+        } catch (NumberFormatException notANumber) {
+            throw new IllegalArgumentException(NOT_A_NUMBER + targetJava, notANumber);
+        }
+    }
+
     private TargetRuntime runtime() {
-        return new TargetRuntime(targetJava, enablePreview ? PreviewMode.ENABLED : PreviewMode.DISABLED);
+        return new TargetRuntime(targetRelease(), enablePreview ? PreviewMode.ENABLED : PreviewMode.DISABLED);
     }
 }

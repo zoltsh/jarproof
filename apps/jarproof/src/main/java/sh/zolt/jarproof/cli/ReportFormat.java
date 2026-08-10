@@ -39,6 +39,13 @@ enum ReportFormat {
      * reads paths that stay the same across checkouts, so both machine formats measure them from the
      * root instead (DESIGN §6).
      *
+     * <p>The asymmetry is deliberate and it is the whole contract: byte stability is promised for the
+     * machine formats only, so only they pay for it. Everything a report shows that could carry a path
+     * follows this one answer -- the artifact of a finding and the path spellings inside the evidence
+     * beside it are measured together, or neither is, so a machine consumer never reads a measured
+     * artifact next to a sentence naming a directory on somebody's laptop, and a person never reads a
+     * path they did not type.
+     *
      * @return whether artifact paths are measured from the path root
      */
     boolean rootsArtifactPaths() {

@@ -14,8 +14,15 @@ import java.util.Optional;
  * nothing appends a separator, because the report already ends in a single LF and the whole point
  * of canonical output is that its bytes are the contract. Files are written as UTF-8 regardless of
  * the platform default.
+ *
+ * <p>A redirected write says so on the diagnostic stream, because the alternative is a command that
+ * prints nothing at all and leaves a reader guessing whether it did the work. Writing to the stream
+ * needs no such note: the document is the confirmation.
  */
 final class OutputTarget {
+    private static final String WROTE = "wrote ";
+    private static final String TO = " to ";
+
     private final Optional<Path> file;
     private final PrintWriter stream;
 
@@ -48,5 +55,19 @@ final class OutputTarget {
         }
         stream.print(document);
         stream.flush();
+    }
+
+    /**
+     * Notes a completed write that went to a file rather than to the stream.
+     *
+     * @param err the diagnostic stream the command was given
+     * @param written what was written, named the way a reader would name it
+     */
+    void note(PrintWriter err, String written) {
+        if (file.isEmpty()) {
+            return;
+        }
+        err.println(WROTE + written + TO + file.get());
+        err.flush();
     }
 }
