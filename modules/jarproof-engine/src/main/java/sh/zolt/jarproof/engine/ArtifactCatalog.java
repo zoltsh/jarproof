@@ -20,6 +20,11 @@ import sh.zolt.jarproof.api.VerificationRequest;
  * rest are shadowed. {@code artifactsByPackage} maps a package internal prefix to the artifacts
  * contributing to it, again in classpath order. Keys are sorted, so iteration is stable and reports
  * built from it are reproducible.
+ *
+ * <p>Which is why the positions may be read all at once. Reading is per-position work that decides
+ * nothing about any other position; ordering is decided here, from results already in classpath order
+ * (see {@link ScanSchedule}). So the indexes, and every report built from them, say exactly what they
+ * would have said had the positions been read one after another.
  */
 final class ArtifactCatalog {
     private final EffectiveClasspath classpath;
@@ -54,11 +59,9 @@ final class ArtifactCatalog {
      * @return the catalog
      */
     static ArtifactCatalog of(EffectiveClasspath classpath, TargetRuntime runtime, ResourceBudget budget) {
-        List<IndexedArtifact> read = new ArrayList<>();
-        for (ClasspathEntry entry : classpath.entries()) {
-            read.add(indexed(entry, runtime, budget));
-        }
-        return new ArtifactCatalog(classpath, read);
+        return new ArtifactCatalog(
+                classpath,
+                ScanSchedule.scan(classpath.entries(), entry -> indexed(entry, runtime, budget)));
     }
 
     /** Reads the whole classpath of one request. */

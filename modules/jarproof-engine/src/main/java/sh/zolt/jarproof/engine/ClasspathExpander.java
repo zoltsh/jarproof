@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.jar.Manifest;
 import java.util.stream.Stream;
 import sh.zolt.jarproof.api.Finding;
 import sh.zolt.jarproof.api.VerificationRequest;
@@ -116,13 +117,23 @@ final class ClasspathExpander {
         }
     }
 
+    /**
+     * Settles one position and reads the manifest that decides what follows it.
+     *
+     * <p>An archive's manifest is parsed here, once, and carried on the entry: this phase has to read it
+     * to know whether the archive declares a {@code Class-Path}, and the phase that indexes the archive
+     * needs the same manifest for multi-release selection, publication identity, and sealing. A class
+     * directory answers to no manifest, so none is read for one.
+     */
     private void add(String display, Path supplied, ClasspathOrigin origin, Optional<String> wildcardSource) {
         Path handle = readHandle(supplied);
         if (!visited.add(handle)) {
             return;
         }
-        EntryKind kind = Files.isDirectory(handle) ? EntryKind.DIRECTORY : EntryKind.ARCHIVE;
-        record(new ClasspathEntry(display, handle, kind, origin, wildcardSource, Optional.empty()));
+        boolean directory = Files.isDirectory(handle);
+        EntryKind kind = directory ? EntryKind.DIRECTORY : EntryKind.ARCHIVE;
+        Optional<Manifest> manifest = directory ? Optional.empty() : ArchiveManifest.read(handle, display);
+        record(new ClasspathEntry(display, handle, kind, origin, wildcardSource, Optional.empty(), manifest));
     }
 
     /**
@@ -152,8 +163,7 @@ final class ClasspathExpander {
     }
 
     private void addManifestChain(ClasspathEntry declaring) {
-        List<String> declared = ArchiveManifest.classPath(
-                ArchiveManifest.read(declaring.path(), declaring.display()));
+        List<String> declared = ArchiveManifest.classPath(declaring.manifest());
         if (declared.isEmpty()) {
             return;
         }

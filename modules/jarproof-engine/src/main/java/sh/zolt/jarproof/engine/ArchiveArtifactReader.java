@@ -16,7 +16,9 @@ import java.util.zip.ZipFile;
  * <p>The archive is opened once, closed on every path out, and each selected class entry is read
  * against the resource budget: the declared size and compression ratio are checked before a single
  * byte is expanded, and the expansion itself is capped, so a crafted archive cannot trade a few
- * kilobytes on disk for gigabytes in memory.
+ * kilobytes on disk for gigabytes in memory. The manifest is not parsed again here: assembling the
+ * classpath had to read it to follow a {@code Class-Path}, so the entry carries what it found and this
+ * read spends its open handle on class bytes alone.
  *
  * <p>Three kinds of classpath position are read here, and they differ only in which entries of the
  * archive they present. An ordinary archive presents all of them. The classes root of an application
@@ -61,7 +63,7 @@ final class ArchiveArtifactReader {
     private IndexedArtifact index(ZipFile archive) throws IOException {
         budget.countArchiveEntries(archive.size(), entry.display());
         List<String> entryNames = contentEntryNames(archive);
-        Optional<Manifest> declared = ArchiveManifest.of(archive);
+        Optional<Manifest> declared = entry.manifest();
         Optional<Manifest> manifest = isClassesRoot() ? Optional.empty() : declared;
         MultiReleaseSelection selection = select(presented(entryNames, declared), manifest);
         ArtifactScan scan = new ArtifactScan(entry);

@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import sh.zolt.jarproof.api.Finding;
@@ -61,13 +62,14 @@ final class NestedApplication {
             List<? extends ZipEntry> contents = archive.stream()
                     .filter(candidate -> !candidate.isDirectory())
                     .toList();
+            Optional<Manifest> declared = ArchiveManifest.of(archive);
             Optional<BootLayout> layout = BootLayout.of(
-                    ArchiveManifest.of(archive), contents.stream().map(ZipEntry::getName).toList());
+                    declared, contents.stream().map(ZipEntry::getName).toList());
             if (layout.isEmpty()) {
                 return Optional.empty();
             }
             NestedApplication application = new NestedApplication(handle, display, budget, layout.get());
-            application.expand(archive, contents);
+            application.expand(archive, contents, declared);
             return Optional.of(application);
         } catch (IOException exception) {
             throw new IllegalArgumentException(ArchiveManifest.UNREADABLE + display, exception);
@@ -84,7 +86,8 @@ final class NestedApplication {
         return List.copyOf(findings);
     }
 
-    private void expand(ZipFile archive, List<? extends ZipEntry> contents) throws IOException {
+    private void expand(ZipFile archive, List<? extends ZipEntry> contents, Optional<Manifest> declared)
+            throws IOException {
         entries.add(position(layout.classesRoot(), EntryKind.NESTED_CLASSES, ClasspathOrigin.APPLICATION));
         for (ZipEntry library : libraries(archive, contents)) {
             if (library.getMethod() != ZipEntry.STORED) {
@@ -94,7 +97,7 @@ final class NestedApplication {
         }
         entries.add(new ClasspathEntry(
                 display, handle, EntryKind.HOST_ARCHIVE, ClasspathOrigin.CLASSPATH,
-                Optional.empty(), Optional.empty()));
+                Optional.empty(), Optional.empty(), declared));
     }
 
     private ClasspathEntry position(String path, EntryKind kind, ClasspathOrigin origin) {
