@@ -158,13 +158,13 @@ final class NestedCoordinateTest {
 
         assertTrue(failure.getMessage().contains(String.valueOf(ResourceBudget.MAXIMUM_EXPANDED_BYTES)),
                 failure::getMessage);
-        assertTrue(failure.getMessage().endsWith(recordPath(WIDGETS)), failure::getMessage);
     }
 
     /**
-     * A budget with room for everything the run reads before the record and not one byte more: the
-     * classes root's only class file, then the nested library read whole out of the outer archive. The
-     * next charge is the record itself, so the ceiling names it.
+     * A budget with room for everything else the run reads and not one byte more, so the run breaches
+     * the expansion ceiling only because the record's bytes were charged too. Positions scan in
+     * parallel, so which entry the breach names is scheduling-dependent and deliberately not asserted;
+     * that the breach happens at all is order-independent, because the total is a commutative sum.
      */
     private static ResourceBudget budgetedUpToTheRecord(Path application) {
         long before = EngineFixture.classFile(ORDERS).length + declaredBytes(application, FIRST_LIBRARY);

@@ -1,8 +1,12 @@
 package sh.zolt.jarproof.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +145,46 @@ final class ClasspathExpanderTest {
 
         assertEquals("*", EngineFixture.required(classpath.findings(), "JP2007").subject());
         assertEquals(2, classpath.entries().size());
+    }
+
+    /**
+     * The manifest is parsed while the classpath is assembled, because a {@code Class-Path} decides what
+     * follows an archive, and it is carried on the entry so indexing that archive never parses it again.
+     */
+    @Test
+    void carriesTheManifestItParsedOnTheEntryThatIndexingWillRead() {
+        jar("lib/chained.jar", "com/acme/chained/Chained");
+        Path declaring = chainingJar("lib/declaring.jar", "com/acme/declaring/Declaring", "chained.jar");
+        Path classes = EngineFixture.classDirectory(workspace, "classes",
+                EngineFixture.entries("com/acme/dir/Dir.class", EngineFixture.classFile("com/acme/dir/Dir")));
+
+        List<ClasspathEntry> entries = expand(List.of(application()), List.of(declaring, classes)).entries();
+
+        ClasspathEntry archive = entries.get(1);
+        assertEquals(declaring.toString(), archive.display());
+        assertEquals(List.of("chained.jar"), ArchiveManifest.classPath(archive.manifest()));
+        assertEquals(Optional.empty(), entries.get(entries.size() - 1).manifest());
+    }
+
+    @Test
+    void refusesAnArchiveItCannotReadInTheCallersOwnWordsForIt() {
+        Path broken = workspace.resolve("lib").resolve("broken.jar");
+        write(broken, "not an archive");
+        Path detour = workspace.resolve("lib").resolve("..").resolve("lib").resolve("broken.jar");
+
+        IllegalArgumentException failure = assertThrows(
+                IllegalArgumentException.class, () -> expand(List.of(application()), List.of(detour)));
+
+        assertEquals(ArchiveManifest.UNREADABLE + detour, failure.getMessage());
+    }
+
+    private static void write(Path file, String content) {
+        try {
+            Files.createDirectories(file.getParent());
+            Files.writeString(file, content);
+        } catch (IOException failure) {
+            throw new UncheckedIOException(failure);
+        }
     }
 
     private EffectiveClasspath expand(List<Path> applications, List<Path> classpath) {
