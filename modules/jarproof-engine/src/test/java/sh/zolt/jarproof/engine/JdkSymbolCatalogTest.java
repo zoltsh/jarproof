@@ -102,9 +102,7 @@ final class JdkSymbolCatalogTest {
     @Test
     void theBundledResourceAgreesWithTheToolchainArchive() {
         List<JdkSymbolEntry> bundled = JdkSymbolCatalog.forRelease(BUNDLED_RELEASE).entries();
-        List<JdkSymbolEntry> parsed = JdkSymbolCatalog
-                .fromCtSym(JdkSymbolResourceGenerator.toolchainCtSym(), BUNDLED_RELEASE)
-                .entries();
+        List<JdkSymbolEntry> parsed = JdkSymbolResourceGenerator.catalogOf(BUNDLED_RELEASE).entries();
 
         assertEquals(parsed.size(), bundled.size());
         for (int index = 0; index < parsed.size(); index++) {

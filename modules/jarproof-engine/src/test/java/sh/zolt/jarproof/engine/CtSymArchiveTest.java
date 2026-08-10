@@ -28,7 +28,7 @@ final class CtSymArchiveTest {
 
     @Test
     void readsTheToolchainArchiveForABundledRelease() {
-        JdkSymbolCatalog catalog = new CtSymArchive(JdkSymbolResourceGenerator.toolchainCtSym()).catalog(17);
+        JdkSymbolCatalog catalog = supplied(JdkSymbolResourceGenerator.toolchainCtSym()).catalog(17);
 
         assertEquals(17, catalog.javaRelease());
         assertTrue(catalog.classCount() > 4000, () -> "Only " + catalog.classCount() + " classes");
@@ -37,7 +37,7 @@ final class CtSymArchiveTest {
 
     @Test
     void theToolchainArchiveCoversTheReleasesItDeclares() {
-        Set<Integer> releases = new CtSymArchive(JdkSymbolResourceGenerator.toolchainCtSym()).releases();
+        Set<Integer> releases = supplied(JdkSymbolResourceGenerator.toolchainCtSym()).releases();
 
         assertTrue(releases.contains(8), () -> "Missing Java 8 in " + releases);
         assertTrue(releases.contains(17), () -> "Missing Java 17 in " + releases);
@@ -50,7 +50,7 @@ final class CtSymArchiveTest {
                 "89AL/example.base/module-info.sig", nestedClass("module-info")));
 
         for (int release : List.of(8, 9, 10, 21)) {
-            JdkSymbolCatalog catalog = new CtSymArchive(archive).catalog(release);
+            JdkSymbolCatalog catalog = supplied(archive).catalog(release);
 
             assertEquals(1, catalog.classCount(), () -> "Java " + release);
             assertEquals(Optional.of("example.base"), catalog.owningModule("com/example/Shared"));
@@ -61,7 +61,7 @@ final class CtSymArchiveTest {
     void declarationsSurviveTheRoundTripThroughAsm() throws IOException {
         Path archive = archive(Map.of("H/example.base/com/example/Shared.sig", nestedClass("com/example/Shared")));
 
-        ClassShape shape = new CtSymArchive(archive).catalog(17)
+        ClassShape shape = supplied(archive).catalog(17)
                 .classShape("com/example/Shared")
                 .orElseThrow();
 
@@ -80,7 +80,7 @@ final class CtSymArchiveTest {
     void nestMembersAreSortedByName() throws IOException {
         Path archive = archive(Map.of("H/example.base/com/example/Outer.sig", hostClass()));
 
-        ClassShape shape = new CtSymArchive(archive).catalog(17).classShape("com/example/Outer").orElseThrow();
+        ClassShape shape = supplied(archive).catalog(17).classShape("com/example/Outer").orElseThrow();
 
         assertEquals(
                 List.of("com/example/Outer$Alpha", "com/example/Outer$Beta", "com/example/Outer$Gamma"),
@@ -92,7 +92,7 @@ final class CtSymArchiveTest {
         Path archive = archive(Map.of("H/example.base/com/example/Shared.sig", nestedClass("com/example/Shared")));
 
         IllegalArgumentException failure =
-                assertThrows(IllegalArgumentException.class, () -> new CtSymArchive(archive).catalog(21));
+                assertThrows(IllegalArgumentException.class, () -> supplied(archive).catalog(21));
 
         assertTrue(failure.getMessage().contains("Java 21"), failure::getMessage);
         assertTrue(failure.getMessage().contains("[17]"), failure::getMessage);
@@ -102,8 +102,8 @@ final class CtSymArchiveTest {
     void releasesOutsideTheCodedRangeAreRejected() {
         Path archive = JdkSymbolResourceGenerator.toolchainCtSym();
 
-        assertThrows(IllegalArgumentException.class, () -> new CtSymArchive(archive).catalog(7));
-        assertThrows(IllegalArgumentException.class, () -> new CtSymArchive(archive).catalog(36));
+        assertThrows(IllegalArgumentException.class, () -> supplied(archive).catalog(7));
+        assertThrows(IllegalArgumentException.class, () -> supplied(archive).catalog(36));
     }
 
     @Test
@@ -112,7 +112,7 @@ final class CtSymArchiveTest {
                 "Loose.sig", nestedClass("Loose"),
                 "H/example.base/com/example/Shared.sig", nestedClass("com/example/Shared")));
 
-        CtSymArchive ctSym = new CtSymArchive(archive);
+        CtSymArchive ctSym = supplied(archive);
 
         assertEquals(1, ctSym.catalog(17).classCount());
         assertEquals(Set.of(17), ctSym.releases());
@@ -122,7 +122,7 @@ final class CtSymArchiveTest {
     void anEntryWithoutAModuleSegmentIsRejected() throws IOException {
         Path archive = archive(Map.of("H/Stray.sig", nestedClass("Stray")));
 
-        assertThrows(IllegalStateException.class, () -> new CtSymArchive(archive).catalog(17));
+        assertThrows(IllegalStateException.class, () -> supplied(archive).catalog(17));
     }
 
     @Test
@@ -130,17 +130,22 @@ final class CtSymArchiveTest {
         Path notAnArchive = Files.writeString(workspace.resolve("ct.sym"), "plain text");
 
         UncheckedIOException failure =
-                assertThrows(UncheckedIOException.class, () -> new CtSymArchive(notAnArchive).catalog(17));
+                assertThrows(UncheckedIOException.class, () -> supplied(notAnArchive).catalog(17));
 
         assertTrue(failure.getMessage().contains(notAnArchive.toString()), failure::getMessage);
-        assertThrows(UncheckedIOException.class, () -> new CtSymArchive(notAnArchive).releases());
+        assertThrows(UncheckedIOException.class, () -> supplied(notAnArchive).releases());
     }
 
     @Test
     void aMissingArchiveIsReported() {
         Path absent = workspace.resolve("absent.sym");
 
-        assertThrows(UncheckedIOException.class, () -> new CtSymArchive(absent).catalog(17));
+        assertThrows(UncheckedIOException.class, () -> supplied(absent).catalog(17));
+    }
+
+    /** Reads an archive the way a caller supplied it: the handle is its own text, resolved once. */
+    private static CtSymArchive supplied(Path archive) {
+        return new CtSymArchive(archive.toAbsolutePath().normalize(), archive.toString());
     }
 
     private Path archive(Map<String, byte[]> entries) throws IOException {

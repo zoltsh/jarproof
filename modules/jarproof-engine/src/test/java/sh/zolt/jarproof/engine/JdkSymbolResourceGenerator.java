@@ -30,13 +30,19 @@ final class JdkSymbolResourceGenerator {
 
     /** Builds the exact bytes the committed resource for a release should hold. */
     static byte[] resourceBytes(int javaRelease) {
-        JdkSymbolCatalog catalog = JdkSymbolCatalog.fromCtSym(toolchainCtSym(), javaRelease);
+        JdkSymbolCatalog catalog = catalogOf(javaRelease);
         StringBuilder text = new StringBuilder();
         text.append(JdkSymbolLines.header(javaRelease, catalog.classCount())).append('\n');
         for (JdkSymbolEntry entry : catalog.entries()) {
             text.append(JdkSymbolLines.encode(entry)).append('\n');
         }
         return compressed(text.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** Reads the toolchain's own archive: an absolute path, so its handle and its text agree. */
+    static JdkSymbolCatalog catalogOf(int javaRelease) {
+        Path ctSym = toolchainCtSym();
+        return JdkSymbolCatalog.fromCtSym(ctSym, ctSym.toString(), javaRelease);
     }
 
     private static byte[] compressed(byte[] text) {

@@ -20,10 +20,14 @@ import sh.zolt.jarproof.api.VerificationResult;
  * loudly instead of returning a report nobody can act on.
  *
  * <p>Platform symbols come from the bundled data for the target release unless the request names a JDK
- * installation, in which case that JDK's own signature archive answers instead. A signature archive
- * that carries nothing at all for the target release and one that carries entries but not the root
- * class mean the same thing to a caller — this JDK cannot describe that release — so both are reported
- * with the same explanation, and the archive's own words are kept as the cause.
+ * installation, in which case that JDK's own signature archive answers instead. The split between the
+ * handle that archive is opened through and the text it is reported by enters here rather than deeper
+ * down, because this is the one place a caller's {@code jdkHome} becomes a file name: the archive path is
+ * settled once into an absolute normalized handle, exactly as a classpath entry is, and the caller's own
+ * text travels beside it so {@link JdkSymbolCatalog#fromCtSym} never has to resolve or render anything
+ * itself. A signature archive that carries nothing at all for the target release and one that carries
+ * entries but not the root class mean the same thing to a caller — this JDK cannot describe that release —
+ * so both are reported with the same explanation, and the archive's own words are kept as the cause.
  */
 final class VerificationRun {
     /**
@@ -74,14 +78,15 @@ final class VerificationRun {
             return JdkSymbolCatalog.forRelease(javaRelease);
         }
         Path signatures = home.get().resolve(SIGNATURE_DIRECTORY).resolve(SIGNATURE_FILE);
-        if (!Files.isReadable(signatures)) {
+        Path handle = signatures.toAbsolutePath().normalize();
+        if (!Files.isReadable(handle)) {
             throw new IllegalArgumentException(NO_SIGNATURE_ARCHIVE + signatures);
         }
-        return describing(signatures, javaRelease);
+        return describing(handle, signatures.toString(), javaRelease);
     }
 
-    private static JdkSymbolCatalog describing(Path signatures, int javaRelease) {
-        JdkSymbolCatalog catalog = supplied(signatures, javaRelease);
+    private static JdkSymbolCatalog describing(Path handle, String display, int javaRelease) {
+        JdkSymbolCatalog catalog = supplied(handle, display, javaRelease);
         if (catalog.classShape(ROOT_CLASS).isEmpty()) {
             throw new IllegalArgumentException(
                     NO_ROOT_CLASS + ROOT_CLASS + FOR_RELEASE + javaRelease + OWN_RELEASE);
@@ -89,9 +94,9 @@ final class VerificationRun {
         return catalog;
     }
 
-    private static JdkSymbolCatalog supplied(Path signatures, int javaRelease) {
+    private static JdkSymbolCatalog supplied(Path handle, String display, int javaRelease) {
         try {
-            return JdkSymbolCatalog.fromCtSym(signatures, javaRelease);
+            return JdkSymbolCatalog.fromCtSym(handle, display, javaRelease);
         } catch (IllegalArgumentException undescribed) {
             throw new IllegalArgumentException(undescribed.getMessage() + OWN_RELEASE, undescribed);
         }

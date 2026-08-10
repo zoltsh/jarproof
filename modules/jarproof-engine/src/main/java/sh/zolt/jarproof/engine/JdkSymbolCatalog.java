@@ -26,8 +26,8 @@ import java.util.zip.GZIPInputStream;
  * nothing is cached statically, so a caller decides how long a catalog lives. Two sources
  * exist. {@link #forRelease(int)} loads a resource committed beside this class, which is what
  * lets a native binary answer for a release with no JDK anywhere on the machine.
- * {@link #fromCtSym(Path, int)} reads a JDK's own {@code lib/ct.sym} instead, which is how an
- * explicit JDK override serves releases that are not bundled.
+ * {@link #fromCtSym(Path, String, int)} reads a JDK's own {@code lib/ct.sym} instead, which is
+ * how an explicit JDK override serves releases that are not bundled.
  *
  * <p>Bundled releases are exactly those the repository's pinned toolchain can regenerate
  * byte-for-byte: a {@code ct.sym} never carries signatures for its own JDK's release, so the
@@ -99,9 +99,17 @@ final class JdkSymbolCatalog {
         return fromResource(resourceName(javaRelease), javaRelease);
     }
 
-    /** Builds a catalog for any release a JDK's own signature archive declares. */
-    static JdkSymbolCatalog fromCtSym(Path ctSym, int javaRelease) {
-        return new CtSymArchive(ctSym).catalog(javaRelease);
+    /**
+     * Builds a catalog for any release a JDK's own signature archive declares.
+     *
+     * @param ctSym read handle of the signature archive, already resolved against the engine's base
+     * @param display the caller's own text for that archive, which is what a failure names, so no
+     *     path this machine resolved ever reaches a report
+     * @param javaRelease the Java feature release the archive is read for
+     * @return the platform symbols that archive declares for the release
+     */
+    static JdkSymbolCatalog fromCtSym(Path ctSym, String display, int javaRelease) {
+        return new CtSymArchive(ctSym, display).catalog(javaRelease);
     }
 
     /** Indexes entries by internal name, keeping ascending name order for canonical output. */

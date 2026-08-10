@@ -52,9 +52,18 @@ final class CtSymArchive {
     private static final int RELEASE_RADIX = 36;
 
     private final Path ctSym;
+    private final String display;
 
-    CtSymArchive(Path ctSym) {
+    /**
+     * Binds one signature archive to read.
+     *
+     * @param ctSym read handle of the archive, already resolved against the engine's base
+     * @param display the caller's own text for that archive, which is what a failure names, so no
+     *     path this machine resolved ever reaches a report
+     */
+    CtSymArchive(Path ctSym, String display) {
         this.ctSym = Objects.requireNonNull(ctSym);
+        this.display = Objects.requireNonNull(display);
     }
 
     /**
@@ -69,7 +78,7 @@ final class CtSymArchive {
         try (ZipFile archive = new ZipFile(ctSym.toFile())) {
             List<ZipEntry> signatures = signatureEntries(archive, code);
             if (signatures.isEmpty()) {
-                throw new IllegalArgumentException("The ct.sym at " + ctSym
+                throw new IllegalArgumentException("The ct.sym at " + display
                         + " declares no signatures for Java " + javaRelease
                         + "; it covers releases " + releaseNumbers(archive));
             }
@@ -79,7 +88,7 @@ final class CtSymArchive {
             }
             return JdkSymbolCatalog.of(javaRelease, entries);
         } catch (IOException failure) {
-            throw new UncheckedIOException(UNREADABLE + ctSym, failure);
+            throw new UncheckedIOException(UNREADABLE + display, failure);
         }
     }
 
@@ -88,7 +97,7 @@ final class CtSymArchive {
         try (ZipFile archive = new ZipFile(ctSym.toFile())) {
             return releaseNumbers(archive);
         } catch (IOException failure) {
-            throw new UncheckedIOException(UNREADABLE + ctSym, failure);
+            throw new UncheckedIOException(UNREADABLE + display, failure);
         }
     }
 

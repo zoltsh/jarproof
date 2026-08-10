@@ -2,6 +2,7 @@ package sh.zolt.jarproof.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -19,11 +20,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.objectweb.asm.Opcodes;
 import sh.zolt.jarproof.api.ArtifactSummary;
 import sh.zolt.jarproof.api.Finding;
+import sh.zolt.jarproof.api.Scope;
+import sh.zolt.jarproof.api.TargetRuntime;
+import sh.zolt.jarproof.api.VerificationRequest;
 
 /**
- * Pins that a relative artifact is read through the same base it was validated against.
+ * Pins that a relative artifact — and a relative {@code --jdk} signature archive — is read through
+ * the same base it was validated against.
  *
  * <p>{@code java.nio.file} resolves a relative path against the {@code user.dir} system property,
  * while {@code java.io} and every {@code ZipFile} constructor resolve one against the process
@@ -49,6 +55,10 @@ final class RelativePathResolutionTest {
     private static final String DUPLICATE = "com/acme/relative/Duplicate";
     private static final String DUPLICATE_ENTRY = DUPLICATE + ArchiveLayout.CLASS_SUFFIX;
     private static final String DECLARES = " declares ";
+    private static final String SIGNATURE_DIRECTORY = "lib";
+    private static final String SIGNATURE_FILE = "ct.sym";
+    /** A release with no bundled symbols, so only the supplied archive can answer for it. */
+    private static final int UNBUNDLED_RELEASE = 11;
 
     @TempDir
     Path elsewhere;
@@ -154,6 +164,76 @@ final class RelativePathResolutionTest {
         } finally {
             System.setProperty(USER_DIR, saved);
         }
+    }
+
+    @Test
+    void readsARelativeSignatureArchiveAndNeedsNoBundledData() {
+        Path home = jdkHome("supplied-jdk");
+        Path application = EngineFixture.jar(
+                scratch,
+                "app11.jar",
+                EngineFixture.entries(DUPLICATE_ENTRY, EngineFixture.classFile(DUPLICATE, Opcodes.V11)));
+
+        List<Finding> findings = EngineFixture.verify(jdkRequest(application, home, UNBUNDLED_RELEASE));
+
+        assertEquals(List.of(), findings);
+    }
+
+    @Test
+    void namesTheCallerTextWhenARelativeJdkHasNoSignatureArchive() throws IOException {
+        Path home = Files.createDirectories(scratch.resolve("empty-jdk"));
+
+        IllegalArgumentException failure = assertThrows(
+                IllegalArgumentException.class,
+                () -> EngineFixture.verify(jdkRequest(jar("app.jar"), home, 17)));
+
+        assertCallerText(failure.getMessage(), signatures(home));
+    }
+
+    @Test
+    void namesTheCallerTextWhenARelativeSignatureArchiveIsNotAnArchive() throws IOException {
+        Path home = scratch.resolve("hollow-jdk");
+        Path signatures = signatures(home);
+        Files.createDirectories(signatures.getParent());
+        Files.writeString(signatures, "plain text");
+
+        UncheckedIOException failure = assertThrows(
+                UncheckedIOException.class,
+                () -> EngineFixture.verify(jdkRequest(jar("app.jar"), home, 17)));
+
+        assertCallerText(failure.getMessage(), signatures);
+    }
+
+    /** A report names the relative text the caller wrote, never the absolute path this machine settled. */
+    private static void assertCallerText(String message, Path signatures) {
+        assertTrue(message.contains(signatures.toString()), () -> message);
+        assertFalse(message.contains(handle(signatures).toString()), () -> message);
+    }
+
+    /** A JDK-shaped directory, reachable only through a relative path, carrying a real signature archive. */
+    private Path jdkHome(String name) {
+        Path home = scratch.resolve(name);
+        Path signatures = signatures(home);
+        try {
+            Files.createDirectories(signatures.getParent());
+            Files.copy(JdkSymbolResourceGenerator.toolchainCtSym(), signatures);
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+        return home;
+    }
+
+    private static Path signatures(Path jdkHome) {
+        return jdkHome.resolve(SIGNATURE_DIRECTORY).resolve(SIGNATURE_FILE);
+    }
+
+    private static VerificationRequest jdkRequest(Path application, Path jdkHome, int release) {
+        return new VerificationRequest(
+                List.of(application),
+                List.of(),
+                TargetRuntime.of(release),
+                Scope.APPLICATION,
+                Optional.of(jdkHome));
     }
 
     private static String declaringPrefix(String evidence) {
