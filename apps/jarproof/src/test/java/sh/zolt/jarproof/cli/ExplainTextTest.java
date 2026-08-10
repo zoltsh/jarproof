@@ -1,10 +1,17 @@
 package sh.zolt.jarproof.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import sh.zolt.jarproof.api.FindingCode;
 
@@ -50,5 +57,35 @@ final class ExplainTextTest {
     void hasNoTextForAReservedCode() {
         assertEquals(Optional.empty(), ExplainText.of(FindingCode.of("JP1008")));
         assertEquals(Optional.empty(), ExplainText.of(FindingCode.of("JP2005")));
+    }
+
+    /**
+     * The index, the texts on disk, and this file's own list are three ways of saying which codes this
+     * build documents, and a listing built from the index is only honest while all three agree. A text
+     * added without its index line would be missing from {@code explain} with no code; an index line
+     * added without its text would list a code nothing explains. Neither can pass here.
+     */
+    @Test
+    void keepsTheIndexTheTextsAndThisListOneSet() throws IOException, URISyntaxException {
+        assertEquals(DOCUMENTED_CODES, ExplainText.codes(), "codes.txt does not match this test's list");
+        assertEquals(DOCUMENTED_CODES, textsOnDisk(), "the explain resources do not match this test's list");
+    }
+
+    @Test
+    void namesEveryCodeInTheIndexInCodeOrder() {
+        assertEquals(ExplainText.codes().stream().sorted().toList(), ExplainText.codes());
+    }
+
+    /** Every {@code JPnnnn.txt} resource beside the reader, named by its code and in code order. */
+    private static List<String> textsOnDisk() throws IOException, URISyntaxException {
+        URL folder = ExplainText.class.getResource("explain");
+        assertNotNull(folder, "the explain resources are not on the test classpath");
+        try (Stream<Path> files = Files.list(Path.of(folder.toURI()))) {
+            return files.map(file -> file.getFileName().toString())
+                    .filter(name -> name.startsWith("JP") && name.endsWith(".txt"))
+                    .map(name -> name.substring(0, name.indexOf('.')))
+                    .sorted()
+                    .toList();
+        }
     }
 }

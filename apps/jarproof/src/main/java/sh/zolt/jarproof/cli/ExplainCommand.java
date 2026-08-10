@@ -16,10 +16,15 @@ import sh.zolt.jarproof.api.FindingCode;
  * reasoning lives. Anything that is not a documented code -- misspelled, reserved, or from a newer
  * release -- fails with the invocation status and says which of those it was, rather than printing
  * nothing and claiming success.
+ *
+ * <p>Naming no code at all is a different question, not a mistake: it asks which codes there are, so
+ * it lists every documented code with the title that code's own documentation opens with, and it
+ * succeeds. That is the answer a reader needs before they can ask for one of them, and printing the
+ * usage text instead would have made them guess.
  */
 @Command(
         name = "explain",
-        description = "Explain a diagnostic code: what it means, how the JVM gets there, how to fix it.",
+        description = "Explain a diagnostic code, or list every code this build documents.",
         mixinStandardHelpOptions = true,
         version = ProductIdentity.VERSION_BANNER)
 final class ExplainCommand implements Callable<Integer> {
@@ -29,7 +34,11 @@ final class ExplainCommand implements Callable<Integer> {
     private static final String RESERVED_HINT =
             "Codes stay reserved until their check ships; DESIGN.md lists the ranges.";
 
-    @Parameters(index = "0", paramLabel = "CODE", description = "Diagnostic code such as JP1003.")
+    @Parameters(
+            index = "0",
+            arity = "0..1",
+            paramLabel = "CODE",
+            description = "Diagnostic code such as JP1003. Omitted, every documented code is listed.")
     private String code;
 
     @Spec
@@ -37,6 +46,10 @@ final class ExplainCommand implements Callable<Integer> {
 
     @Override
     public Integer call() {
+        return code == null ? print(ExplainText.listing()) : explanation();
+    }
+
+    private int explanation() {
         Optional<FindingCode> parsed = parseCode();
         if (parsed.isEmpty()) {
             return failure(NOT_A_CODE + code, FORMAT_HINT);
@@ -45,10 +58,7 @@ final class ExplainCommand implements Callable<Integer> {
         if (text.isEmpty()) {
             return failure(UNDOCUMENTED + code, RESERVED_HINT);
         }
-        PrintWriter out = spec.commandLine().getOut();
-        out.print(text.get());
-        out.flush();
-        return ExitCode.CLEAN.status();
+        return print(text.get());
     }
 
     private Optional<FindingCode> parseCode() {
@@ -57,6 +67,13 @@ final class ExplainCommand implements Callable<Integer> {
         } catch (IllegalArgumentException exception) {
             return Optional.empty();
         }
+    }
+
+    private int print(String document) {
+        PrintWriter out = spec.commandLine().getOut();
+        out.print(document);
+        out.flush();
+        return ExitCode.CLEAN.status();
     }
 
     private int failure(String message, String hint) {

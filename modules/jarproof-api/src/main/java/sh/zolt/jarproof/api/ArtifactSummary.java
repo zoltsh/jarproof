@@ -21,9 +21,9 @@ import java.util.Objects;
  * binary names and {@code multiReleaseVersions} holds release numbers, both ascending. All three
  * lists are defensively copied and always unmodifiable.
  *
- * <p>This record is a stable caller-facing value. How {@code jarproof inspect} renders it as JSON
- * is explicitly unstable in 0.1.x, unlike the {@code check} JSON envelope, which is a versioned
- * contract (DESIGN §3).
+ * <p>This record is a stable caller-facing value, and the JSON envelope {@code jarproof inspect}
+ * renders it into is a versioned contract of its own, carrying {@code inspectJsonVersion} as its
+ * first member (DESIGN §3).
  */
 public record ArtifactSummary(
         String artifact,

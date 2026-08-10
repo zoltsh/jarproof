@@ -16,6 +16,7 @@ DUPLICATES=$WORK/duplicates
 NATIVE=apps/jarproof/target/native/jarproof
 TARGET_JAVA=17
 failures=0
+scenarios=0
 
 fail() {
     printf 'FAIL %s\n' "$1" >&2
@@ -93,6 +94,9 @@ invoke() {
     explain)
         cli "$engine" explain JP1003 > "$report"
         ;;
+    explain-listing)
+        cli "$engine" explain > "$report"
+        ;;
     *)
         printf 'native-parity: unknown scenario %s\n' "$2" >&2
         exit 2
@@ -133,6 +137,7 @@ identical() {
 parity() {
     scenario=$1
     expected=$2
+    scenarios=$((scenarios + 1))
     report_of jvm "$scenario" "$expected"
     report_of native "$scenario" "$expected"
     identical report "$WORK/$scenario.jvm" "$WORK/$scenario.native"
@@ -185,6 +190,7 @@ parity newer-bytecode 1
 parity clean-pair 0
 parity sarif 1
 parity inspect 0
+parity explain-listing 0
 parity explain 0
 
 if [ "$failures" -ne 0 ]; then
@@ -192,4 +198,4 @@ if [ "$failures" -ne 0 ]; then
     exit 1
 fi
 
-printf 'native parity: 8 scenarios identical on both engines\n'
+printf 'native parity: %s scenarios identical on both engines\n' "$scenarios"

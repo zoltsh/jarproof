@@ -16,6 +16,10 @@ import org.junit.jupiter.api.Test;
  * declared. Without the declaration the native binary would fail every {@code explain} invocation
  * while the JVM build stayed green, so the declaration is checked here rather than discovered at
  * release time.
+ *
+ * <p>The index the listing reads is declared by the same pattern, and needs to be: a native image
+ * cannot enumerate a classpath folder, so {@code explain} with no code answers out of that resource
+ * or not at all.
  */
 final class NativeResourceConfigTest {
     private static final String CONFIG = "/META-INF/native-image/sh.zolt/jarproof-cli/resource-config.json";
@@ -31,9 +35,32 @@ final class NativeResourceConfigTest {
     }
 
     @Test
-    void declaresNothingBeyondTheExplainTexts() throws IOException {
+    void declaresTheIndexTheListingReads() throws IOException {
+        String resource = "sh/zolt/jarproof/cli/explain/codes.txt";
+
+        assertTrue(Pattern.matches(declaredPattern(), resource), resource + " is not declared");
+    }
+
+    /**
+     * A resource pattern may hold no colon. native-image reads the first one as the boundary between a
+     * module name and the pattern itself, so a non-capturing group -- {@code (?:...)} -- silently becomes
+     * a module nobody has plus a pattern that no longer parses, and the image build dies inside the
+     * resources feature instead of failing here. Learned by building the image; pinned so it stays
+     * learned.
+     */
+    @Test
+    void declaresAPatternTheImageBuilderCanParse() throws IOException {
+        String pattern = declaredPattern();
+
+        assertEquals(-1, pattern.indexOf(':'), pattern);
+        assertNotNull(Pattern.compile(pattern), pattern);
+    }
+
+    @Test
+    void declaresNothingBeyondTheExplainTextsAndTheirIndex() throws IOException {
         assertTrue(Pattern.matches(declaredPattern(), "sh/zolt/jarproof/cli/explain/JP1001.txt"));
         assertTrue(!Pattern.matches(declaredPattern(), "sh/zolt/jarproof/cli/explain/JP1001.txtx"));
+        assertTrue(!Pattern.matches(declaredPattern(), "sh/zolt/jarproof/cli/explain/codes.txtx"));
         assertTrue(!Pattern.matches(declaredPattern(), "sh/zolt/jarproof/cli/explain/notes.txt"));
     }
 

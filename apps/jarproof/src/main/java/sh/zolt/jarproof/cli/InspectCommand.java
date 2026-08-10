@@ -22,10 +22,13 @@ import sh.zolt.jarproof.engine.Jarproof;
  * <p>The facts are raw. A multi-release archive reports every version directory it carries rather
  * than the one a chosen runtime would use, because selecting for a release is what {@code check}
  * does and reporting the selection here would answer a question nobody asked.
+ *
+ * <p>The JSON form is a versioned contract of its own, kept by {@link ArtifactJson}: a script may
+ * gate on it exactly as it gates on the {@code check} envelope.
  */
 @Command(
         name = "inspect",
-        description = "Report one artifact's layout facts. The JSON shape is unstable in 0.1.x.",
+        description = "Report one artifact's layout facts. The JSON is a versioned contract.",
         mixinStandardHelpOptions = true,
         version = ProductIdentity.VERSION_BANNER)
 final class InspectCommand implements Callable<Integer> {

@@ -14,7 +14,7 @@ enum InspectFormat {
     /** An aligned table of facts for a person. */
     HUMAN,
 
-    /** The same facts as JSON, whose shape is unstable in 0.1.x. */
+    /** The same facts as JSON, whose member set and order are a versioned contract. */
     JSON;
 
     /**

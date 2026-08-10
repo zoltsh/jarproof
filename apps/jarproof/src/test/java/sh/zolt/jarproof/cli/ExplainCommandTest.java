@@ -1,10 +1,12 @@
 package sh.zolt.jarproof.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 final class ExplainCommandTest {
@@ -70,11 +72,70 @@ final class ExplainCommandTest {
     }
 
     @Test
-    void requiresACode() {
+    void listsEveryDocumentedCodeWhenAskedForNoneOfThem() {
         Invocation invocation = invoke("explain");
 
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertEquals("", invocation.err());
+        assertEquals(
+                """
+                JP1001  missing class
+                JP1002  missing field
+                JP1003  missing method
+                JP1004  static and instance mismatch
+                JP1005  class and interface kind mismatch
+                JP1006  inaccessible class
+                JP1007  inaccessible member
+                JP2001  duplicate class with identical bytecode
+                JP2002  duplicate class with differing bytecode
+                JP2003  split package across artifacts
+                JP2004  same artifact present in multiple versions
+                JP2006  duplicate winner depends on wildcard expansion order
+                JP2007  manifest Class-Path entry not found
+                JP2008  sealed package split across artifacts
+                JP3001  class file newer than the target release
+                JP3002  preview class file used incorrectly
+                JP3003  invalid multi-release JAR layout
+                JP3004  unparseable class file
+                JP3005  mixed bytecode levels in one artifact
+                JP3006  invalid nested application archive layout
+                JP4001  service provider class missing
+                JP4002  provider does not implement the service type
+                JP4003  malformed META-INF/services file
+                JP4004  duplicate service provider entry
+                JP4005  provider not instantiable
+                JP5001  required module resolves nowhere
+                JP5002  exposed package holds no classes here
+                JP5003  module service provider unusable
+                JP5004  consumed service type resolves nowhere
+                JP5005  package split across module-capable artifacts
+                JP5006  reserved automatic module name is not a legal module name
+                """,
+                invocation.out());
+    }
+
+    /**
+     * The listing names a code exactly once and never the reserved ones, so a reader can take it as the
+     * complete set rather than a sample of it.
+     */
+    @Test
+    void listsEachCodeOnceAndNoReservedCode() {
+        List<String> listed = invoke("explain").out().lines()
+                .map(line -> line.substring(0, line.indexOf(' ')))
+                .toList();
+
+        assertEquals(listed.stream().distinct().sorted().toList(), listed);
+        assertFalse(listed.contains("JP1008"), listed.toString());
+        assertFalse(listed.contains("JP2005"), listed.toString());
+    }
+
+    @Test
+    void refusesMoreThanOneCode() {
+        Invocation invocation = invoke("explain", "JP1003", "JP1004");
+
         assertEquals(2, invocation.exitCode());
-        assertTrue(invocation.err().contains("Missing required parameter: 'CODE'"), invocation.err());
+        assertEquals("", invocation.out());
+        assertTrue(invocation.err().contains("JP1004"), invocation.err());
     }
 
     @Test

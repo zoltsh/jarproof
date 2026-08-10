@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -50,6 +51,7 @@ final class InspectCommandTest {
         assertEquals(
                 """
                 {
+                  "inspectJsonVersion": "1",
                   "artifact": "app.jar",
                   "entryCount": 5,
                   "classCount": 3,
@@ -69,6 +71,34 @@ final class InspectCommandTest {
                 }
                 """,
                 CliFixture.rooted(invocation.out(), workspace));
+    }
+
+    /**
+     * The envelope is a contract, so the member set and the member order are pinned here as well as
+     * inside the golden document -- the way the {@code check} envelope is pinned -- rather than left to
+     * whatever the renderer happens to write next. {@code inspectJsonVersion} comes first and stays
+     * first; an optional member may only ever join the end of this list, and renaming or dropping one
+     * a consumer already reads is a version bump.
+     */
+    @Test
+    void pinsTheMemberSetAndOrderOfTheVersionedEnvelope() {
+        Invocation invocation = CliFixture.invoke(
+                INSPECT, multiReleaseArchive().toString(), CliFixture.FORMAT, CliFixture.JSON);
+
+        Map<?, ?> document = (Map<?, ?>) JsonScanner.parse(invocation.out());
+        assertEquals(
+                List.of(
+                        "inspectJsonVersion",
+                        "artifact",
+                        "entryCount",
+                        "classCount",
+                        "nestedArchiveCount",
+                        "bytecodeLevels",
+                        "declaredServices",
+                        "multiReleaseVersions"),
+                List.copyOf(document.keySet()),
+                invocation.out());
+        assertEquals("1", document.get("inspectJsonVersion"), invocation.out());
     }
 
     @Test
