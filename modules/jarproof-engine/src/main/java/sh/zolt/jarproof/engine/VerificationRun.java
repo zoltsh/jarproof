@@ -27,6 +27,7 @@ final class VerificationRun {
      */
     static VerificationResult execute(VerificationRequest request) {
         ResourceBudget budget = new ResourceBudget();
+        JdkSymbolCatalog platform = JdkSymbolCatalog.forRelease(request.targetRuntime().javaRelease());
         ArtifactCatalog catalog = ArtifactCatalog.read(request, budget);
         List<Finding> findings = new ArrayList<>(catalog.findings());
         findings.addAll(DuplicateClassCheck.run(catalog));
@@ -35,6 +36,7 @@ final class VerificationRun {
         findings.addAll(SealedPackageCheck.run(catalog));
         findings.addAll(ClassFileVersionCheck.run(catalog, request.targetRuntime()));
         findings.addAll(BytecodeLevelCheck.run(catalog));
+        findings.addAll(ServiceProviderCheck.run(catalog, platform, budget));
         budget.checkFindingCount(findings.size());
         findings.sort(FindingOrder.CANONICAL);
         return new VerificationResult(findings);

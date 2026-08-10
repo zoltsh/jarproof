@@ -33,7 +33,8 @@ public final class Jarproof {
      * @param request the artifacts, classpath, target runtime, and scope to verify
      * @return every finding the run produced, in canonical order
      * @throws NullPointerException when the request is missing
-     * @throws IllegalArgumentException when an artifact or classpath entry cannot be read
+     * @throws IllegalArgumentException when an artifact or classpath entry cannot be read, or when
+     *     the target release has no bundled platform symbols
      * @throws IllegalStateException when the input exceeds one of the engine's resource ceilings
      */
     public static VerificationResult verify(VerificationRequest request) {
