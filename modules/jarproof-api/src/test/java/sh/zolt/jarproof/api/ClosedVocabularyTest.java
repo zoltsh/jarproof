@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 final class ClosedVocabularyTest {
     @Test
     void scopeVocabularyIsDeliberatelySmall() {
-        assertArrayEquals(new Scope[] {Scope.APPLICATION, Scope.ALL}, Scope.values());
+        assertArrayEquals(
+                new Scope[] {Scope.APPLICATION, Scope.ALL, Scope.REACHABLE},
+                Scope.values());
     }
 
     @Test
