@@ -36,6 +36,7 @@ final class VerificationRun {
         findings.addAll(SealedPackageCheck.run(catalog));
         findings.addAll(ClassFileVersionCheck.run(catalog, request.targetRuntime()));
         findings.addAll(BytecodeLevelCheck.run(catalog));
+        findings.addAll(LinkageCheck.run(catalog, platform, request.scope()));
         findings.addAll(ServiceProviderCheck.run(catalog, platform, budget));
         budget.checkFindingCount(findings.size());
         findings.sort(FindingOrder.CANONICAL);
