@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sh.zolt.jarproof.api.Finding;
@@ -51,6 +54,26 @@ final class DuplicateClassCheckTest {
         assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2001"));
         assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2002"));
         assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2006"));
+    }
+
+    @Test
+    void exemptsVersionedModuleDescriptorsLikeBaseOnes() {
+        Manifest manifest = EngineFixture.manifest();
+        manifest.getMainAttributes().put(Attributes.Name.MULTI_RELEASE, "true");
+        Map<String, byte[]> versioned = EngineFixture.entries(
+                "module-info.class", EngineFixture.classFile(ModuleClaimReader.DESCRIPTOR_NAME));
+        versioned.put("META-INF/versions/9/module-info.class",
+                EngineFixture.classFileWithField(ModuleClaimReader.DESCRIPTOR_NAME, "extra"));
+        Path modern = EngineFixture.jar(workspace, "lib/modern.jar",
+                EngineFixture.withManifest(versioned, manifest));
+        Path plain = EngineFixture.jar(workspace, "lib/plain.jar",
+                EngineFixture.entries("module-info.class",
+                        EngineFixture.classFile(ModuleClaimReader.DESCRIPTOR_NAME)));
+
+        List<Finding> findings = EngineFixture.verify(List.of(modern), List.of(plain), 17);
+
+        assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2001"));
+        assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2002"));
     }
 
     @Test
