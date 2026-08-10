@@ -17,10 +17,12 @@ final class FindingJson {
     /** Member holding the summary of a finding, and of a whole run. */
     static final String SUMMARY = "summary";
 
+    /** Member holding an artifact path, and the label a report prints one under. */
+    static final String ARTIFACT = "artifact";
+
     private static final String CODE = "code";
     private static final String SEVERITY = "severity";
     private static final String PREDICTED_ERROR = "predictedError";
-    private static final String ARTIFACT = "artifact";
     private static final String CLASS_ENTRY = "classEntry";
     private static final String SUBJECT = "subject";
     private static final String EXPLANATION = "explanation";
