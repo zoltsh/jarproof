@@ -16,6 +16,9 @@ import org.junit.jupiter.api.Test;
 
 final class JavaSourceArchitectureTest {
     private static final int MAXIMUM_LINES = 299;
+    private static final String MAIN_ROOT = "/src/main/java/";
+    private static final String TEST_ROOT = "/src/test/java/";
+    private static final String INTEGRATION_TEST_ROOT = "/src/integration-test/java/";
     private static final Pattern TOP_LEVEL_TYPE = Pattern.compile(
             "^(?:public\\s+|protected\\s+|private\\s+|final\\s+|abstract\\s+|sealed\\s+|non-sealed\\s+)*"
                     + "(?:class|interface|record|enum|@interface)\\s+\\w");
@@ -51,7 +54,7 @@ final class JavaSourceArchitectureTest {
     void declaredPackagesMatchSourcePaths() {
         for (Path file : RepositoryLayout.javaFiles()) {
             String normalized = file.toString().replace('\\', '/');
-            String marker = normalized.contains("/src/main/java/") ? "/src/main/java/" : "/src/test/java/";
+            String marker = markerIn(normalized);
             int sourceIndex = normalized.indexOf(marker);
             assertTrue(sourceIndex >= 0, () -> RepositoryLayout.relative(file) + " is outside a Java source root");
 
@@ -73,6 +76,18 @@ final class JavaSourceArchitectureTest {
                 assertFalse(file.getFileName().toString().endsWith("Test.java"), RepositoryLayout.relative(file));
             }
         }
+    }
+
+    /**
+     * The Java source root a file lives under. Three roots are recognised: production sources, unit
+     * tests, and the integration-test root {@code zolt integration-test} compiles separately, which
+     * holds the execution-assertion harness.
+     */
+    private static String markerIn(String normalized) {
+        if (normalized.contains(MAIN_ROOT)) {
+            return MAIN_ROOT;
+        }
+        return normalized.contains(INTEGRATION_TEST_ROOT) ? INTEGRATION_TEST_ROOT : TEST_ROOT;
     }
 
     private static List<String> lines(Path file) {
