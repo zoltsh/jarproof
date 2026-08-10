@@ -1,0 +1,8 @@
+# Deliberately broken provider list: one fault per line, plus a duplicate and a malformed entry.
+sh.zolt.jarproof.fixtures.badservice.MissingCodec
+sh.zolt.jarproof.fixtures.badservice.UnrelatedCodec
+sh.zolt.jarproof.fixtures.badservice.AbstractCodec
+sh.zolt.jarproof.fixtures.badservice.PrivateCodec
+sh.zolt.jarproof.fixtures.badservice.DuplicateCodec
+sh.zolt.jarproof.fixtures.badservice.DuplicateCodec
+not a java identifier!
