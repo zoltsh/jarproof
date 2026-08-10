@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 final class VerificationRequestTest {
@@ -17,6 +18,7 @@ final class VerificationRequestTest {
     private static final Path SECOND = Path.of("lib/jackson-databind-2.17.0.jar");
     private static final List<Path> CLASSPATH = List.of(FIRST, SECOND);
     private static final TargetRuntime RUNTIME = TargetRuntime.of(17);
+    private static final Optional<Path> JDK_HOME = Optional.of(Path.of("/opt/jdk-21"));
 
     @Test
     void keepsEverySuppliedComponentInOrder() {
@@ -26,13 +28,22 @@ final class VerificationRequestTest {
         assertEquals(List.of(FIRST, SECOND), request.classpath());
         assertEquals(RUNTIME, request.targetRuntime());
         assertEquals(Scope.APPLICATION, request.scope());
+        assertEquals(Optional.empty(), request.jdkHome());
+    }
+
+    @Test
+    void keepsTheJdkInstallationItWasGiven() {
+        VerificationRequest request =
+                new VerificationRequest(APPLICATIONS, CLASSPATH, RUNTIME, Scope.APPLICATION, JDK_HOME);
+
+        assertEquals(JDK_HOME, request.jdkHome());
     }
 
     @Test
     void copiesBothListsDefensively() {
         List<Path> applications = new ArrayList<>(APPLICATIONS);
         List<Path> classpath = new ArrayList<>(CLASSPATH);
-        VerificationRequest request = new VerificationRequest(applications, classpath, RUNTIME, Scope.ALL);
+        VerificationRequest request = VerificationRequest.of(applications, classpath, RUNTIME, Scope.ALL);
 
         applications.add(Path.of("app-added-after-construction.jar"));
         classpath.add(Path.of("lib/added-after-construction.jar"));
@@ -52,7 +63,7 @@ final class VerificationRequestTest {
 
     @Test
     void acceptsAnEmptyClasspath() {
-        VerificationRequest request = new VerificationRequest(APPLICATIONS, List.of(), RUNTIME, Scope.ALL);
+        VerificationRequest request = VerificationRequest.of(APPLICATIONS, List.of(), RUNTIME, Scope.ALL);
 
         assertEquals(List.of(), request.classpath());
     }
@@ -60,19 +71,21 @@ final class VerificationRequestTest {
     @Test
     void rejectsAnEmptyApplicationList() {
         assertThrows(IllegalArgumentException.class,
-                () -> new VerificationRequest(List.of(), CLASSPATH, RUNTIME, Scope.APPLICATION));
+                () -> VerificationRequest.of(List.of(), CLASSPATH, RUNTIME, Scope.APPLICATION));
     }
 
     @Test
     void rejectsAnyMissingComponent() {
         assertThrows(NullPointerException.class,
-                () -> new VerificationRequest(null, CLASSPATH, RUNTIME, Scope.APPLICATION));
+                () -> VerificationRequest.of(null, CLASSPATH, RUNTIME, Scope.APPLICATION));
         assertThrows(NullPointerException.class,
-                () -> new VerificationRequest(APPLICATIONS, null, RUNTIME, Scope.APPLICATION));
+                () -> VerificationRequest.of(APPLICATIONS, null, RUNTIME, Scope.APPLICATION));
         assertThrows(NullPointerException.class,
-                () -> new VerificationRequest(APPLICATIONS, CLASSPATH, null, Scope.APPLICATION));
+                () -> VerificationRequest.of(APPLICATIONS, CLASSPATH, null, Scope.APPLICATION));
         assertThrows(NullPointerException.class,
-                () -> new VerificationRequest(APPLICATIONS, CLASSPATH, RUNTIME, null));
+                () -> VerificationRequest.of(APPLICATIONS, CLASSPATH, RUNTIME, null));
+        assertThrows(NullPointerException.class,
+                () -> new VerificationRequest(APPLICATIONS, CLASSPATH, RUNTIME, Scope.APPLICATION, null));
     }
 
     @Test
@@ -81,14 +94,17 @@ final class VerificationRequestTest {
 
         assertEquals(request, sample());
         assertEquals(request.hashCode(), sample().hashCode());
-        assertNotEquals(request, new VerificationRequest(APPLICATIONS, CLASSPATH, RUNTIME, Scope.ALL));
-        assertNotEquals(request, new VerificationRequest(List.of(CORE), CLASSPATH, RUNTIME, Scope.APPLICATION));
+        assertNotEquals(request, VerificationRequest.of(APPLICATIONS, CLASSPATH, RUNTIME, Scope.ALL));
+        assertNotEquals(request, VerificationRequest.of(List.of(CORE), CLASSPATH, RUNTIME, Scope.APPLICATION));
         assertNotEquals(
                 request,
-                new VerificationRequest(APPLICATIONS, List.of(SECOND, FIRST), RUNTIME, Scope.APPLICATION));
+                VerificationRequest.of(APPLICATIONS, List.of(SECOND, FIRST), RUNTIME, Scope.APPLICATION));
+        assertNotEquals(
+                request,
+                new VerificationRequest(APPLICATIONS, CLASSPATH, RUNTIME, Scope.APPLICATION, JDK_HOME));
     }
 
     private static VerificationRequest sample() {
-        return new VerificationRequest(APPLICATIONS, CLASSPATH, RUNTIME, Scope.APPLICATION);
+        return VerificationRequest.of(APPLICATIONS, CLASSPATH, RUNTIME, Scope.APPLICATION);
     }
 }

@@ -129,11 +129,11 @@ final class EngineFixture {
     }
 
     static VerificationRequest request(List<Path> applications, List<Path> classpath, int release) {
-        return new VerificationRequest(applications, classpath, TargetRuntime.of(release), Scope.APPLICATION);
+        return VerificationRequest.of(applications, classpath, TargetRuntime.of(release), Scope.APPLICATION);
     }
 
     static VerificationRequest previewRequest(List<Path> applications, int release) {
-        return new VerificationRequest(
+        return VerificationRequest.of(
                 applications,
                 List.of(),
                 new TargetRuntime(release, PreviewMode.ENABLED),

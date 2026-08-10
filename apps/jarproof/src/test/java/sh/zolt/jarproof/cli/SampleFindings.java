@@ -67,7 +67,7 @@ final class SampleFindings {
 
     /** The request the sample findings answer. */
     static VerificationRequest request() {
-        return new VerificationRequest(
+        return VerificationRequest.of(
                 List.of(Path.of("app.jar")),
                 List.of(Path.of("lib")),
                 TargetRuntime.of(17),
