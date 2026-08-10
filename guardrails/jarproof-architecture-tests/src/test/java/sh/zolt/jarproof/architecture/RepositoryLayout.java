@@ -92,6 +92,7 @@ final class RepositoryLayout {
         try (Stream<Path> paths = Files.walk(start)) {
             return paths.filter(Files::isRegularFile)
                     .filter(path -> !path.toString().contains("/target/"))
+                    .filter(path -> !path.toString().contains("/.claude/"))
                     .filter(predicate)
                     .sorted()
                     .toList();

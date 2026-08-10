@@ -73,6 +73,7 @@ final class RepositoryPolicyArchitectureTest {
         try (Stream<Path> paths = Files.walk(root)) {
             return paths.filter(path -> !path.toString().contains("/target/"))
                     .filter(path -> !path.toString().contains("/.zolt/"))
+                    .filter(path -> !path.toString().contains("/.claude/"))
                     .sorted()
                     .toList();
         } catch (IOException exception) {
