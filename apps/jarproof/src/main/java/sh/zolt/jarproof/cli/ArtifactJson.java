@@ -17,6 +17,7 @@ import sh.zolt.jarproof.api.ArtifactSummary;
 final class ArtifactJson {
     private static final String ENTRY_COUNT = "entryCount";
     private static final String CLASS_COUNT = "classCount";
+    private static final String NESTED_ARCHIVE_COUNT = "nestedArchiveCount";
     private static final String BYTECODE_LEVELS = "bytecodeLevels";
     private static final String DECLARED_SERVICES = "declaredServices";
     private static final String MULTI_RELEASE_VERSIONS = "multiReleaseVersions";
@@ -36,6 +37,7 @@ final class ArtifactJson {
         json.name(FindingJson.ARTIFACT).value(summary.artifact());
         json.name(ENTRY_COUNT).value(summary.entryCount());
         json.name(CLASS_COUNT).value(summary.classCount());
+        json.name(NESTED_ARCHIVE_COUNT).value(summary.nestedArchiveCount());
         json.name(BYTECODE_LEVELS).beginArray();
         summary.bytecodeLevels().forEach(json::value);
         json.endArray();

@@ -29,12 +29,13 @@ final class InspectCommandTest {
         assertEquals(0, invocation.exitCode(), invocation.err());
         assertEquals(
                 """
-                artifact:       app.jar
-                entries:        5
-                classes:        3
-                bytecode:       52:1, 61:1, 65:1
-                services:       com.acme.spi.Codec
-                multi-release:  11, 21
+                artifact:         app.jar
+                entries:          5
+                classes:          3
+                nested-archives:  0
+                bytecode:         52:1, 61:1, 65:1
+                services:         com.acme.spi.Codec
+                multi-release:    11, 21
                 """,
                 CliFixture.rooted(invocation.out(), workspace));
         assertEquals("", invocation.err());
@@ -52,6 +53,7 @@ final class InspectCommandTest {
                   "artifact": "app.jar",
                   "entryCount": 5,
                   "classCount": 3,
+                  "nestedArchiveCount": 0,
                   "bytecodeLevels": [
                     "52:1",
                     "61:1",
@@ -70,6 +72,29 @@ final class InspectCommandTest {
     }
 
     @Test
+    void countsTheArchivesAnApplicationCarries() {
+        Map<String, byte[]> entries = CliFixture.entries(
+                "BOOT-INF/classes/" + MODERN + CliFixture.CLASS_SUFFIX,
+                CliFixture.classFile(MODERN, JAVA_17_MAJOR));
+        entries.put("BOOT-INF/lib/api.jar", new byte[0]);
+
+        Invocation invocation = CliFixture.invoke(INSPECT, CliFixture.jar(workspace, "fat.jar", entries).toString());
+
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertEquals(
+                """
+                artifact:         fat.jar
+                entries:          2
+                classes:          1
+                nested-archives:  1
+                bytecode:         61:1
+                services:         none
+                multi-release:    none
+                """,
+                CliFixture.rooted(invocation.out(), workspace));
+    }
+
+    @Test
     void saysSoWhenAnArtifactHasNothingToReport() {
         Path bare = CliFixture.jar(workspace, "bare.jar", Map.of());
 
@@ -78,12 +103,13 @@ final class InspectCommandTest {
         assertEquals(0, invocation.exitCode(), invocation.err());
         assertEquals(
                 """
-                artifact:       bare.jar
-                entries:        0
-                classes:        0
-                bytecode:       none
-                services:       none
-                multi-release:  none
+                artifact:         bare.jar
+                entries:          0
+                classes:          0
+                nested-archives:  0
+                bytecode:         none
+                services:         none
+                multi-release:    none
                 """,
                 CliFixture.rooted(invocation.out(), workspace));
     }

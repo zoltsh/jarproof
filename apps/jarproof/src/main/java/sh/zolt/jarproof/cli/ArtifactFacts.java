@@ -7,31 +7,35 @@ import sh.zolt.jarproof.api.ArtifactSummary;
  * The table of facts {@code inspect} shows a person.
  *
  * <p>One label per line, every value starting in the same column, in the order a reader asks the
- * questions -- what is this, how big is it, what was it compiled for, what does it register, what
- * does it vary by release:
+ * questions -- what is this, how big is it, what does it carry, what was it compiled for, what does it
+ * register, what does it vary by release:
  *
  * <pre>
- * artifact:       build/app.jar
- * entries:        27
- * classes:        24
- * bytecode:       52:2, 61:22
- * services:       com.acme.spi.Codec
- * multi-release:  11, 17
+ * artifact:         build/app.jar
+ * entries:          27
+ * classes:          24
+ * nested-archives:  0
+ * bytecode:         52:2, 61:22
+ * services:         com.acme.spi.Codec
+ * multi-release:    11, 17
  * </pre>
  *
  * <p>A {@code bytecode} value pairs a class file major version with how many classes declare it. A
- * fact the artifact does not have prints as {@code none} rather than vanishing, because an absent
- * line reads as a rendering bug while an empty one is an answer. Nothing here reads a clock, a
- * locale, or the file system, so the same summary always renders the same bytes.
+ * {@code nested-archives} value above zero is the shape of an application archive carrying its own
+ * dependencies, and the classes inside those archives are not part of the class count. A fact the
+ * artifact does not have prints as {@code none} rather than vanishing, because an absent line reads as
+ * a rendering bug while an empty one is an answer. Nothing here reads a clock, a locale, or the file
+ * system, so the same summary always renders the same bytes.
  */
 final class ArtifactFacts {
     private static final String ENTRIES = "entries";
     private static final String CLASSES = "classes";
+    private static final String NESTED_ARCHIVES = "nested-archives";
     private static final String BYTECODE = "bytecode";
     private static final String SERVICES = "services";
     private static final String MULTI_RELEASE = "multi-release";
     private static final String NOTHING = "none";
-    private static final int VALUE_COLUMN = 16;
+    private static final int VALUE_COLUMN = 18;
 
     private ArtifactFacts() {
     }
@@ -47,6 +51,7 @@ final class ArtifactFacts {
         appendFact(out, FindingJson.ARTIFACT, summary.artifact());
         appendFact(out, ENTRIES, String.valueOf(summary.entryCount()));
         appendFact(out, CLASSES, String.valueOf(summary.classCount()));
+        appendFact(out, NESTED_ARCHIVES, String.valueOf(summary.nestedArchiveCount()));
         appendFact(out, BYTECODE, joined(summary.bytecodeLevels()));
         appendFact(out, SERVICES, joined(summary.declaredServices()));
         appendFact(out, MULTI_RELEASE, joined(summary.multiReleaseVersions()));
