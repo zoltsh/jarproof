@@ -94,7 +94,7 @@ final class CheckCommand implements Callable<Integer> {
         VerificationResult result = Jarproof.verify(request);
         VerificationResult reported = accepted(request, result);
         VerificationResult rendered =
-                format.rootsArtifactPaths() ? options.pathRoot().rewrite(reported) : reported;
+                format.rootsArtifactPaths() ? options.pathRoot().rewrite(request, reported) : reported;
         OutputTarget.of(Optional.ofNullable(output), spec.commandLine().getOut())
                 .write(report(request, rendered));
         return failOn.verdict(reported);
