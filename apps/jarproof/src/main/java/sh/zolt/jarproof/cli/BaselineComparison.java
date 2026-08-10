@@ -35,14 +35,15 @@ record BaselineComparison(List<Finding> newFindings, int suppressed, List<String
      *
      * @param result the findings the fresh run produced
      * @param baseline the accepted fingerprints
+     * @param root the root the fresh run's fingerprints are measured from
      * @return the new findings, the suppressed count, and the stale fingerprints
      */
-    static BaselineComparison against(VerificationResult result, BaselineDocument baseline) {
+    static BaselineComparison against(VerificationResult result, BaselineDocument baseline, PathRoot root) {
         Set<String> accepted = Set.copyOf(baseline.fingerprints());
         Set<String> occurring = new LinkedHashSet<>();
         List<Finding> reported = new ArrayList<>();
         for (Finding finding : result.findings()) {
-            String fingerprint = BaselineFingerprint.of(finding);
+            String fingerprint = BaselineFingerprint.of(root, finding);
             occurring.add(fingerprint);
             if (!accepted.contains(fingerprint)) {
                 reported.add(finding);

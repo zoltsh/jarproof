@@ -18,17 +18,17 @@ final class BaselineRoundTripTest {
     private static final String OUT = "--out";
     private static final String SECOND_VALIDATOR = "com/acme/app/PriceValidator";
     private static final String NOTHING_NEW = "no findings\n";
+    private static final String ACCEPTED_ONE = "suppressed 1 accepted finding; 0 baseline entries are stale\n";
 
     @TempDir
     Path workspace;
 
     @Test
-    void recordsEveryFindingItFoundAndSaysNothingOnEitherStream() throws IOException {
+    void recordsEveryFindingItFoundAndKeepsTheOutputStreamClean() throws IOException {
         Invocation invocation = record();
 
         assertEquals(0, invocation.exitCode(), invocation.err());
         assertEquals("", invocation.out());
-        assertEquals("", invocation.err());
         assertEquals(
                 """
                 {
@@ -53,7 +53,7 @@ final class BaselineRoundTripTest {
 
         assertEquals(0, invocation.exitCode(), invocation.err());
         assertEquals(NOTHING_NEW, invocation.out());
-        assertEquals("suppressed 1 accepted findings; 0 baseline entries are stale\n", invocation.err());
+        assertEquals(ACCEPTED_ONE, invocation.err());
     }
 
     @Test
@@ -67,7 +67,7 @@ final class BaselineRoundTripTest {
         assertTrue(invocation.out().contains(SECOND_VALIDATOR + ".class"), invocation.out());
         assertFalse(invocation.out().contains(CliFixture.VALIDATOR + ".class"), invocation.out());
         assertTrue(invocation.out().endsWith("1 error, 1 finding\n"), invocation.out());
-        assertEquals("suppressed 1 accepted findings; 0 baseline entries are stale\n", invocation.err());
+        assertEquals(ACCEPTED_ONE, invocation.err());
     }
 
     @Test
@@ -77,7 +77,33 @@ final class BaselineRoundTripTest {
         Invocation invocation = check(BASELINE_FLAG, baselineFile().toString());
 
         assertEquals(0, invocation.exitCode(), invocation.err());
-        assertEquals("suppressed 1 accepted findings; 1 baseline entries are stale\n", invocation.err());
+        assertEquals("suppressed 1 accepted finding; 1 baseline entry is stale\n", invocation.err());
+    }
+
+    /**
+     * Two spellings of one path describe one finding. A fingerprint that kept the caller's own text
+     * would call the accepted finding new and the recorded one stale, which is the exact failure a
+     * baseline exists to prevent -- and the spelling difference can be as small as a leading
+     * {@code ./} that a shell or a build tool added.
+     */
+    @Test
+    void acceptsTheSameFindingThroughADifferentSpellingOfTheSamePath() throws IOException {
+        record();
+
+        Invocation invocation = CliFixture.invoke(
+                CliFixture.CHECK,
+                CliFixture.APPLICATION,
+                dotted(CliFixture.brokenApplication(workspace)),
+                CliFixture.CLASSPATH,
+                dotted(CliFixture.library(workspace)),
+                CliFixture.TARGET_JAVA,
+                CliFixture.JAVA_17,
+                BASELINE_FLAG,
+                baselineFile().toString());
+
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertEquals(NOTHING_NEW, invocation.out());
+        assertEquals(ACCEPTED_ONE, invocation.err());
     }
 
     @Test
@@ -189,6 +215,11 @@ final class BaselineRoundTripTest {
 
     private Path baselineFile() {
         return workspace.resolve("jarproof-baseline.json");
+    }
+
+    /** The same artifact, spelled the way a shell or a build tool that inserts {@code ./} would. */
+    private static String dotted(Path artifact) {
+        return artifact.getParent() + "/./" + artifact.getFileName();
     }
 
     /** The broken application plus a second class that breaks on the same missing method. */

@@ -25,6 +25,10 @@ import sh.zolt.jarproof.engine.Jarproof;
  * accepted. The file it writes also carries what the acceptance was measured against -- the target
  * release, the preview policy, the scope, and the runtime symbol profile -- because the same
  * fingerprints judged against a different runtime are a different judgement.
+ *
+ * <p>The file is the whole output, so the run says how much went into it on the diagnostic stream:
+ * recording a hundred findings and recording none are otherwise the same silent success, and the
+ * difference is the entire point of the command.
  */
 @Command(
         name = "baseline",
@@ -35,7 +39,11 @@ final class BaselineCommand implements Callable<Integer> {
     @Mixin
     private RequestOptions options;
 
-    @Option(names = "--out", required = true, description = "File the accepted findings are written to.")
+    @Option(
+            names = {"--out", FlagName.OUTPUT},
+            required = true,
+            description = "File the accepted findings are written to. The run then confirms the write on"
+                    + " the diagnostic stream.")
     private Path out;
 
     @Spec
@@ -48,15 +56,18 @@ final class BaselineCommand implements Callable<Integer> {
         } catch (IllegalArgumentException | IllegalStateException | UncheckedIOException refused) {
             return FailedInvocation.reported(spec.commandLine().getErr(), refused.getMessage());
         } catch (IOException unwritable) {
-            return FailedInvocation.reported(spec.commandLine().getErr(), unwritable.toString());
+            return FailedInvocation.unwritable(spec.commandLine().getErr(), unwritable);
         }
     }
 
     private ExitCode record() throws IOException {
+        PathRoot root = options.pathRoot();
         VerificationRequest request = options.request();
         VerificationResult result = Jarproof.verify(request);
-        BaselineDocument recorded = BaselineDocument.of(request, options.profile(), result);
-        OutputTarget.of(Optional.of(out), spec.commandLine().getOut()).write(BaselineJson.write(recorded));
+        BaselineDocument recorded = BaselineDocument.of(request, options.profile(), result, root);
+        OutputTarget target = OutputTarget.of(Optional.of(out), spec.commandLine().getOut());
+        target.write(BaselineJson.write(recorded));
+        target.note(spec.commandLine().getErr(), BaselineNote.accepted(recorded.fingerprints().size()));
         return ExitCode.CLEAN;
     }
 }

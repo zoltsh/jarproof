@@ -114,4 +114,17 @@ final class SampleFindings {
     static VerificationResult result(Finding... findings) {
         return new VerificationResult(List.of(findings));
     }
+
+    /**
+     * The default root, which is the working directory.
+     *
+     * <p>Every specimen names its artifact with relative text, exactly as a developer standing in
+     * their project would, so measuring one from the working directory returns the same text and a
+     * fingerprint reads as the caller wrote it.
+     *
+     * @return the root a run with no {@code --path-root} measures from
+     */
+    static PathRoot workingDirectory() {
+        return PathRoot.of(Path.of(""));
+    }
 }

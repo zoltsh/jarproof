@@ -33,35 +33,35 @@ final class AcceptedBaseline {
     private static final String RECORDS = " records ";
     private static final String MEASURED = ", and this run measured ";
     private static final String APPLIED_ANYWAY = "; applying it anyway";
-    private static final String SUPPRESSED = "suppressed ";
-    private static final String ACCEPTED = " accepted findings; ";
-    private static final String STALE = " baseline entries are stale";
-    private static final String PRUNED = "pruned ";
-    private static final String PRUNED_ENTRIES = " stale baseline entries";
     private static final String UNPRUNABLE = "This baseline cannot be rewritten: ";
 
     private final Path file;
     private final BaselineDocument document;
+    private final PathRoot root;
 
-    private AcceptedBaseline(Path file, BaselineDocument document) {
+    private AcceptedBaseline(Path file, BaselineDocument document, PathRoot root) {
         this.file = file;
         this.document = document;
+        this.root = root;
     }
 
     /**
      * Reads a baseline file.
      *
      * @param file the path named by {@code --baseline}
+     * @param root the root a fresh run's fingerprints are measured from, which is what the recorded
+     *     fingerprints are compared against
      * @return the accepted findings it records
      * @throws IllegalArgumentException when the file does not exist or is not a baseline this build
      *     understands
      * @throws IOException when reading the file fails after it was found
      */
-    static AcceptedBaseline read(Path file) throws IOException {
+    static AcceptedBaseline read(Path file, PathRoot root) throws IOException {
         if (!Files.isReadable(file)) {
             throw new IllegalArgumentException("This baseline does not exist or cannot be read: " + file);
         }
-        return new AcceptedBaseline(file, BaselineJson.read(Files.readString(file, StandardCharsets.UTF_8)));
+        return new AcceptedBaseline(
+                file, BaselineJson.read(Files.readString(file, StandardCharsets.UTF_8)), root);
     }
 
     /**
@@ -76,8 +76,8 @@ final class AcceptedBaseline {
     BaselineComparison applyTo(
             VerificationRequest request, String profile, VerificationResult result, PrintWriter err) {
         warnAboutDrift(request, profile, err);
-        BaselineComparison comparison = BaselineComparison.against(result, document);
-        err.println(SUPPRESSED + comparison.suppressed() + ACCEPTED + comparison.stale().size() + STALE);
+        BaselineComparison comparison = BaselineComparison.against(result, document, root);
+        err.println(BaselineNote.applied(comparison.suppressed(), comparison.stale().size()));
         err.flush();
         return comparison;
     }
@@ -105,7 +105,7 @@ final class AcceptedBaseline {
             throw new IllegalArgumentException(UNPRUNABLE + file);
         }
         Set<String> stale = Set.copyOf(comparison.stale());
-        err.println(PRUNED + stale.size() + PRUNED_ENTRIES);
+        err.println(BaselineNote.pruned(stale.size()));
         err.flush();
         if (stale.isEmpty()) {
             return;

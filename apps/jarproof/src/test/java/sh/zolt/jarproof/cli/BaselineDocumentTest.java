@@ -9,19 +9,21 @@ import sh.zolt.jarproof.api.PreviewMode;
 import sh.zolt.jarproof.api.Scope;
 
 final class BaselineDocumentTest {
+    private static final PathRoot ROOT = SampleFindings.workingDirectory();
+
     @Test
     void fingerprintsAFindingByCodeArtifactEntryAndSubject() {
         assertEquals(
                 "JP1003|app.jar|com/acme/orders/OrderValidator.class"
                         + "|com/google/common/base/Preconditions#checkArgument(ZLjava/lang/String;Ljava/lang/Object;)V",
-                BaselineFingerprint.of(SampleFindings.missingMethod()));
+                BaselineFingerprint.of(ROOT, SampleFindings.missingMethod()));
     }
 
     @Test
     void leavesTheClassEntryPartEmptyForAnArtifactWideFinding() {
         assertEquals(
                 "JP2002|lib/commons-io-2.4.jar||org/apache/commons/io/IOUtils",
-                BaselineFingerprint.of(SampleFindings.duplicateClass()));
+                BaselineFingerprint.of(ROOT, SampleFindings.duplicateClass()));
     }
 
     @Test
@@ -29,7 +31,8 @@ final class BaselineDocumentTest {
         BaselineDocument baseline = BaselineDocument.of(
                 SampleFindings.request(),
                 "bundled-java-17",
-                SampleFindings.result(SampleFindings.duplicateClass(), SampleFindings.splitPackage()));
+                SampleFindings.result(SampleFindings.duplicateClass(), SampleFindings.splitPackage()),
+                ROOT);
 
         assertEquals(17, baseline.targetJava());
         assertEquals(PreviewMode.DISABLED, baseline.preview());

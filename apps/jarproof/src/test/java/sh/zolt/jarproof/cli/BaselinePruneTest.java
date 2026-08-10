@@ -23,7 +23,7 @@ final class BaselinePruneTest {
     private static final String OUT = "--out";
     private static final String PRICE_VALIDATOR = "com/acme/app/PriceValidator";
     private static final String SHIPPING_VALIDATOR = "com/acme/app/ShippingValidator";
-    private static final String PRUNED_ONE = "pruned 1 stale baseline entries\n";
+    private static final String PRUNED_ONE = "pruned 1 stale baseline entry\n";
     private static final String PRUNED_NONE = "pruned 0 stale baseline entries\n";
 
     @TempDir

@@ -13,7 +13,10 @@ final class BaselineJsonTest {
     @Test
     void writesTheVersionedEnvelopeInAFixedOrder() {
         BaselineDocument baseline = BaselineDocument.of(
-                SampleFindings.request(), "bundled-java-17", SampleFindings.result(SampleFindings.splitPackage()));
+                SampleFindings.request(),
+                "bundled-java-17",
+                SampleFindings.result(SampleFindings.splitPackage()),
+                SampleFindings.workingDirectory());
 
         assertEquals(
                 """

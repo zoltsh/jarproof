@@ -41,6 +41,7 @@ final class CheckCommand implements Callable<Integer> {
     private static final String BASELINE = "--baseline";
     private static final String PRUNE_STALE = "--prune-stale";
     private static final String NEEDS_A_BASELINE = " has nothing to prune without ";
+    private static final String REPORT = " report";
 
     @Mixin
     private RequestOptions options;
@@ -64,7 +65,10 @@ final class CheckCommand implements Callable<Integer> {
     @Option(names = FlagName.FORMAT, description = "Report format: human|json|sarif. Defaults to human.")
     private ReportFormat format = ReportFormat.HUMAN;
 
-    @Option(names = FlagName.OUTPUT, description = "Write the report to this file instead of stdout.")
+    @Option(
+            names = FlagName.OUTPUT,
+            description = "Write the report to this file instead of stdout. The run then confirms the"
+                    + " write on the diagnostic stream, so a redirected report is never silent.")
     private Path output;
 
     @Option(
@@ -84,19 +88,21 @@ final class CheckCommand implements Callable<Integer> {
         } catch (IllegalArgumentException | IllegalStateException | UncheckedIOException refused) {
             return FailedInvocation.reported(spec.commandLine().getErr(), refused.getMessage());
         } catch (IOException unwritable) {
-            return FailedInvocation.reported(spec.commandLine().getErr(), unwritable.toString());
+            return FailedInvocation.unwritable(spec.commandLine().getErr(), unwritable);
         }
     }
 
     private ExitCode check() throws IOException {
         refuseAPruneWithNothingToPrune();
+        PathRoot root = options.pathRoot();
         VerificationRequest request = options.request();
         VerificationResult result = Jarproof.verify(request);
-        VerificationResult reported = accepted(request, result);
+        VerificationResult reported = accepted(request, root, result);
         VerificationResult rendered =
-                format.rootsArtifactPaths() ? options.pathRoot().rewrite(request, reported) : reported;
-        OutputTarget.of(Optional.ofNullable(output), spec.commandLine().getOut())
-                .write(report(request, rendered));
+                format.rootsArtifactPaths() ? root.rewrite(request, reported) : reported;
+        OutputTarget target = OutputTarget.of(Optional.ofNullable(output), spec.commandLine().getOut());
+        target.write(report(request, rendered));
+        target.note(spec.commandLine().getErr(), CanonicalName.of(format) + REPORT);
         return failOn.verdict(reported);
     }
 
@@ -123,12 +129,13 @@ final class CheckCommand implements Callable<Integer> {
         }
     }
 
-    private VerificationResult accepted(VerificationRequest request, VerificationResult result) throws IOException {
+    private VerificationResult accepted(VerificationRequest request, PathRoot root, VerificationResult result)
+            throws IOException {
         if (baseline == null) {
             return result;
         }
         PrintWriter err = spec.commandLine().getErr();
-        AcceptedBaseline accepted = AcceptedBaseline.read(baseline);
+        AcceptedBaseline accepted = AcceptedBaseline.read(baseline, root);
         BaselineComparison comparison = accepted.applyTo(request, options.profile(), result, err);
         if (pruneStale) {
             accepted.pruneStale(comparison, err);

@@ -42,15 +42,17 @@ record BaselineDocument(
      * @param request the request the run answered
      * @param profile identity of the runtime symbol profile the run used
      * @param result the findings to accept
+     * @param root the root the recorded fingerprints measure artifact paths from
      * @return the baseline to write
      */
-    static BaselineDocument of(VerificationRequest request, String profile, VerificationResult result) {
+    static BaselineDocument of(
+            VerificationRequest request, String profile, VerificationResult result, PathRoot root) {
         return new BaselineDocument(
                 request.targetRuntime().javaRelease(),
                 request.targetRuntime().previewMode(),
                 request.scope(),
                 profile,
-                result.findings().stream().map(BaselineFingerprint::of).toList());
+                result.findings().stream().map(finding -> BaselineFingerprint.of(root, finding)).toList());
     }
 
     /**

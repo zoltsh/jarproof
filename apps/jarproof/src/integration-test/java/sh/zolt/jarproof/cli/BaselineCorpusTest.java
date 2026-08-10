@@ -34,8 +34,9 @@ final class BaselineCorpusTest {
     private static final String BROKEN_API = "missing-method-api-v2";
     private static final String NEWER = "newer-bytecode";
     private static final String BASELINE_FILE = "jarproof-baseline.json";
-    private static final String ACCEPTED = "suppressed 1 accepted findings; 0 baseline entries are stale\n";
+    private static final String ACCEPTED = "suppressed 1 accepted finding; 0 baseline entries are stale\n";
     private static final String NOTHING_NEW = "no findings\n";
+    private static final String WROTE_ONE = "wrote 1 accepted finding to ";
     private static final String FINGERPRINTS = "fingerprints";
     private static final String RECORDED = "JP1003|fixtures/missing-method-consumer/target/"
             + "jarproof-fixture-missing-method-consumer-0.0.1-SNAPSHOT.jar"
@@ -51,7 +52,7 @@ final class BaselineCorpusTest {
 
         assertEquals(0, recorded.exitCode(), recorded.err());
         assertEquals("", recorded.out());
-        assertEquals("", recorded.err());
+        assertEquals(WROTE_ONE + baseline() + "\n", recorded.err());
         assertEquals(List.of(RECORDED), fingerprints());
 
         Outcome accepted = CorpusProcess.jarproof(workspace, against(List.of()));
@@ -73,6 +74,34 @@ final class BaselineCorpusTest {
         assertFalse(check.out().contains("JP1003"), check.out());
         assertTrue(check.out().endsWith("1 error, 1 finding\n"), check.out());
         assertEquals(ACCEPTED, check.err());
+    }
+
+    /**
+     * The same acceptance, recorded from absolute paths and read by a run that names those files the
+     * way a developer standing in the workspace would.
+     *
+     * <p>This is the portability claim in one test. A fingerprint is measured from the path root, so
+     * the spelling the recording happened to be given does not travel into the file -- which is what
+     * lets a baseline recorded by a build script holding absolute paths be committed and then read by
+     * a developer, or by CI, from a relative command line.
+     */
+    @Test
+    void acceptsARelativeRunAgainstARecordingMadeFromAbsolutePaths() {
+        Outcome recorded = CorpusProcess.jarproof(workspace, List.of(
+                CorpusCommand.BASELINE,
+                CorpusCommand.APPLICATION, absolute(CONSUMER),
+                CorpusCommand.CLASSPATH, absolute(BROKEN_API),
+                CorpusCommand.TARGET_JAVA, CorpusCommand.JAVA_17,
+                CorpusCommand.PATH_ROOT, FixtureCorpus.workspaceRoot().toString(),
+                CorpusCommand.OUT, baseline().toString()));
+
+        assertEquals(0, recorded.exitCode(), recorded.err());
+
+        Outcome accepted = CorpusProcess.jarproof(workspace, against(List.of()));
+
+        assertEquals(0, accepted.exitCode(), accepted.err());
+        assertEquals(NOTHING_NEW, accepted.out());
+        assertEquals(ACCEPTED, accepted.err());
     }
 
     private Outcome record() {
@@ -108,5 +137,9 @@ final class BaselineCorpusTest {
 
     private static String relative(String member) {
         return FixtureCorpus.relativePath(FixtureCorpus.jar(member));
+    }
+
+    private static String absolute(String member) {
+        return FixtureCorpus.jar(member).toString();
     }
 }

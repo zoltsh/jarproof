@@ -11,6 +11,8 @@ import sh.zolt.jarproof.api.Scope;
 import sh.zolt.jarproof.api.VerificationResult;
 
 final class BaselineComparisonTest {
+    private static final PathRoot ROOT = SampleFindings.workingDirectory();
+
     @Test
     void reportsOnlyFindingsTheBaselineDoesNotAccept() {
         Finding accepted = SampleFindings.duplicateClass();
@@ -18,7 +20,7 @@ final class BaselineComparisonTest {
         BaselineDocument baseline = baselineOf(accepted);
 
         BaselineComparison comparison =
-                BaselineComparison.against(SampleFindings.result(accepted, fresh), baseline);
+                BaselineComparison.against(SampleFindings.result(accepted, fresh), baseline, ROOT);
 
         assertEquals(List.of(fresh), comparison.newFindings());
         assertEquals(1, comparison.suppressed());
@@ -29,9 +31,9 @@ final class BaselineComparisonTest {
     void suppressesEveryFindingOfAnUnchangedRun() {
         VerificationResult result =
                 SampleFindings.result(SampleFindings.missingMethod(), SampleFindings.splitPackage());
-        BaselineDocument baseline = BaselineDocument.of(SampleFindings.request(), "jdk", result);
+        BaselineDocument baseline = BaselineDocument.of(SampleFindings.request(), "jdk", result, ROOT);
 
-        BaselineComparison comparison = BaselineComparison.against(result, baseline);
+        BaselineComparison comparison = BaselineComparison.against(result, baseline, ROOT);
 
         assertEquals(List.of(), comparison.newFindings());
         assertEquals(2, comparison.suppressed());
@@ -45,10 +47,12 @@ final class BaselineComparisonTest {
                 PreviewMode.DISABLED,
                 Scope.APPLICATION,
                 "jdk",
-                List.of("JP1001|gone.jar||com/acme/Gone", BaselineFingerprint.of(SampleFindings.splitPackage())));
+                List.of(
+                        "JP1001|gone.jar||com/acme/Gone",
+                        BaselineFingerprint.of(ROOT, SampleFindings.splitPackage())));
 
         BaselineComparison comparison =
-                BaselineComparison.against(SampleFindings.result(SampleFindings.splitPackage()), baseline);
+                BaselineComparison.against(SampleFindings.result(SampleFindings.splitPackage()), baseline, ROOT);
 
         assertEquals(List.of(), comparison.newFindings());
         assertEquals(1, comparison.suppressed());
@@ -61,7 +65,7 @@ final class BaselineComparisonTest {
         BaselineDocument baseline = new BaselineDocument(
                 17, PreviewMode.DISABLED, Scope.APPLICATION, "jdk", List.of());
 
-        BaselineComparison comparison = BaselineComparison.against(result, baseline);
+        BaselineComparison comparison = BaselineComparison.against(result, baseline, ROOT);
 
         assertEquals(result.findings(), comparison.newFindings());
         assertEquals(0, comparison.suppressed());
@@ -71,7 +75,7 @@ final class BaselineComparisonTest {
     void countsRepeatedFindingsOnceInTheStaleCheck() {
         Finding repeated = SampleFindings.missingMethod();
         BaselineComparison comparison =
-                BaselineComparison.against(SampleFindings.result(repeated, repeated), baselineOf(repeated));
+                BaselineComparison.against(SampleFindings.result(repeated, repeated), baselineOf(repeated), ROOT);
 
         assertEquals(List.of(), comparison.newFindings());
         assertEquals(2, comparison.suppressed());
@@ -91,6 +95,6 @@ final class BaselineComparisonTest {
     }
 
     private static BaselineDocument baselineOf(Finding... findings) {
-        return BaselineDocument.of(SampleFindings.request(), "jdk", SampleFindings.result(findings));
+        return BaselineDocument.of(SampleFindings.request(), "jdk", SampleFindings.result(findings), ROOT);
     }
 }
