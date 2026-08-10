@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
@@ -48,7 +49,7 @@ final class LinkageFixture {
     }
 
     static MemberReference reference(ReferenceKind kind, String owner, String name, String descriptor) {
-        return new MemberReference(kind, owner, name, descriptor, RUN);
+        return new MemberReference(kind, owner, name, descriptor, RUN, Optional.empty());
     }
 
     /** A target type declaring exactly the given members and nothing else. */

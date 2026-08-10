@@ -2,6 +2,7 @@ package sh.zolt.jarproof.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.objectweb.asm.ConstantDynamic;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Type;
@@ -15,34 +16,35 @@ final class ReferenceCollector {
     private final List<MemberReference> members = new ArrayList<>();
 
     /** Records a class named by an instruction, as an internal name or an array descriptor. */
-    void addInternalName(String type, String referencingMethod) {
+    void addInternalName(String type, CallSite site) {
         Type parsed = type.charAt(0) == ARRAY_DESCRIPTOR_START ? Type.getType(type) : Type.getObjectType(type);
-        addType(parsed, referencingMethod);
+        addType(parsed, site);
     }
 
     /** Records a class named by a type descriptor. */
-    void addDescriptor(String descriptor, String referencingMethod) {
-        addType(Type.getType(descriptor), referencingMethod);
+    void addDescriptor(String descriptor, CallSite site) {
+        addType(Type.getType(descriptor), site);
     }
 
     /** Records a member named by an instruction. */
-    void addMember(ReferenceKind kind, String owner, String name, String descriptor, String referencingMethod) {
-        members.add(new MemberReference(kind, owner, name, descriptor, referencingMethod));
+    void addMember(ReferenceKind kind, String owner, String name, String descriptor, CallSite site) {
+        members.add(new MemberReference(kind, owner, name, descriptor, site.referencingMethod(), site.line()));
     }
 
     /** Records the member a constant-pool method handle names. */
-    void addHandle(Handle handle, String referencingMethod) {
+    void addHandle(Handle handle, CallSite site) {
         members.add(new MemberReference(
                 ReferenceKind.METHOD_HANDLE,
                 handle.getOwner(),
                 handle.getName(),
                 handle.getDesc(),
-                referencingMethod));
+                site.referencingMethod(),
+                site.line()));
     }
 
     /** Records whatever a loadable constant reaches, following dynamic constants to their roots. */
-    void addConstant(Object value, String referencingMethod) {
-        addConstant(value, referencingMethod, 0);
+    void addConstant(Object value, CallSite site) {
+        addConstant(value, site, 0);
     }
 
     /** Returns the references gathered so far. */
@@ -50,30 +52,40 @@ final class ReferenceCollector {
         return new ClassReferences(types, members);
     }
 
-    private void addConstant(Object value, String referencingMethod, int depth) {
+    private void addConstant(Object value, CallSite site, int depth) {
         if (depth > MAXIMUM_CONSTANT_DEPTH) {
             return;
         }
         if (value instanceof Type type) {
-            addType(type, referencingMethod);
+            addType(type, site);
         } else if (value instanceof Handle handle) {
-            addHandle(handle, referencingMethod);
+            addHandle(handle, site);
         } else if (value instanceof ConstantDynamic dynamic) {
-            addDynamic(dynamic, referencingMethod, depth);
+            addDynamic(dynamic, site, depth);
         }
     }
 
-    private void addDynamic(ConstantDynamic dynamic, String referencingMethod, int depth) {
-        addHandle(dynamic.getBootstrapMethod(), referencingMethod);
+    private void addDynamic(ConstantDynamic dynamic, CallSite site, int depth) {
+        addHandle(dynamic.getBootstrapMethod(), site);
         for (int argument = 0; argument < dynamic.getBootstrapMethodArgumentCount(); argument++) {
-            addConstant(dynamic.getBootstrapMethodArgument(argument), referencingMethod, depth + 1);
+            addConstant(dynamic.getBootstrapMethodArgument(argument), site, depth + 1);
         }
     }
 
-    private void addType(Type type, String referencingMethod) {
+    private void addType(Type type, CallSite site) {
         Type element = type.getSort() == Type.ARRAY ? type.getElementType() : type;
         if (element.getSort() == Type.OBJECT) {
-            types.add(new TypeReference(element.getInternalName(), referencingMethod));
+            types.add(new TypeReference(element.getInternalName(), site.referencingMethod(), site.line()));
         }
+    }
+
+    /**
+     * Where the bytecode named a reference: the method it is written in, and the source line in force
+     * at that instruction when the class file records line numbers at all.
+     *
+     * <p>Carrying the two together is what keeps every recording method inside the parameter ceiling,
+     * and it keeps the line beside the method it belongs to instead of beside the reference shapes.
+     */
+    record CallSite(String referencingMethod, Optional<Integer> line) {
     }
 }

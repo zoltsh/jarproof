@@ -22,9 +22,9 @@ import sh.zolt.jarproof.api.Severity;
  * because it already has its own diagnostic.
  *
  * <p><strong>What one finding covers.</strong> Findings are deduplicated by code, subject, and
- * referencing class, and the first reference to observe a break supplies its evidence. Two hundred call
- * sites reaching the same absent method in one class are one problem, and reporting them two hundred
- * times would bury the other nineteen problems in the report.
+ * referencing class, and the first reference to observe a break supplies its evidence and its source
+ * line. Two hundred call sites reaching the same absent method in one class are one problem, and
+ * reporting them two hundred times would bury the other nineteen problems in the report.
  *
  * <p>Findings come back in the order they were observed. Ordering them is the pipeline's job, so this
  * check never sorts and never has to agree with anything about how.
@@ -69,7 +69,11 @@ final class LinkageCheck {
                 table,
                 ResolvedClass.ofClasspath(
                         declared.internalName(), shape, new ClassDeclaration(artifact.entry(), declared)),
-                ArtifactLocation.ofClassEntry(artifact.entry().display(), declared.entryName()),
+                ArtifactLocation.ofSource(
+                        artifact.entry().display(),
+                        declared.entryName(),
+                        declared.sourceFile(),
+                        Optional.empty()),
                 severity);
         declared.references().types().forEach(type -> record(review.type(type)));
         declared.references().members().forEach(member -> record(review.member(member)));

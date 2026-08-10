@@ -65,13 +65,60 @@ final class ReferenceIndexTest {
         List<MemberReference> members = indexed().references().members();
 
         assertTrue(members.contains(new MemberReference(ReferenceKind.GET_STATIC, ReferenceFixture.TARGET,
-                "FLAG", "Z", ReferenceFixture.METHOD)), members.toString());
+                "FLAG", "Z", ReferenceFixture.METHOD, Optional.empty())), members.toString());
         assertTrue(members.contains(new MemberReference(ReferenceKind.PUT_STATIC, ReferenceFixture.TARGET,
-                "FLAG", "Z", ReferenceFixture.METHOD)), members.toString());
+                "FLAG", "Z", ReferenceFixture.METHOD, Optional.empty())), members.toString());
         assertTrue(members.contains(new MemberReference(ReferenceKind.INVOKE_SPECIAL, ReferenceFixture.TARGET,
-                "<init>", "()V", ReferenceFixture.METHOD)), members.toString());
+                "<init>", "()V", ReferenceFixture.METHOD, Optional.empty())), members.toString());
         assertTrue(members.contains(new MemberReference(ReferenceKind.INVOKE_STATIC, ReferenceFixture.TARGET,
-                "reset", "()V", ReferenceFixture.METHOD)), members.toString());
+                "reset", "()V", ReferenceFixture.METHOD, Optional.empty())), members.toString());
+    }
+
+    @Test
+    void capturesTheSourceFileAndTheLineOfEveryReference() {
+        IndexedClass declared = traced(SourceDebugFixture.tracedCaller(
+                LinkageFixture.CALLER,
+                List.of(
+                        LinkageFixture.reference(ReferenceKind.INVOKE_STATIC, ReferenceFixture.TARGET, "first", "()V"),
+                        LinkageFixture.reference(ReferenceKind.INVOKE_STATIC, ReferenceFixture.TARGET, "second", "()V"))));
+
+        assertEquals(Optional.of(SourceDebugFixture.SOURCE_FILE), declared.sourceFile());
+        assertEquals(
+                List.of(Optional.of(SourceDebugFixture.lineOf(0)), Optional.of(SourceDebugFixture.lineOf(1))),
+                declared.references().members().stream().map(MemberReference::line).toList());
+    }
+
+    @Test
+    void capturesTheLineOfATypeInstruction() {
+        IndexedClass declared =
+                traced(SourceDebugFixture.tracedTypeCaller(LinkageFixture.CALLER, List.of(ReferenceFixture.TARGET)));
+
+        assertEquals(
+                List.of(Optional.of(SourceDebugFixture.lineOf(0))),
+                declared.references().types().stream().map(TypeReference::line).toList());
+    }
+
+    @Test
+    void recordsNoLineForAClassCompiledWithoutALineTable() {
+        IndexedClass declared = traced(SourceDebugFixture.untracedCaller(
+                LinkageFixture.CALLER,
+                List.of(LinkageFixture.reference(ReferenceKind.INVOKE_STATIC, ReferenceFixture.TARGET, "first", "()V"))));
+
+        assertEquals(Optional.of(SourceDebugFixture.SOURCE_FILE), declared.sourceFile());
+        assertEquals(
+                List.of(Optional.empty()),
+                declared.references().members().stream().map(MemberReference::line).toList());
+    }
+
+    @Test
+    void recordsNoSourceForAClassCompiledWithoutDebugInformation() {
+        IndexedClass declared = indexed();
+
+        assertTrue(declared.sourceFile().isEmpty());
+        assertTrue(declared.references().types().stream().allMatch(type -> type.line().isEmpty()),
+                declared.references().types().toString());
+        assertTrue(declared.references().members().stream().allMatch(member -> member.line().isEmpty()),
+                declared.references().members().toString());
     }
 
     @Test
@@ -101,6 +148,12 @@ final class ReferenceIndexTest {
     private IndexedClass indexed() {
         Path archive = EngineFixture.jar(workspace, "lib/references.jar",
                 EngineFixture.entries(ReferenceFixture.OWNER + ".class", ReferenceFixture.classFile()));
+        return classes(archive).get(0);
+    }
+
+    private IndexedClass traced(byte[] classFile) {
+        Path archive = EngineFixture.jar(workspace, "lib/traced.jar",
+                EngineFixture.entries(LinkageFixture.CALLER + ".class", classFile));
         return classes(archive).get(0);
     }
 

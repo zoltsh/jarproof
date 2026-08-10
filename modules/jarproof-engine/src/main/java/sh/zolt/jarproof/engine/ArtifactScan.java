@@ -62,7 +62,8 @@ final class ArtifactScan {
                 unsignedShort(classFile, MINOR_VERSION_OFFSET),
                 digest(classFile),
                 structure.map(ClassStructure::shape),
-                structure.map(ClassStructure::references).orElseGet(ClassReferences::empty)));
+                structure.map(ClassStructure::references).orElseGet(ClassReferences::empty),
+                structure.flatMap(ClassStructure::sourceFile)));
     }
 
     /** Returns the classes read so far, in the order they were recorded. */

@@ -82,6 +82,7 @@ final class ArchiveManifestTest {
                 0,
                 "0".repeat(64),
                 Optional.empty(),
-                ClassReferences.empty());
+                ClassReferences.empty(),
+                Optional.empty());
     }
 }

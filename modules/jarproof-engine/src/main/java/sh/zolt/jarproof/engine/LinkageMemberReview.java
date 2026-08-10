@@ -39,7 +39,8 @@ final class LinkageMemberReview {
         }
         Optional<ResolvedClass> owner = review.table().find(reference.ownerInternalName());
         if (owner.isEmpty()) {
-            return review.missingClass(reference.ownerInternalName(), reference.referencingMethod());
+            return review.missingClass(
+                    reference.ownerInternalName(), reference.referencingMethod(), reference.line());
         }
         return withinOwner(review, reference, owner.get());
     }
@@ -50,7 +51,8 @@ final class LinkageMemberReview {
             return Optional.empty();
         }
         if (!AccessRules.classAccessible(owner, review.referencing())) {
-            return Optional.of(review.inaccessibleClass(owner, reference.referencingMethod()));
+            return Optional.of(
+                    review.inaccessibleClass(owner, reference.referencingMethod(), reference.line()));
         }
         if (contradictsKind(reference.kind(), owner)) {
             return Optional.of(review.kindMismatch(owner, reference));
