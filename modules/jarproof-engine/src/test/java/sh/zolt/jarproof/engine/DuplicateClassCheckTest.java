@@ -38,6 +38,22 @@ final class DuplicateClassCheckTest {
     }
 
     @Test
+    void exemptsModuleDescriptorsSharedByModularArtifacts() {
+        Path first = EngineFixture.jar(workspace, "lib/alpha-module.jar",
+                EngineFixture.entries("module-info.class",
+                        EngineFixture.classFile(ModuleClaimReader.DESCRIPTOR_NAME)));
+        Path second = EngineFixture.jar(workspace, "lib/beta-module.jar",
+                EngineFixture.entries("module-info.class",
+                        EngineFixture.classFileWithField(ModuleClaimReader.DESCRIPTOR_NAME, "extra")));
+
+        List<Finding> findings = EngineFixture.verify(List.of(first), List.of(second), 17);
+
+        assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2001"));
+        assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2002"));
+        assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2006"));
+    }
+
+    @Test
     void reportsDifferingCopiesAsAWarningAgainstTheWinner() {
         Path winner = EngineFixture.jar(workspace, "lib/winner.jar",
                 EngineFixture.entries(DUPLICATE_ENTRY, EngineFixture.classFile(DUPLICATE)));

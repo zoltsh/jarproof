@@ -30,14 +30,18 @@ final class DuplicateClassCheck {
     /**
      * Runs the duplicate-class checks.
      *
+     * <p>Module descriptors are exempt: every modular artifact carries one under the same internal
+     * name, the class-loading path never resolves it on a flat classpath, and the module-path
+     * story it does matter for is judged by the JP5xxx checks instead.
+     *
      * @param catalog the read classpath
      * @return one finding per duplicated class internal name
      */
     static List<Finding> run(ArtifactCatalog catalog) {
         List<Finding> findings = new ArrayList<>();
-        for (List<ClassDeclaration> claims : catalog.declarations().values()) {
-            if (claims.size() > 1) {
-                findings.add(finding(claims));
+        for (var declared : catalog.declarations().entrySet()) {
+            if (declared.getValue().size() > 1 && !declared.getKey().equals(ModuleClaimReader.DESCRIPTOR_NAME)) {
+                findings.add(finding(declared.getValue()));
             }
         }
         return List.copyOf(findings);
