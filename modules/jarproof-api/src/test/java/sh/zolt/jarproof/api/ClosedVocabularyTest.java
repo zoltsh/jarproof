@@ -23,4 +23,5 @@ final class ClosedVocabularyTest {
                 new Severity[] {Severity.INFO, Severity.WARNING, Severity.ERROR},
                 Severity.values());
     }
+
 }
