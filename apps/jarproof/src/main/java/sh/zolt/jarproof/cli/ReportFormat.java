@@ -1,5 +1,7 @@
 package sh.zolt.jarproof.cli;
 
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import sh.zolt.jarproof.api.VerificationRequest;
 import sh.zolt.jarproof.api.VerificationResult;
@@ -48,13 +50,14 @@ enum ReportFormat {
      *
      * @param request the request the run answered
      * @param result the findings the run produced
+     * @param sourceRoots roots that may resolve findings to source files; only SARIF reads them
      * @return the complete report, terminated by a single LF
      */
-    String render(VerificationRequest request, VerificationResult result) {
+    String render(VerificationRequest request, VerificationResult result, List<Path> sourceRoots) {
         return switch (this) {
             case HUMAN -> HumanReport.render(result);
             case JSON -> JsonReport.render(request, result);
-            case SARIF -> SarifReport.render(result);
+            case SARIF -> SarifReport.render(result, sourceRoots);
         };
     }
 }

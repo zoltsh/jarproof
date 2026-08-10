@@ -113,9 +113,7 @@ final class CheckCommand implements Callable<Integer> {
      * @return the complete report text
      */
     private String report(VerificationRequest request, VerificationResult rendered) {
-        return format == ReportFormat.SARIF
-                ? SarifReport.render(rendered, sourceRoots)
-                : format.render(request, rendered);
+        return format.render(request, rendered, sourceRoots);
     }
 
     /** Refuses a prune that has no file to rewrite, before any analysis is done for it. */

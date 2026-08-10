@@ -23,9 +23,9 @@ final class ReportFormatTest {
         VerificationRequest request = SampleFindings.request();
         VerificationResult result = SampleFindings.result(SampleFindings.missingMethod());
 
-        assertEquals(HumanReport.render(result), ReportFormat.HUMAN.render(request, result));
-        assertEquals(JsonReport.render(request, result), ReportFormat.JSON.render(request, result));
-        assertEquals(SarifReport.render(result), ReportFormat.SARIF.render(request, result));
+        assertEquals(HumanReport.render(result), ReportFormat.HUMAN.render(request, result, java.util.List.of()));
+        assertEquals(JsonReport.render(request, result), ReportFormat.JSON.render(request, result, java.util.List.of()));
+        assertEquals(SarifReport.render(result), ReportFormat.SARIF.render(request, result, java.util.List.of()));
     }
 
     @Test
@@ -34,7 +34,7 @@ final class ReportFormatTest {
         VerificationResult result = SampleFindings.result(SampleFindings.splitPackage());
 
         for (ReportFormat format : ReportFormat.values()) {
-            String report = format.render(request, result);
+            String report = format.render(request, result, java.util.List.of());
             assertTrue(report.endsWith("\n"), report);
             assertTrue(!report.endsWith("\n\n"), report);
             assertEquals(-1, report.indexOf('\r'), report);
