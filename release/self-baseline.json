@@ -1,0 +1,10 @@
+{
+  "baselineVersion": "1",
+  "targetJava": 17,
+  "preview": "disabled",
+  "scope": "application",
+  "profile": "bundled:17",
+  "fingerprints": [
+    "JP3005|target/dist/jarproof-cli.jar||target/dist/jarproof-cli.jar"
+  ]
+}
