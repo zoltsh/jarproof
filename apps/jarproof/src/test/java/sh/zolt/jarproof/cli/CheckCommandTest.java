@@ -119,11 +119,11 @@ final class CheckCommandTest {
 
         Map<?, ?> document = object(JsonScanner.parse(rooted(invocation.out())));
         assertEquals("2.1.0", document.get("version"));
-        Map<?, ?> run = object(array(document.get("runs")).getFirst());
+        Map<?, ?> run = object(array(document.get("runs")).get(0));
         assertEquals("jarproof", object(object(run.get("tool")).get("driver")).get("name"));
-        Map<?, ?> rule = object(array(object(object(run.get("tool")).get("driver")).get("rules")).getFirst());
+        Map<?, ?> rule = object(array(object(object(run.get("tool")).get("driver")).get("rules")).get(0));
         assertEquals("JP1003", rule.get("id"));
-        Map<?, ?> result = object(array(run.get("results")).getFirst());
+        Map<?, ?> result = object(array(run.get("results")).get(0));
         assertEquals("JP1003", result.get("ruleId"));
         assertEquals("error", result.get("level"));
         assertEquals(REPORTED_ARTIFACT, uriOf(result));
@@ -177,7 +177,7 @@ final class CheckCommandTest {
     }
 
     private static String uriOf(Map<?, ?> result) {
-        Map<?, ?> location = object(array(result.get("locations")).getFirst());
+        Map<?, ?> location = object(array(result.get("locations")).get(0));
         return (String) object(object(location.get("physicalLocation")).get("artifactLocation")).get("uri");
     }
 

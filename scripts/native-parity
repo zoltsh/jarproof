@@ -1,0 +1,195 @@
+#!/bin/sh
+# Prove the native binary and the uber JAR are the same tool.
+#
+# Canonical output carries no paths, timings, or locale-dependent formatting, so the two builds
+# must agree byte for byte on every scenario below. They do not agree by construction: the native
+# image drops reflective metadata, resources, and charset data unless they were declared, and each
+# omission shows up as a different report rather than a build failure. This script is the check
+# that turns those into a red build.
+#
+# Run it from the workspace root. Findings are expected, so each scenario declares the exit status
+# both engines must produce; a scenario that stops reporting is a failure, not a pass.
+set -eu
+
+WORK=target/native-parity
+DUPLICATES=$WORK/duplicates
+NATIVE=apps/jarproof/target/native/jarproof
+TARGET_JAVA=17
+failures=0
+
+fail() {
+    printf 'FAIL %s\n' "$1" >&2
+    failures=$((failures + 1))
+}
+
+# The member's own artifact, found without spelling its version. Supplemental artifacts are
+# skipped by classifier so enabling sources or Javadoc jars cannot quietly redirect this.
+member_jar() {
+    for candidate in "$1"/target/*.jar; do
+        case $candidate in
+        *-sources.jar | *-javadoc.jar) continue ;;
+        esac
+        if [ -f "$candidate" ]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    printf 'native-parity: no packaged jar in %s/target; run `zolt package --workspace --all`\n' "$1" >&2
+    exit 2
+}
+
+fixture_jar() {
+    member_jar "fixtures/$1"
+}
+
+cli() {
+    engine=$1
+    shift
+    if [ "$engine" = jvm ]; then
+        zolt exec --quiet -- java -jar "$UBER" "$@"
+    else
+        "$NATIVE" "$@"
+    fi
+}
+
+# Every scenario uses relative artifact paths and `--path-root .` so the reports describe the
+# workspace rather than the checkout directory they were produced in.
+invoke() {
+    engine=$1
+    report=$3
+    case $2 in
+    missing-method)
+        cli "$engine" check --application "$MISSING_METHOD_CONSUMER" \
+            --classpath "$MISSING_METHOD_API_V2" --target-java "$TARGET_JAVA" \
+            --path-root . --format json --output "$report"
+        ;;
+    bad-service-provider)
+        cli "$engine" check --application "$BAD_SERVICE_PROVIDER" \
+            --classpath "$SERVICE_API" --scope all --target-java "$TARGET_JAVA" \
+            --path-root . --format json --output "$report"
+        ;;
+    duplicate-class)
+        cli "$engine" check --application "$SERVICE_API" \
+            --classpath "$DUPLICATES/*" --target-java "$TARGET_JAVA" \
+            --path-root . --format json --output "$report"
+        ;;
+    newer-bytecode)
+        cli "$engine" check --application "$NEWER_BYTECODE" --target-java "$TARGET_JAVA" \
+            --path-root . --format json --output "$report"
+        ;;
+    clean-pair)
+        cli "$engine" check --application "$MISSING_METHOD_CONSUMER" \
+            --classpath "$MISSING_METHOD_API_V1" --target-java "$TARGET_JAVA" \
+            --path-root . --format json --output "$report"
+        ;;
+    sarif)
+        cli "$engine" check --application "$MISSING_METHOD_CONSUMER" \
+            --classpath "$MISSING_METHOD_API_V2" --target-java "$TARGET_JAVA" \
+            --path-root . --format sarif --output "$report"
+        ;;
+    inspect)
+        cli "$engine" inspect --format json --output "$report" "$MISSING_METHOD_API_V2"
+        ;;
+    explain)
+        cli "$engine" explain JP1003 > "$report"
+        ;;
+    *)
+        printf 'native-parity: unknown scenario %s\n' "$2" >&2
+        exit 2
+        ;;
+    esac
+}
+
+report_of() {
+    engine=$1
+    scenario=$2
+    expected=$3
+    report=$WORK/$scenario.$engine
+    set +e
+    invoke "$engine" "$scenario" "$report" > "$report.stdout" 2> "$report.stderr"
+    status=$?
+    set -e
+    if [ "$status" != "$expected" ]; then
+        fail "$scenario ($engine) exited $status, expected $expected"
+        cat "$report.stderr" >&2
+    fi
+}
+
+identical() {
+    label=$1
+    left=$2
+    right=$3
+    if [ ! -s "$left" ] && [ "$label" = report ]; then
+        fail "$scenario ($label) produced nothing to compare"
+        return 0
+    fi
+    if cmp -s "$left" "$right"; then
+        return 0
+    fi
+    fail "$scenario ($label) differs between the JVM and the native binary"
+    diff -u "$left" "$right" >&2 || true
+}
+
+parity() {
+    scenario=$1
+    expected=$2
+    report_of jvm "$scenario" "$expected"
+    report_of native "$scenario" "$expected"
+    identical report "$WORK/$scenario.jvm" "$WORK/$scenario.native"
+    identical stdout "$WORK/$scenario.jvm.stdout" "$WORK/$scenario.native.stdout"
+    identical stderr "$WORK/$scenario.jvm.stderr" "$WORK/$scenario.native.stderr"
+    printf 'ok   %s\n' "$scenario"
+}
+
+if [ ! -f zolt.toml ]; then
+    printf 'native-parity: run this from the workspace root\n' >&2
+    exit 2
+fi
+
+if ! ls apps/jarproof/target/jarproof-cli-*.jar >/dev/null 2>&1; then
+    printf '%s\n' 'native-parity: packaging the workspace first'
+    zolt package --workspace --all
+fi
+
+zolt native --workspace --member apps/jarproof
+
+# `zolt native` leaves a thin jar in place of the member's uber jar -- same file name, no mention of
+# it in the output, `[package] mode` ignored. Packaging after the native build is what puts the
+# published artifact back, and the order matters: reversed, this script would compare a native
+# binary against a jar that cannot even start.
+zolt package --workspace --member apps/jarproof
+
+UBER=$(member_jar apps/jarproof)
+MISSING_METHOD_CONSUMER=$(fixture_jar missing-method-consumer)
+MISSING_METHOD_API_V1=$(fixture_jar missing-method-api-v1)
+MISSING_METHOD_API_V2=$(fixture_jar missing-method-api-v2)
+BAD_SERVICE_PROVIDER=$(fixture_jar bad-service-provider)
+SERVICE_API=$(fixture_jar service-api)
+NEWER_BYTECODE=$(fixture_jar newer-bytecode)
+
+# The duplicate-class arrangement needs both copies behind one wildcard: a winner that arrived
+# through a wildcard is what makes JP2006 reportable, and each fixture packages into its own
+# target directory.
+rm -rf "$WORK"
+mkdir -p "$DUPLICATES"
+cp "$(fixture_jar duplicate-class-a)" "$DUPLICATES"
+cp "$(fixture_jar duplicate-class-b)" "$DUPLICATES"
+
+printf '%s\n' "jvm:    $UBER"
+printf '%s\n' "native: $NATIVE"
+
+parity missing-method 1
+parity bad-service-provider 1
+parity duplicate-class 1
+parity newer-bytecode 1
+parity clean-pair 0
+parity sarif 1
+parity inspect 0
+parity explain 0
+
+if [ "$failures" -ne 0 ]; then
+    printf 'native parity: %s failures\n' "$failures" >&2
+    exit 1
+fi
+
+printf 'native parity: 8 scenarios identical on both engines\n'

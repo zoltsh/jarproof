@@ -41,7 +41,7 @@ final class PathRootTest {
 
     @Test
     void leavesEverythingExceptTheArtifactPathAlone() {
-        Finding rewritten = PathRoot.of(ROOT).rewrite(result(APPLICATION)).findings().getFirst();
+        Finding rewritten = PathRoot.of(ROOT).rewrite(result(APPLICATION)).findings().get(0);
         Finding original = sample(APPLICATION);
 
         assertEquals(original.code(), rewritten.code());
@@ -66,7 +66,7 @@ final class PathRootTest {
     }
 
     private static String rewritten(String artifact) {
-        return PathRoot.of(ROOT).rewrite(result(artifact)).findings().getFirst().artifact().artifact();
+        return PathRoot.of(ROOT).rewrite(result(artifact)).findings().get(0).artifact().artifact();
     }
 
     private static VerificationResult result(String artifact) {

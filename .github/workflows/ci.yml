@@ -37,3 +37,25 @@ jobs:
 
       - name: Check clean generated state
         run: git diff --exit-code
+
+  # Parallel to `check`, never chained into it: native-image is the slowest and most
+  # memory-hungry step in the build, and the fast feedback path should not wait behind it.
+  native-parity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Zolt
+        uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
+        with:
+          channel: zap
+          version: 0.1.0-zap.20260804.6ccff768b7bc
+          sha256: e05b00e206d312ddf15954370ed904c114f7037f9da6a0a69cc7ddd4ee7e3f55
+
+      - name: Compare the native binary against the uber JAR
+        run: scripts/native-parity

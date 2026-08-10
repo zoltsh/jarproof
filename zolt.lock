@@ -1,6 +1,6 @@
 version = 5
-projectResolutionFingerprint = "sha256:518c58c35c2af9ceaae7ea16c8933dd83b8e62ddad95ea5647900bb13c66d049"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:c46db0c9b0f5fa2f3b1d01522c522a52aa81fe5f6921699a4a00d3562c2dfd0e", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:c1adb06b3a7fb842c3dfa607044682ab687294d5b45674d39b5c131691f81004", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+projectResolutionFingerprint = "sha256:6515bbde8c105ce2da63eac2c227b52bb7d79502ca27dd8727c95b9bd4e77edc"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:c46db0c9b0f5fa2f3b1d01522c522a52aa81fe5f6921699a4a00d3562c2dfd0e", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
 
 [[package]]
 id = "args4j:args4j"
@@ -120,11 +120,37 @@ members = ["apps/jarproof"]
 dependencies = []
 
 [[package]]
+id = "info.picocli:picocli-codegen"
+version = "4.7.6"
+source = "maven-central"
+scope = "processor"
+direct = true
+jar = "info/picocli/picocli-codegen/4.7.6/picocli-codegen-4.7.6.jar"
+pom = "info/picocli/picocli-codegen/4.7.6/picocli-codegen-4.7.6.pom"
+jarSha256 = "245a2e5d7fc1f8c06b37b7aa0fc1781d47110cc7b4ec77dc3583cc505f99d827"
+pomSha256 = "b5e7f3167757bd6062f66b58be7f0d50e20e2d5db45507b9bd131f1bc750a345"
+members = ["apps/jarproof"]
+dependencies = ["info.picocli:picocli:4.7.6:jar:processor"]
+
+[[package]]
 id = "info.picocli:picocli"
 version = "4.7.6"
 source = "maven-central"
 scope = "compile"
 direct = true
+jar = "info/picocli/picocli/4.7.6/picocli-4.7.6.jar"
+pom = "info/picocli/picocli/4.7.6/picocli-4.7.6.pom"
+jarSha256 = "ed441183f309b93f104ca9e071e314a4062a893184e18a3c7ad72ec9cba12ba0"
+pomSha256 = "2d2248cccf487ad9ce208dec751745df15cd1e1924a4cc3d36841b5f1990c6fb"
+members = ["apps/jarproof"]
+dependencies = []
+
+[[package]]
+id = "info.picocli:picocli"
+version = "4.7.6"
+source = "maven-central"
+scope = "processor"
+direct = false
 jar = "info/picocli/picocli/4.7.6/picocli-4.7.6.jar"
 pom = "info/picocli/picocli/4.7.6/picocli-4.7.6.pom"
 jarSha256 = "ed441183f309b93f104ca9e071e314a4062a893184e18a3c7ad72ec9cba12ba0"

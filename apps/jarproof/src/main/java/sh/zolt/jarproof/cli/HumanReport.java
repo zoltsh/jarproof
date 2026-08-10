@@ -105,7 +105,7 @@ final class HumanReport {
                 .append(NEXT)
                 .append(':')
                 .append(' ')
-                .append(finding.remediation().getFirst().action())
+                .append(finding.remediation().get(0).action())
                 .append('\n');
     }
 

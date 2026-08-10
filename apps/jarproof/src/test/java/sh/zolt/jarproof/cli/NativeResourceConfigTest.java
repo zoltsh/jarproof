@@ -45,7 +45,7 @@ final class NativeResourceConfigTest {
             Object includes = ((java.util.Map<?, ?>) resources).get("includes");
             List<?> entries = (List<?>) includes;
             assertEquals(1, entries.size(), String.valueOf(entries));
-            return (String) ((java.util.Map<?, ?>) entries.getFirst()).get("pattern");
+            return (String) ((java.util.Map<?, ?>) entries.get(0)).get("pattern");
         }
     }
 }
