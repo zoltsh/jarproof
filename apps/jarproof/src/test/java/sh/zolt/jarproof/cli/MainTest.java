@@ -3,14 +3,13 @@ package sh.zolt.jarproof.cli;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import org.junit.jupiter.api.Test;
+import sh.zolt.jarproof.cli.CliFixture.Invocation;
 
 final class MainTest {
     @Test
     void printsFocusedHelp() {
-        Invocation invocation = invoke("--help");
+        Invocation invocation = CliFixture.invoke("--help");
 
         assertEquals(0, invocation.exitCode());
         assertTrue(invocation.out().contains("Find JAR hell before production."));
@@ -20,35 +19,44 @@ final class MainTest {
 
     @Test
     void showsHelpWhenNoCommandIsGiven() {
-        Invocation invocation = invoke();
+        Invocation invocation = CliFixture.invoke();
 
         assertEquals(0, invocation.exitCode());
         assertTrue(invocation.out().contains("Usage: jarproof"));
     }
 
     @Test
-    void printsTheProductVersionBanner() {
-        Invocation invocation = invoke("--version");
+    void offersEveryCommandItImplements() {
+        String help = CliFixture.invoke("--help").out();
 
-        assertEquals(0, invocation.exitCode());
-        assertEquals("jarproof 0.1.0-alpha.1-dev\n", invocation.out().replace("\r\n", "\n"));
+        assertTrue(help.contains("check"), help);
+        assertTrue(help.contains("baseline"), help);
+        assertTrue(help.contains("inspect"), help);
+        assertTrue(help.contains("explain"), help);
     }
 
     @Test
-    void rejectsCommandsThatDoNotExistYet() {
-        Invocation invocation = invoke("check");
+    void printsTheProductVersionBanner() {
+        Invocation invocation = CliFixture.invoke("--version");
+
+        assertEquals(0, invocation.exitCode());
+        assertEquals("jarproof 0.1.0-alpha.1-dev\n", invocation.out());
+    }
+
+    @Test
+    void rejectsACommandThatDoesNotExist() {
+        Invocation invocation = CliFixture.invoke("audit");
 
         assertEquals(2, invocation.exitCode());
-        assertTrue(invocation.err().contains("Unmatched argument"));
+        assertTrue(invocation.err().contains("Unmatched argument"), invocation.err());
     }
 
-    private static Invocation invoke(String... args) {
-        StringWriter out = new StringWriter();
-        StringWriter err = new StringWriter();
-        int exitCode = Main.execute(new PrintWriter(out, true), new PrintWriter(err, true), args);
-        return new Invocation(exitCode, out.toString(), err.toString());
-    }
+    @Test
+    void rejectsACheckWithoutTheFlagsItNeeds() {
+        Invocation invocation = CliFixture.invoke(CliFixture.CHECK);
 
-    private record Invocation(int exitCode, String out, String err) {
+        assertEquals(2, invocation.exitCode());
+        assertTrue(invocation.err().contains("--application"), invocation.err());
+        assertTrue(invocation.err().contains("--target-java"), invocation.err());
     }
 }
