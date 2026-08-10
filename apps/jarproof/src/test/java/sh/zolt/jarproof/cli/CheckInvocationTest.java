@@ -78,6 +78,19 @@ final class CheckInvocationTest {
         assertTrue(invocation.out().contains("JP1003"), invocation.out());
     }
 
+    /**
+     * The third scope parses and reaches the engine. The broken call the fixture makes sits in the
+     * consumer's own {@code main}, which the entry surface presumes live, so the finding survives the
+     * reachability filter and the run still fails.
+     */
+    @Test
+    void provesReachabilityWhenAsked() {
+        Invocation invocation = check(SCOPE, "reachable");
+
+        assertEquals(1, invocation.exitCode(), invocation.err());
+        assertTrue(invocation.out().contains("JP1003"), invocation.out());
+    }
+
     @Test
     void expandsAClasspathListFile() throws IOException {
         Path application = CliFixture.brokenApplication(workspace);
@@ -176,7 +189,9 @@ final class CheckInvocationTest {
         Invocation invocation = check(SCOPE, "ALL");
 
         assertEquals(2, invocation.exitCode());
-        assertTrue(invocation.err().contains("ALL is not one of: application|all"), invocation.err());
+        assertTrue(
+                invocation.err().contains("ALL is not one of: application|all|reachable"),
+                invocation.err());
     }
 
     @Test

@@ -47,8 +47,10 @@ final class RequestOptions {
 
     @Option(
             names = "--scope",
-            description = "Which bytecode origins may produce linkage errors: application|all."
-                    + " Defaults to application.")
+            description = "Which bytecode a linkage finding may come from: application|all|reachable."
+                    + " Defaults to application. reachable is the strictest and quietest: it reports only"
+                    + " the findings a method-level call graph proves executable from first-party code,"
+                    + " every one of them an error whatever its origin.")
     private Scope scope = Scope.APPLICATION;
 
     @Option(
