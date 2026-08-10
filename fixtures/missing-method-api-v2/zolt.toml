@@ -1,0 +1,23 @@
+[project]
+name = "jarproof-fixture-missing-method-api-v2"
+version = "0.1.0-alpha.1-SNAPSHOT"
+group = "sh.zolt"
+java = "17"
+
+[repositories]
+central = "https://repo.maven.apache.org/maven2"
+
+[dependencies]
+
+[test.dependencies]
+"org.junit.platform:junit-platform-console-standalone" = "1.11.4"
+
+[dependencyPolicy.licenses]
+allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
+unknown = "fail"
+
+[build]
+source = "src/main/java"
+test = "src/test/java"
+output = "target/classes"
+testOutput = "target/test-classes"
