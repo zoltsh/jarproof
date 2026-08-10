@@ -28,6 +28,9 @@ final class ArchiveLayout {
     /** Upper-case archive suffix a classpath wildcard expands to. */
     static final String UPPERCASE_JAR_SUFFIX = ".JAR";
 
+    /** Suffix of a plain ZIP archive, which is an archive an artifact can nest without being a JAR. */
+    static final String ZIP_SUFFIX = ".zip";
+
     /** Final path segment that marks a classpath entry as a wildcard. */
     static final String WILDCARD_NAME = "*";
 
@@ -37,6 +40,16 @@ final class ArchiveLayout {
     /** Returns whether a wildcard expansion accepts this file name. */
     static boolean isExpandableArchive(String fileName) {
         return fileName.endsWith(JAR_SUFFIX) || fileName.endsWith(UPPERCASE_JAR_SUFFIX);
+    }
+
+    /**
+     * Returns whether an entry is an archive in its own right.
+     *
+     * @param entryName entry name inside an archive or class directory
+     * @return whether the name ends in an archive suffix, whatever the entry holds
+     */
+    static boolean isNestedArchive(String entryName) {
+        return isExpandableArchive(entryName) || entryName.endsWith(ZIP_SUFFIX);
     }
 
     /**
