@@ -1,11 +1,14 @@
 package sh.zolt.jarproof.engine;
 
+import java.nio.file.Path;
 import java.util.Objects;
+import sh.zolt.jarproof.api.ArtifactSummary;
 import sh.zolt.jarproof.api.VerificationRequest;
 import sh.zolt.jarproof.api.VerificationResult;
 
 /**
- * Verifies that a set of Java artifacts will work together on a given runtime.
+ * Verifies that a set of Java artifacts will work together on a given runtime, and reports the
+ * layout facts of one artifact on its own.
  *
  * <p>This is the engine's whole surface. A run reads bytes and metadata only: analysed classes are
  * never defined or executed, no archive is ever extracted, and nothing is fetched, so the same inputs
@@ -40,5 +43,26 @@ public final class Jarproof {
     public static VerificationResult verify(VerificationRequest request) {
         Objects.requireNonNull(request, "A verification needs a request");
         return VerificationRun.execute(request);
+    }
+
+    /**
+     * Reports the facts one artifact presents on its own, with nothing to compare it against.
+     *
+     * <p>These are raw layout facts rather than diagnostics: entry and class counts, the class file
+     * versions the classes declare, the services the artifact registers providers for, and the
+     * multi-release directories it carries. Nothing is selected for a target release, so a
+     * multi-release archive reports every version directory it holds instead of the one a runtime
+     * would choose.
+     *
+     * @param artifact path to a JAR or a class directory, kept exactly as the caller supplied it
+     * @return the artifact's layout facts, with every list in canonical order
+     * @throws NullPointerException when the artifact is missing
+     * @throws IllegalArgumentException when the path is neither a readable archive nor a readable
+     *     class directory
+     * @throws IllegalStateException when the artifact exceeds one of the engine's resource ceilings
+     */
+    public static ArtifactSummary inspect(Path artifact) {
+        Objects.requireNonNull(artifact, "An inspection needs an artifact");
+        return Inspection.of(artifact);
     }
 }

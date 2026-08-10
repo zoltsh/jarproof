@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import sh.zolt.jarproof.api.ArtifactLocation;
+import sh.zolt.jarproof.api.ArtifactSummary;
 import sh.zolt.jarproof.api.Evidence;
 import sh.zolt.jarproof.api.Finding;
 import sh.zolt.jarproof.api.FindingCode;
@@ -29,6 +30,7 @@ import sh.zolt.jarproof.api.VerificationResult;
 final class ApiDesignArchitectureTest {
     private static final Set<String> APPROVED_PUBLIC_TYPES = Set.of(
             "sh.zolt.jarproof.api.ArtifactLocation",
+            "sh.zolt.jarproof.api.ArtifactSummary",
             "sh.zolt.jarproof.api.Evidence",
             "sh.zolt.jarproof.api.Finding",
             "sh.zolt.jarproof.api.FindingCode",
@@ -44,6 +46,7 @@ final class ApiDesignArchitectureTest {
             "sh.zolt.jarproof.engine.Jarproof");
     private static final List<Class<?>> API_TYPES = List.of(
             ArtifactLocation.class,
+            ArtifactSummary.class,
             Evidence.class,
             Finding.class,
             FindingCode.class,
@@ -56,6 +59,9 @@ final class ApiDesignArchitectureTest {
             VerificationRequest.class,
             VerificationResult.class);
     private static final Set<String> APPROVED_COLLECTION_RETURNS = Set.of(
+            "sh.zolt.jarproof.api.ArtifactSummary.bytecodeLevels",
+            "sh.zolt.jarproof.api.ArtifactSummary.declaredServices",
+            "sh.zolt.jarproof.api.ArtifactSummary.multiReleaseVersions",
             "sh.zolt.jarproof.api.Finding.evidence",
             "sh.zolt.jarproof.api.Finding.remediation",
             "sh.zolt.jarproof.api.VerificationRequest.applications",
