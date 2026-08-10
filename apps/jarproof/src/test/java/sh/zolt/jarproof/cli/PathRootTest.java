@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import sh.zolt.jarproof.api.ArtifactLocation;
 import sh.zolt.jarproof.api.Evidence;
@@ -48,6 +49,8 @@ final class PathRootTest {
         assertEquals(original.severity(), rewritten.severity());
         assertEquals(original.predictedError(), rewritten.predictedError());
         assertEquals(original.artifact().classEntry(), rewritten.artifact().classEntry());
+        assertEquals(original.artifact().sourceFile(), rewritten.artifact().sourceFile());
+        assertEquals(original.artifact().line(), rewritten.artifact().line());
         assertEquals(original.subject(), rewritten.subject());
         assertEquals(original.summary(), rewritten.summary());
         assertEquals(original.explanation(), rewritten.explanation());
@@ -78,7 +81,8 @@ final class PathRootTest {
                 FindingCode.of("JP1001"),
                 Severity.ERROR,
                 PredictedError.NO_CLASS_DEF_FOUND_ERROR,
-                ArtifactLocation.ofClassEntry(artifact, "com/acme/App.class"),
+                ArtifactLocation.ofSource(
+                        artifact, "com/acme/App.class", Optional.of("App.java"), Optional.of(17)),
                 "com/acme/Absent",
                 "referenced class is absent",
                 "Nothing declares it.",

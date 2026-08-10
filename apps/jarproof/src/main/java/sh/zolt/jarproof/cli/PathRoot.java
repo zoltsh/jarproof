@@ -15,10 +15,11 @@ import sh.zolt.jarproof.api.VerificationResult;
  * artifacts relative to this root with forward slashes on every platform.
  *
  * <p>Only the artifact path of a finding is rewritten. Class entry names are already
- * archive-internal, subjects are bytecode symbols, and evidence is prose the engine composed, so
- * rewriting any of those would corrupt them. A path that cannot be expressed relative to the root at
- * all -- a different filesystem root, or text that is not a path on this platform -- is left exactly
- * as the caller wrote it, because inventing a path would be worse than repeating one.
+ * archive-internal, a source file name is the bare name a compiler recorded, subjects are bytecode
+ * symbols, and evidence is prose the engine composed, so rewriting any of those would corrupt them. A
+ * path that cannot be expressed relative to the root at all -- a different filesystem root, or text
+ * that is not a path on this platform -- is left exactly as the caller wrote it, because inventing a
+ * path would be worse than repeating one.
  */
 final class PathRoot {
     private static final char FILE_SYSTEM_SEPARATOR = '\\';
@@ -57,7 +58,11 @@ final class PathRoot {
                 finding.code(),
                 finding.severity(),
                 finding.predictedError(),
-                new ArtifactLocation(relative(location.artifact()), location.classEntry()),
+                new ArtifactLocation(
+                        relative(location.artifact()),
+                        location.classEntry(),
+                        location.sourceFile(),
+                        location.line()),
                 finding.subject(),
                 finding.summary(),
                 finding.explanation(),
