@@ -37,15 +37,17 @@ final class ArchiveManifest {
     /**
      * Opens an archive purely to read its manifest.
      *
-     * @param archive path to a JAR, kept exactly as the caller supplied it
+     * @param archive read handle of the archive, already resolved against the engine's base
+     * @param display the caller's own text for that archive, which is what a failure names, so no
+     *     path this machine resolved ever reaches a report
      * @return the main manifest, or empty when the archive declares none
      * @throws IllegalArgumentException when the path is not a readable archive with a readable manifest
      */
-    static Optional<Manifest> read(Path archive) {
+    static Optional<Manifest> read(Path archive, String display) {
         try (ZipFile opened = new ZipFile(archive.toFile())) {
             return of(opened);
         } catch (IOException exception) {
-            throw new IllegalArgumentException("Cannot read this JAR archive or its manifest: " + archive);
+            throw new IllegalArgumentException("Cannot read this JAR archive or its manifest: " + display);
         }
     }
 

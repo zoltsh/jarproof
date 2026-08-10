@@ -24,6 +24,10 @@ import sh.zolt.jarproof.api.ArtifactSummary;
  * entry that cannot be opened -- becomes one {@link IllegalArgumentException} naming the artifact,
  * decided in one place, because a summary of an artifact nobody can read would be a report of zero
  * facts rather than a failure.
+ *
+ * <p>The artifact is resolved to an absolute normalized read handle once, on the same terms
+ * {@link ClasspathExpander} settles a classpath entry on, so the archive an inspection opens is the
+ * archive it tested; the caller's own text is kept beside it and is the only text reported.
  */
 final class Inspection {
     private static final String UNREADABLE = "Cannot inspect this artifact as an archive or a class directory: ";
@@ -36,7 +40,7 @@ final class Inspection {
     private final InspectionTally tally;
 
     private Inspection(Path artifact) {
-        this.artifact = artifact;
+        this.artifact = artifact.toAbsolutePath().normalize();
         this.display = artifact.toString();
         this.budget = new ResourceBudget();
         this.tally = new InspectionTally(display);
@@ -51,7 +55,7 @@ final class Inspection {
     static ArtifactSummary of(Path artifact) {
         Inspection inspection = new Inspection(artifact);
         try {
-            return Files.isDirectory(artifact) ? inspection.directory() : inspection.archive();
+            return Files.isDirectory(inspection.artifact) ? inspection.directory() : inspection.archive();
         } catch (IOException failure) {
             throw new IllegalArgumentException(UNREADABLE + artifact, failure);
         }

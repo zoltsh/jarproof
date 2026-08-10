@@ -24,7 +24,8 @@ import sh.zolt.jarproof.api.VerificationRequest;
  * resolved beside that JAR and inserted immediately after it, recursively, and manifest wildcards
  * are left alone because the launcher does not expand them either. An entry that is already on the
  * path keeps its earliest position: identity is the normalized absolute path, so the first
- * appearance wins.
+ * appearance wins. That same normalized absolute path is the handle every later read of the entry
+ * opens, while every report of it keeps the caller's own text.
  */
 final class ClasspathExpander {
     private final List<ClasspathEntry> entries = new ArrayList<>();
@@ -49,7 +50,7 @@ final class ClasspathExpander {
     }
 
     private void addApplication(Path application) {
-        if (!Files.isReadable(application)) {
+        if (!Files.isReadable(readHandle(application))) {
             throw new IllegalArgumentException(
                     "This application artifact does not exist or cannot be read: " + application);
         }
@@ -62,27 +63,27 @@ final class ClasspathExpander {
             addWildcard(supplied);
             return;
         }
-        if (!Files.isReadable(supplied)) {
+        if (!Files.isReadable(readHandle(supplied))) {
             throw new IllegalArgumentException("This classpath entry does not exist or cannot be read: " + supplied);
         }
         add(supplied.toString(), supplied, ClasspathOrigin.CLASSPATH, Optional.empty());
     }
 
     private void addWildcard(Path wildcard) {
-        Path parent = wildcard.getParent();
-        Path directory = parent == null ? Path.of("") : parent;
-        if (!Files.isDirectory(directory.toAbsolutePath())) {
+        Path directory = parentOf(wildcard);
+        Path handle = readHandle(directory);
+        if (!Files.isDirectory(handle)) {
             throw new IllegalArgumentException("This classpath wildcard needs an existing directory: " + wildcard);
         }
         Optional<String> source = Optional.of(wildcard.toString());
-        for (String archive : archiveNamesIn(directory)) {
+        for (String archive : archiveNamesIn(handle)) {
             Path expanded = directory.resolve(archive);
             add(expanded.toString(), expanded, ClasspathOrigin.CLASSPATH, source);
         }
     }
 
     private static List<String> archiveNamesIn(Path directory) {
-        try (Stream<Path> children = Files.list(directory.toAbsolutePath())) {
+        try (Stream<Path> children = Files.list(directory)) {
             return children.filter(Files::isRegularFile)
                     .map(child -> child.getFileName().toString())
                     .filter(ArchiveLayout::isExpandableArchive)
@@ -93,38 +94,63 @@ final class ClasspathExpander {
         }
     }
 
-    private void add(String display, Path path, ClasspathOrigin origin, Optional<String> wildcardSource) {
-        if (!visited.add(path.toAbsolutePath().normalize())) {
+    private void add(String display, Path supplied, ClasspathOrigin origin, Optional<String> wildcardSource) {
+        Path handle = readHandle(supplied);
+        if (!visited.add(handle)) {
             return;
         }
-        EntryKind kind = Files.isDirectory(path) ? EntryKind.DIRECTORY : EntryKind.ARCHIVE;
-        ClasspathEntry entry = new ClasspathEntry(display, path, kind, origin, wildcardSource);
+        EntryKind kind = Files.isDirectory(handle) ? EntryKind.DIRECTORY : EntryKind.ARCHIVE;
+        ClasspathEntry entry = new ClasspathEntry(display, handle, kind, origin, wildcardSource);
         entries.add(entry);
         if (kind == EntryKind.ARCHIVE) {
             addManifestChain(entry);
         }
     }
 
+    /**
+     * Resolves one supplied entry, once, to the absolute normalized handle every later read opens.
+     *
+     * <p>Jarproof resolves a relative entry the way {@code java.nio.file} does — against the
+     * {@code user.dir} system property, which is the base {@link Path#toAbsolutePath()} applies —
+     * because the engine's public surface takes a {@link Path} and a library that accepts one is
+     * expected to honour that API's own semantics; deciding it here once is what stops a later read
+     * through {@code java.io}, which resolves a relative name against the process working directory
+     * instead, from reaching a different file than the one this entry was validated against.
+     */
+    private static Path readHandle(Path supplied) {
+        return supplied.toAbsolutePath().normalize();
+    }
+
     private void addManifestChain(ClasspathEntry declaring) {
-        List<String> declared = ArchiveManifest.classPath(ArchiveManifest.read(declaring.path()));
+        List<String> declared = ArchiveManifest.classPath(
+                ArchiveManifest.read(declaring.path(), declaring.display()));
         if (declared.isEmpty()) {
             return;
         }
-        Path parent = declaring.path().getParent();
-        Path directory = parent == null ? Path.of("") : parent;
+        Path beside = parentOf(declaring.path());
+        Path besideDisplay = parentOf(Path.of(declaring.display()));
         for (String candidate : declared) {
-            addInherited(declaring, directory, candidate);
+            addInherited(declaring, beside, besideDisplay, candidate);
         }
     }
 
-    private void addInherited(ClasspathEntry declaring, Path directory, String candidate) {
-        Optional<Path> resolved = resolve(directory, candidate);
+    /**
+     * Adds one manifest {@code Class-Path} entry, read beside the declaring JAR's handle and reported
+     * beside the declaring JAR's own text, so a chained entry renders in the caller's terms too.
+     */
+    private void addInherited(ClasspathEntry declaring, Path beside, Path besideDisplay, String candidate) {
+        Optional<Path> resolved = resolve(beside, candidate).map(ClasspathExpander::readHandle);
+        String display = resolve(besideDisplay, candidate).map(Path::toString).orElse(candidate);
         if (resolved.filter(Files::isReadable).isEmpty()) {
-            findings.add(ManifestClassPathFinding.of(
-                    declaring, candidate, resolved.map(Path::toString).orElse(candidate)));
+            findings.add(ManifestClassPathFinding.of(declaring, candidate, display));
             return;
         }
-        add(resolved.get().toString(), resolved.get(), ClasspathOrigin.CLASSPATH, Optional.empty());
+        add(display, resolved.get(), ClasspathOrigin.CLASSPATH, Optional.empty());
+    }
+
+    private static Path parentOf(Path entry) {
+        Path parent = entry.getParent();
+        return parent == null ? Path.of("") : parent;
     }
 
     private static Optional<Path> resolve(Path directory, String candidate) {
