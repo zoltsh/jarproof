@@ -42,6 +42,11 @@ final class LinkageReachabilityTest {
      * The contrast the mode exists for. One library method calls another library's absent method, and
      * the application has a static path to the first: an error when reachability is proved, a warning
      * when every origin is merely inspected, and absent when only application bytecode is read.
+     *
+     * <p>The promotion has to be arguable, so the promoted finding also shows the path that promoted it:
+     * the first-party method that starts it, and the library method the break is written in. Neither
+     * quieter mode may show one, because neither proved one — that is the regression this asserts, and it
+     * is what keeps a run at either quieter scope byte for byte what it was before this mode existed.
      */
     @Test
     void promotesALibraryBreakTheApplicationReallyReachesAndOmitsItOtherwise() {
@@ -58,6 +63,12 @@ final class LinkageReachabilityTest {
         assertEquals(List.of(MISSING_METHOD, MISSING_METHOD), EngineFixture.codes(all));
         assertEquals(Severity.WARNING, all.get(0).severity());
         assertEquals(List.of(), EngineFixture.codes(check(application, library, Scope.APPLICATION)));
+        assertEquals(
+                List.of("reachable via: " + MAIN_CLASS + "#" + ReachableFixture.MAIN
+                        + " -> " + ALPHA + "#" + ReachableFixture.WORK),
+                chains(reachable),
+                EngineFixture.evidence(reachable.get(0)).toString());
+        assertEquals(List.of(), chains(all), "the wider scope proves no path, so it quotes none");
     }
 
     /**
@@ -240,5 +251,13 @@ final class LinkageReachabilityTest {
 
     private static List<String> subjects(List<Finding> findings) {
         return findings.stream().map(Finding::subject).toList();
+    }
+
+    /** Every proving chain the findings carry, which is none at all unless the run proved reachability. */
+    private static List<String> chains(List<Finding> findings) {
+        return findings.stream()
+                .flatMap(finding -> EngineFixture.evidence(finding).stream())
+                .filter(line -> line.startsWith("reachable via: "))
+                .toList();
     }
 }

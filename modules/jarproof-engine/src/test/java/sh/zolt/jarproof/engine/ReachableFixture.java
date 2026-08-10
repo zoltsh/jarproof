@@ -155,6 +155,29 @@ final class ReachableFixture {
         return writer.toByteArray();
     }
 
+    /**
+     * A linear call chain: each step's {@code work()V} calls the next step's, and the last step reaches
+     * for a class nothing declares so the chain ends in a finding.
+     *
+     * <p>Chains long enough to exercise the rendering's shortening rule exist in real closures and run
+     * through framework internals no synthesised corpus has. Building one by hand is the only way to
+     * reach that rule, and the one property a real deep chain has is the property this shape keeps:
+     * exactly one caller per step, so the reconstructed path is the chain and not a choice among paths.
+     *
+     * @param prefix the internal name each step is named by, with its index appended
+     * @param steps how many methods the chain runs through
+     * @param broken the class the last step reaches for and nothing on the classpath declares
+     * @return the class files, in chain order
+     */
+    static Map<String, byte[]> linearChain(String prefix, int steps, String broken) {
+        Map<String, byte[]> entries = new LinkedHashMap<>();
+        for (int step = 0; step < steps; step++) {
+            String reached = step + 1 < steps ? prefix + (step + 1) : broken;
+            LinkageFixture.and(entries, prefix + step, type(prefix + step, body(WORK, call(reached, WORK))));
+        }
+        return entries;
+    }
+
     /** The call graph of one classpath, so a test can ask what it proved and how. */
     static ReachableMethods graph(List<Path> applications, List<Path> classpath) {
         ArtifactCatalog catalog = ArtifactCatalog.read(

@@ -24,11 +24,13 @@ import sh.zolt.jarproof.api.Severity;
  * <p>{@link Scope#REACHABLE} analyses every origin as well and then keeps only what {@link Reachability}
  * proves executable: a reference survives when the method it is written in is in the call graph, and it
  * is an error whatever its origin, because a proven chain from first-party code is the same problem in a
- * library as in the application. That filter is the only thing scope changes here — the resolution, the
- * evidence, and the deduplication are identical in all three modes, so a finding cannot mean one thing
- * at one scope and something else at another. The reachability analysis reuses this check's own
- * resolution table, so the graph and the findings can never disagree about which declaration a
- * reference means.
+ * library as in the application. Each surviving finding also shows the chain that proved it, which is the
+ * only thing this mode adds to a finding rather than removes from the report. The resolution and the
+ * deduplication are identical in all three modes, so a finding cannot mean one thing at one scope and
+ * something else at another, and a run at either quieter scope produces the evidence it always has
+ * because there is no graph to quote. The reachability analysis reuses this check's own resolution table,
+ * so the graph and the findings can never disagree about which declaration a reference means — nor, now,
+ * about which method a chain arrives at.
  *
  * <p><strong>What one finding covers.</strong> Findings are deduplicated by code, subject, and
  * referencing class, and the first reference to observe a break supplies its evidence and its source
@@ -87,7 +89,8 @@ final class LinkageCheck {
                         declared.entryName(),
                         declared.sourceFile(),
                         Optional.empty()),
-                severity);
+                severity,
+                reachable);
         declared.references().types().stream()
                 .filter(type -> executable(declared, type.referencingMethod()))
                 .forEach(type -> record(review.type(type)));

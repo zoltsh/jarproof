@@ -3,6 +3,7 @@ package sh.zolt.jarproof.engine;
 import java.util.ArrayList;
 import java.util.List;
 import sh.zolt.jarproof.api.Evidence;
+import sh.zolt.jarproof.api.Scope;
 
 /**
  * The facts a linkage finding shows, and the canonical way to spell a member.
@@ -18,8 +19,25 @@ import sh.zolt.jarproof.api.Evidence;
 final class LinkageEvidence {
     private static final int MAXIMUM_CANDIDATES = 3;
     private static final char MEMBER_SEPARATOR = '#';
+    private static final String PROVING_CHAIN = "reachable via: ";
 
     private LinkageEvidence() {
+    }
+
+    /**
+     * Spells one member the canonical way: the class that owns it, a separator, then its name joined
+     * to its descriptor.
+     *
+     * <p>This is the one place the repository writes that shape. A baseline fingerprints it, a call
+     * graph node reads back as one, and a reconstructed chain is a list of them, so all three agree by
+     * construction instead of by convention.
+     *
+     * @param owner the internal name of the class that owns the member
+     * @param signature the member's name joined to its descriptor
+     * @return the canonical spelling
+     */
+    static String member(String owner, String signature) {
+        return owner + MEMBER_SEPARATOR + signature;
     }
 
     /**
@@ -29,7 +47,21 @@ final class LinkageEvidence {
      * @return the class the reference named, a separator, then the member name and descriptor
      */
     static String subject(MemberReference reference) {
-        return reference.ownerInternalName() + MEMBER_SEPARATOR + reference.name() + reference.descriptor();
+        return member(reference.ownerInternalName(), reference.name() + reference.descriptor());
+    }
+
+    /**
+     * Evidence that the referencing method really executes, which only {@link Scope#REACHABLE} can show.
+     *
+     * <p>Every other line of a linkage finding explains what fails to resolve. This one answers the
+     * question a reader asks first at this scope — why is the broken method reached at all — with the
+     * path {@link Reachability} proved, running from the entry surface to the referencing method itself.
+     *
+     * @param chain the reconstructed path, already rendered
+     * @return the one line that proves the finding is on an executable path
+     */
+    static Evidence reachableVia(String chain) {
+        return new Evidence(PROVING_CHAIN + chain);
     }
 
     /** Evidence that a name is declared nowhere at all. */

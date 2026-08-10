@@ -1,10 +1,12 @@
 package sh.zolt.jarproof.engine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import sh.zolt.jarproof.api.ArtifactLocation;
 import sh.zolt.jarproof.api.Evidence;
 import sh.zolt.jarproof.api.Finding;
+import sh.zolt.jarproof.api.Scope;
 import sh.zolt.jarproof.api.Severity;
 
 /**
@@ -26,12 +28,18 @@ import sh.zolt.jarproof.api.Severity;
  * interfaces are not among them by design: the reference index excludes generic signatures, annotations,
  * declared exceptions, and record metadata, none of which the JVM resolves on the path that raises a
  * linkage error.
+ *
+ * <p>{@code reachable} is present only when the run asked for {@link Scope#REACHABLE}, and it is the one
+ * thing scope changes about a finding: with a graph, every finding gains the chain that proves its
+ * referencing method executes. Absent a graph nothing is appended and the evidence is byte for byte what
+ * the other two scopes have always produced.
  */
 record LinkageReview(
         ResolutionTable table,
         ResolvedClass referencing,
         ArtifactLocation location,
-        Severity severity) {
+        Severity severity,
+        Optional<ReachableMethods> reachable) {
     /**
      * Reviews one class named by executable bytecode.
      *
@@ -78,6 +86,7 @@ record LinkageReview(
                 LinkageFault.MISSING_CLASS,
                 internalName,
                 LinkageEvidence.absent(internalName, referencingMethod),
+                referencingMethod,
                 line));
     }
 
@@ -87,6 +96,7 @@ record LinkageReview(
                 LinkageFault.INACCESSIBLE_CLASS,
                 owner.internalName(),
                 LinkageEvidence.classAccess(owner, referencing, referencingMethod),
+                referencingMethod,
                 line);
     }
 
@@ -96,6 +106,7 @@ record LinkageReview(
                 LinkageFault.KIND_MISMATCH,
                 LinkageEvidence.subject(reference),
                 LinkageEvidence.kind(owner, reference.referencingMethod()),
+                reference.referencingMethod(),
                 reference.line());
     }
 
@@ -106,12 +117,14 @@ record LinkageReview(
                     LinkageFault.MISSING_METHOD,
                     LinkageEvidence.subject(reference),
                     LinkageEvidence.candidates(owner, reference),
+                    reference.referencingMethod(),
                     reference.line());
         }
         return fault(
                 LinkageFault.MISSING_FIELD,
                 LinkageEvidence.subject(reference),
                 LinkageEvidence.resolvedOwner(owner, reference.referencingMethod()),
+                reference.referencingMethod(),
                 reference.line());
     }
 
@@ -121,6 +134,7 @@ record LinkageReview(
                 LinkageFault.STATIC_MISMATCH,
                 LinkageEvidence.subject(reference),
                 LinkageEvidence.memberForm(owner, resolved, reference.referencingMethod()),
+                reference.referencingMethod(),
                 reference.line());
     }
 
@@ -130,11 +144,35 @@ record LinkageReview(
                 LinkageFault.INACCESSIBLE_MEMBER,
                 LinkageEvidence.subject(reference),
                 LinkageEvidence.memberAccess(owner, resolved, reference.referencingMethod()),
+                reference.referencingMethod(),
                 reference.line());
     }
 
-    private Finding fault(LinkageFault fault, String subject, List<Evidence> evidence, Optional<Integer> line) {
-        return fault.at(at(line), severity, subject, evidence);
+    private Finding fault(
+            LinkageFault fault,
+            String subject,
+            List<Evidence> evidence,
+            String referencingMethod,
+            Optional<Integer> line) {
+        return fault.at(at(line), severity, subject, proved(evidence, referencingMethod));
+    }
+
+    /**
+     * Appends the chain that proves the referencing method executes, when the run proved one.
+     *
+     * <p>Every finding carries its own line even when several share a referencing method: a reader
+     * follows one finding at a time, and a line that has to be looked up in a sibling finding is not
+     * evidence. The chain is appended last, after the facts about what failed to resolve, because it
+     * answers a different question — why this code runs — and a reader reaches for it second.
+     */
+    private List<Evidence> proved(List<Evidence> evidence, String referencingMethod) {
+        if (reachable.isEmpty()) {
+            return evidence;
+        }
+        List<Evidence> proved = new ArrayList<>(evidence);
+        proved.add(LinkageEvidence.reachableVia(
+                reachable.get().chain(referencing.internalName(), referencingMethod)));
+        return List.copyOf(proved);
     }
 
     /** The referencing class file, narrowed to the line this reference is written on. */

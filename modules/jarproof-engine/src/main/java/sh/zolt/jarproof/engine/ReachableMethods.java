@@ -25,8 +25,6 @@ import java.util.Set;
  * be reachable.
  */
 record ReachableMethods(Set<ReachableNode> reached, Map<ReachableNode, ReachableNode> callers, int declared) {
-    private static final String CHAIN_STEP = " -> ";
-
     ReachableMethods {
         reached = Set.copyOf(reached);
         callers = Map.copyOf(callers);
@@ -46,12 +44,20 @@ record ReachableMethods(Set<ReachableNode> reached, Map<ReachableNode, Reachable
     /**
      * Rebuilds the path that reached one method, the entry method first.
      *
-     * <p>A method the analysis never reached answers with itself alone, which is the truthful answer
-     * to why it is not in the graph.
+     * <p>The walk follows caller pointers, and each pointer was written once, at the moment its method
+     * was discovered by a method that was already reachable. Every step therefore leads strictly
+     * backwards in discovery order and the walk ends at an entry method, which is why it needs no depth
+     * ceiling. A method that <em>is</em> entry surface has no pointer at all and answers with itself
+     * alone: "your own code, directly" is the whole answer to why it runs, and rendering it as one step
+     * says that rather than saying nothing.
+     *
+     * <p>A method the analysis never reached answers with itself alone too, which is the truthful answer
+     * to why it is not in the graph. Callers that only report reached methods never ask.
      *
      * @param internalName the class the method belongs to
      * @param referencingMethod that method's name joined to its descriptor
-     * @return the chain, each step spelled as a member and separated by an arrow
+     * @return the chain, each step spelled as a member and separated by an arrow, shortened in the
+     *     middle when it runs longer than a reader can follow
      */
     String chain(String internalName, String referencingMethod) {
         List<String> steps = new ArrayList<>();
@@ -62,6 +68,6 @@ record ReachableMethods(Set<ReachableNode> reached, Map<ReachableNode, Reachable
             steps.add(current.toString());
         }
         Collections.reverse(steps);
-        return String.join(CHAIN_STEP, steps);
+        return ReachableChain.render(steps);
     }
 }

@@ -35,7 +35,10 @@ final class ReachableScopeTest {
     private static final String CLOSURE_REPORT = "reachable-corpus.json";
     private static final String LINKAGE_PREFIX = "JP1";
     private static final String CALL_SITE = "referenced from ";
+    private static final String PROVING_CHAIN = "reachable via: ";
     private static final String FIXTURE_SUBJECT = "sh/zolt/jarproof/fixtures/";
+    private static final String CONSUMER_MAIN =
+            "missingmethod/consumer/OrderReport#main([Ljava/lang/String;)V";
     private static final String CONSUMER = "-consumer";
     private static final String BROKEN_API = "-api-v2";
     private static final String LOUD = "The healthy corpus is not silent at --scope reachable, so the"
@@ -78,6 +81,29 @@ final class ReachableScopeTest {
         proves("static-instance-flip", "JP1004", "staticflip/ClockSource#label()Ljava/lang/String;");
         proves("class-to-interface", "JP1005", "classkind/Renderer#render()Ljava/lang/String;");
         proves("inaccessible", "JP1006", "inaccessible/SecretVault");
+    }
+
+    /**
+     * The mode explains itself on a real artifact pair. The finding it keeps carries the chain that
+     * proves its referencing method executes, read back out of the machine report rather than out of the
+     * engine, so the evidence a consumer of the JSON sees is the thing under test.
+     *
+     * <p>The chain is one node long here, and that is the point rather than a shortfall: the removed
+     * method is called from the consumer's own {@code main}, the entry surface presumes first-party code
+     * live, and "your own code, directly" is the whole proof. A mode that printed nothing in that case
+     * would be silent exactly where the answer is simplest.
+     */
+    @Test
+    void carriesTheChainThatProvesASurvivingFindingExecutes() {
+        CorpusCheck check = reachable("missing-method-chain", List.of(
+                CorpusCommand.APPLICATION, FixtureCorpus.jar("missing-method" + CONSUMER).toString(),
+                CorpusCommand.CLASSPATH, FixtureCorpus.jar("missing-method" + BROKEN_API).toString()));
+
+        assertEquals(
+                List.of(PROVING_CHAIN + FIXTURE_SUBJECT + CONSUMER_MAIN),
+                chains(check.report()),
+                check.report());
+        assertEquals(1, check.exitCode(), check.err());
     }
 
     /**
@@ -149,6 +175,22 @@ final class ReachableScopeTest {
             }
         }
         return lines.toString();
+    }
+
+    /**
+     * Every proving chain the report carries, in report order, read with the CLI's own scanner so an
+     * assertion measures parsed values rather than a substring of formatted text.
+     */
+    private static List<String> chains(String report) {
+        List<String> proven = new ArrayList<>();
+        for (Object element : array(object(JsonScanner.parse(report)).get("findings"))) {
+            for (Object detail : array(object(element).get("evidence"))) {
+                if (((String) detail).startsWith(PROVING_CHAIN)) {
+                    proven.add((String) detail);
+                }
+            }
+        }
+        return List.copyOf(proven);
     }
 
     private static String evidenceLine(Map<?, ?> finding) {

@@ -15,17 +15,18 @@ package sh.zolt.jarproof.engine;
  * every chain this analysis reconstructs the same on every machine.
  */
 record ReachableNode(String owner, String signature) implements Comparable<ReachableNode> {
-    private static final char MEMBER_SEPARATOR = '#';
-
     @Override
     public int compareTo(ReachableNode other) {
         int byOwner = owner.compareTo(other.owner);
         return byOwner != 0 ? byOwner : signature.compareTo(other.signature);
     }
 
-    /** Spells the node the way linkage evidence spells a member, so a chain reads like a report. */
+    /**
+     * Spells the node with {@link LinkageEvidence}'s own canonical member spelling, so a chain in a
+     * finding's evidence and the subject of that finding cannot drift apart.
+     */
     @Override
     public String toString() {
-        return owner + MEMBER_SEPARATOR + signature;
+        return LinkageEvidence.member(owner, signature);
     }
 }
