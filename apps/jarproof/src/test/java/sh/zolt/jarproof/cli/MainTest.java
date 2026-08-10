@@ -27,6 +27,14 @@ final class MainTest {
     }
 
     @Test
+    void printsTheProductVersionBanner() {
+        Invocation invocation = invoke("--version");
+
+        assertEquals(0, invocation.exitCode());
+        assertEquals("jarproof 0.1.0-alpha.1-dev\n", invocation.out().replace("\r\n", "\n"));
+    }
+
+    @Test
     void rejectsCommandsThatDoNotExistYet() {
         Invocation invocation = invoke("check");
 
