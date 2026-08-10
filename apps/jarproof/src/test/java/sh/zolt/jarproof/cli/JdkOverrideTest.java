@@ -62,12 +62,22 @@ final class JdkOverrideTest {
     }
 
     @Test
-    void refusesAJdkThatCannotDescribeItsOwnRelease() {
+    void readsItsOwnReleaseFromAJdkWhoseArchiveCarriesIt() {
         Invocation invocation = check(toolchainHome(), String.valueOf(Runtime.version().feature()));
+
+        assertEquals(1, invocation.exitCode(), invocation.err());
+        assertTrue(invocation.out().contains("JP1003"), invocation.out());
+    }
+
+    @Test
+    void refusesASignatureArchiveLackingTheTargetRelease() throws IOException {
+        Path home = signaturesDeclaring("H/java.base/java/lang/Object.sig");
+
+        Invocation invocation = check(home, "21");
 
         assertEquals(2, invocation.exitCode());
         assertTrue(invocation.err().contains("newer than the target Java release"), invocation.err());
-        assertTrue(invocation.err().contains("declares no signatures for Java"), invocation.err());
+        assertTrue(invocation.err().contains("declares no signatures for Java 21"), invocation.err());
     }
 
     @Test

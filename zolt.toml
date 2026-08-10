@@ -42,10 +42,10 @@ defaultMembers = ["apps/jarproof"]
 central = "https://repo.maven.apache.org/maven2"
 
 [toolchain.zolt]
-version = "0.1.0-zap.20260804.6ccff768b7bc"
+version = "0.1.0-zap.20260810.e45c94a87776"
 
 [toolchain.java]
-version = "21"
+version = "25"
 distribution = "graalvm-community"
 features = ["native-image"]
 policy = "require-managed"

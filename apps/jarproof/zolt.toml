@@ -39,7 +39,10 @@ testOutput = "target/test-classes"
 [package]
 mode = "uber"
 
+# picocli-codegen unconditionally emits an EMPTY proxy-config.json, and GraalVM 25 deprecates
+# that resource format with a warning the native gate rightly refuses. Excluding the one empty
+# file silences nothing real; the generated reflect-config stays load-bearing and pinned by test.
 [native]
 imageName = "jarproof"
 output = "target/native"
-args = ["--no-fallback"]
+args = ["--no-fallback", "--exclude-config", ".*", "META-INF/native-image/picocli-generated/proxy-config\\.json"]

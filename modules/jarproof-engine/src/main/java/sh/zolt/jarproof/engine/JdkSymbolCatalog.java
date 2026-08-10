@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -74,7 +75,8 @@ import java.util.zip.GZIPInputStream;
  * data, and a reader reports it as such rather than guessing.
  */
 final class JdkSymbolCatalog {
-    private static final Set<Integer> BUNDLED_RELEASES = Set.of(17);
+    private static final Set<Integer> BUNDLED_RELEASES =
+            Collections.unmodifiableSortedSet(new TreeSet<>(Set.of(17, 21)));
     private static final String RESOURCE_PREFIX = "jdk-symbols-";
     private static final String RESOURCE_SUFFIX = ".bin";
 

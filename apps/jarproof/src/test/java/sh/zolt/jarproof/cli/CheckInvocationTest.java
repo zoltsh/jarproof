@@ -155,11 +155,11 @@ final class CheckInvocationTest {
                 CliFixture.APPLICATION,
                 CliFixture.brokenApplication(workspace).toString(),
                 CliFixture.TARGET_JAVA,
-                "21");
+                "11");
 
         assertEquals(2, invocation.exitCode());
         assertEquals(
-                "Java 21 has no bundled JDK symbols; bundled releases are [17]\n",
+                "Java 11 has no bundled JDK symbols; bundled releases are [17, 21]\n",
                 invocation.err());
     }
 

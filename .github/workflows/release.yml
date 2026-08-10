@@ -28,16 +28,16 @@ jobs:
         include:
           - runner: ubuntu-24.04
             platform: linux-x64
-            zoltSha256: e05b00e206d312ddf15954370ed904c114f7037f9da6a0a69cc7ddd4ee7e3f55
+            zoltSha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
           - runner: ubuntu-24.04-arm
             platform: linux-arm64
-            zoltSha256: 7bb6a9c1953dbc4a2a242665da8a1219a6fb0f90e6f31c62c282e0523afd91a0
+            zoltSha256: 829dac7b6a79f63a1b66a1810dbc5741b94e72c05f721329c60ef61beaa7dd4b
           - runner: macos-13
             platform: macos-x64
-            zoltSha256: ed576be109b0280ce1a4d6951d63db037c05491e2d1feab231f0118b7d843721
+            zoltSha256: 62b71be7319c920157ebb1dfc7108af1c88b59dbfe20c776c46c6b4177d52a57
           - runner: macos-15
             platform: macos-arm64
-            zoltSha256: a7f899bdeab3f8027d52b4fabc8ebf69859a7c8f1d84d90d84817e977e22dc91
+            zoltSha256: 634efe024c58ce9e4400bf47a10d2e93298c423e4fcf9b80ff09086e71bb3a8f
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
 
@@ -51,7 +51,7 @@ jobs:
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:
           channel: zap
-          version: 0.1.0-zap.20260804.6ccff768b7bc
+          version: 0.1.0-zap.20260810.e45c94a87776
           sha256: ${{ matrix.zoltSha256 }}
 
       - name: Check repository
@@ -97,8 +97,8 @@ jobs:
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:
           channel: zap
-          version: 0.1.0-zap.20260804.6ccff768b7bc
-          sha256: e05b00e206d312ddf15954370ed904c114f7037f9da6a0a69cc7ddd4ee7e3f55
+          version: 0.1.0-zap.20260810.e45c94a87776
+          sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
 
       - name: Download the platform archives
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1

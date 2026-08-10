@@ -41,8 +41,9 @@ final class VerificationRun {
     private static final String NO_SIGNATURE_ARCHIVE = "This JDK has no signature archive at ";
     private static final String NO_ROOT_CLASS = "This signature archive declares no ";
     private static final String FOR_RELEASE = " for Java ";
-    private static final String OWN_RELEASE = ". A JDK's signature archive never describes its own"
-            + " release, so --jdk needs a JDK newer than the target Java release.";
+    private static final String OWN_RELEASE = ". A JDK's signature archive may not describe its own"
+            + " release (before JDK 25 it never did), so --jdk may need a JDK newer than the target"
+            + " Java release.";
 
     private VerificationRun() {
     }
