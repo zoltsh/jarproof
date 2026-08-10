@@ -40,7 +40,8 @@ final class ApiDesignArchitectureTest {
             "sh.zolt.jarproof.api.TargetRuntime",
             "sh.zolt.jarproof.api.VerificationRequest",
             "sh.zolt.jarproof.api.VerificationResult",
-            "sh.zolt.jarproof.cli.Main");
+            "sh.zolt.jarproof.cli.Main",
+            "sh.zolt.jarproof.engine.Jarproof");
     private static final List<Class<?>> API_TYPES = List.of(
             ArtifactLocation.class,
             Evidence.class,
