@@ -1,0 +1,7 @@
+* @zoltsh/release-engineers
+
+/.github/ @zoltsh/release-engineers
+/apps/ @zoltsh/release-engineers
+/modules/jarproof-api/ @zoltsh/release-engineers
+/guardrails/ @zoltsh/release-engineers
+/zolt.toml @zoltsh/release-engineers
