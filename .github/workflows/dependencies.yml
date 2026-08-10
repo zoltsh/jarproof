@@ -1,0 +1,26 @@
+name: dependencies
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  submit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Submit dependency snapshot
+        uses: zoltsh/submit-dependencies@04ede689b0e33600bf68bc93a7848e549ebeb3a4 # main, no release tag yet
+        with:
+          validate-lock: true
