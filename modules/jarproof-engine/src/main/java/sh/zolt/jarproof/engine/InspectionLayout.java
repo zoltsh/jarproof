@@ -37,6 +37,20 @@ final class InspectionLayout {
     }
 
     /**
+     * Returns whether an entry is an archive the artifact carries inside itself.
+     *
+     * <p>Counted wherever it sits and never opened, which is what keeps the count a layout fact: an
+     * application archive that carries its own dependencies is exactly the shape this answers for, and
+     * an inspection describes that shape rather than reading through it.
+     *
+     * @param entryName entry name inside the artifact
+     * @return whether the name ends in an archive suffix
+     */
+    static boolean isNestedArchive(String entryName) {
+        return ArchiveLayout.isNestedArchive(entryName);
+    }
+
+    /**
      * Returns the service an entry registers providers for.
      *
      * @param entryName entry name inside the artifact

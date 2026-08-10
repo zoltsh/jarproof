@@ -15,6 +15,11 @@ import sh.zolt.jarproof.api.ArtifactSummary;
  * binary name, and release directories ascend by release. A service or a release directory is
  * counted once however many entries mention it, while a class file version is counted once per
  * class file, because the point of that line is how many classes sit at each level.
+ *
+ * <p>Counting stays flat. A nested archive is one entry and one nested archive, never a set of entries
+ * to descend into, and a class entry is counted wherever it sits — including inside the classes root of
+ * an application archive that carries its own dependencies, because that is a class this artifact
+ * holds. Deciding which of them a runtime would reach is what {@code check} does with the same bytes.
  */
 final class InspectionTally {
     private static final String LEVEL_SEPARATOR = ":";
@@ -25,6 +30,7 @@ final class InspectionTally {
     private final Set<Integer> releases = new TreeSet<>();
     private int entryCount;
     private int classCount;
+    private int nestedArchiveCount;
 
     InspectionTally(String artifact) {
         this.artifact = artifact;
@@ -39,6 +45,9 @@ final class InspectionTally {
         entryCount++;
         if (InspectionLayout.isClassEntry(entryName)) {
             classCount++;
+        }
+        if (InspectionLayout.isNestedArchive(entryName)) {
+            nestedArchiveCount++;
         }
         InspectionLayout.serviceName(entryName).ifPresent(services::add);
         InspectionLayout.multiReleaseVersion(entryName).ifPresent(releases::add);
@@ -60,6 +69,7 @@ final class InspectionTally {
                 artifact,
                 entryCount,
                 classCount,
+                nestedArchiveCount,
                 bytecodeLevels(),
                 List.copyOf(services),
                 List.copyOf(releases));

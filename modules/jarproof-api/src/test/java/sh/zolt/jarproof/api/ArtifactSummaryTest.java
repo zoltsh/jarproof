@@ -21,6 +21,7 @@ final class ArtifactSummaryTest {
         assertEquals(ARTIFACT, summary.artifact());
         assertEquals(27, summary.entryCount());
         assertEquals(27, summary.classCount());
+        assertEquals(2, summary.nestedArchiveCount());
         assertEquals(LEVELS, summary.bytecodeLevels());
         assertEquals(SERVICES, summary.declaredServices());
         assertEquals(VERSIONS, summary.multiReleaseVersions());
@@ -28,8 +29,9 @@ final class ArtifactSummaryTest {
 
     @Test
     void acceptsAnArtifactWithNothingToReport() {
-        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 0, 0, List.of(), List.of(), List.of());
+        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 0, 0, 0, List.of(), List.of(), List.of());
 
+        assertEquals(0, summary.nestedArchiveCount());
         assertEquals(List.of(), summary.bytecodeLevels());
         assertEquals(List.of(), summary.declaredServices());
         assertEquals(List.of(), summary.multiReleaseVersions());
@@ -38,7 +40,7 @@ final class ArtifactSummaryTest {
     @Test
     void copiesTheClassFileVersionsDefensively() {
         List<String> levels = new ArrayList<>(LEVELS);
-        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 27, 27, levels, SERVICES, VERSIONS);
+        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 27, 27, 2, levels, SERVICES, VERSIONS);
 
         levels.add("52:1");
 
@@ -49,7 +51,7 @@ final class ArtifactSummaryTest {
     @Test
     void copiesTheDeclaredServicesDefensively() {
         List<String> services = new ArrayList<>(SERVICES);
-        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 27, 27, LEVELS, services, VERSIONS);
+        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 27, 27, 2, LEVELS, services, VERSIONS);
 
         services.add("com.acme.spi.Late");
 
@@ -61,7 +63,7 @@ final class ArtifactSummaryTest {
     @Test
     void copiesTheReleaseDirectoriesDefensively() {
         List<Integer> versions = new ArrayList<>(VERSIONS);
-        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 27, 27, LEVELS, SERVICES, versions);
+        ArtifactSummary summary = new ArtifactSummary(ARTIFACT, 27, 27, 2, LEVELS, SERVICES, versions);
 
         versions.add(21);
 
@@ -73,23 +75,36 @@ final class ArtifactSummaryTest {
     void rejectsAnArtifactPathThatNamesNothing() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new ArtifactSummary(" ", 0, 0, List.of(), List.of(), List.of()));
+                () -> new ArtifactSummary(" ", 0, 0, 0, List.of(), List.of(), List.of()));
+    }
+
+    @Test
+    void rejectsACountOfLessThanNothing() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new ArtifactSummary(ARTIFACT, -1, 0, 0, List.of(), List.of(), List.of()));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new ArtifactSummary(ARTIFACT, 0, -1, 0, List.of(), List.of(), List.of()));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new ArtifactSummary(ARTIFACT, 0, 0, -1, List.of(), List.of(), List.of()));
     }
 
     @Test
     void rejectsAnyMissingComponent() {
         assertThrows(
                 NullPointerException.class,
-                () -> new ArtifactSummary(null, 0, 0, List.of(), List.of(), List.of()));
+                () -> new ArtifactSummary(null, 0, 0, 0, List.of(), List.of(), List.of()));
         assertThrows(
                 NullPointerException.class,
-                () -> new ArtifactSummary(ARTIFACT, 0, 0, null, List.of(), List.of()));
+                () -> new ArtifactSummary(ARTIFACT, 0, 0, 0, null, List.of(), List.of()));
         assertThrows(
                 NullPointerException.class,
-                () -> new ArtifactSummary(ARTIFACT, 0, 0, List.of(), null, List.of()));
+                () -> new ArtifactSummary(ARTIFACT, 0, 0, 0, List.of(), null, List.of()));
         assertThrows(
                 NullPointerException.class,
-                () -> new ArtifactSummary(ARTIFACT, 0, 0, List.of(), List.of(), null));
+                () -> new ArtifactSummary(ARTIFACT, 0, 0, 0, List.of(), List.of(), null));
     }
 
     @Test
@@ -98,15 +113,16 @@ final class ArtifactSummaryTest {
 
         assertEquals(summary, sample());
         assertEquals(summary.hashCode(), sample().hashCode());
-        assertNotEquals(summary, new ArtifactSummary("other.jar", 27, 27, LEVELS, SERVICES, VERSIONS));
-        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 28, 27, LEVELS, SERVICES, VERSIONS));
-        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 26, LEVELS, SERVICES, VERSIONS));
-        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, List.of(), SERVICES, VERSIONS));
-        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, LEVELS, List.of(), VERSIONS));
-        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, LEVELS, SERVICES, List.of()));
+        assertNotEquals(summary, new ArtifactSummary("other.jar", 27, 27, 2, LEVELS, SERVICES, VERSIONS));
+        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 28, 27, 2, LEVELS, SERVICES, VERSIONS));
+        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 26, 2, LEVELS, SERVICES, VERSIONS));
+        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, 1, LEVELS, SERVICES, VERSIONS));
+        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, 2, List.of(), SERVICES, VERSIONS));
+        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, 2, LEVELS, List.of(), VERSIONS));
+        assertNotEquals(summary, new ArtifactSummary(ARTIFACT, 27, 27, 2, LEVELS, SERVICES, List.of()));
     }
 
     private static ArtifactSummary sample() {
-        return new ArtifactSummary(ARTIFACT, 27, 27, LEVELS, SERVICES, VERSIONS);
+        return new ArtifactSummary(ARTIFACT, 27, 27, 2, LEVELS, SERVICES, VERSIONS);
     }
 }
