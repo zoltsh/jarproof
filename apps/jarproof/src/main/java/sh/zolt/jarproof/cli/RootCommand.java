@@ -9,7 +9,8 @@ import picocli.CommandLine.Spec;
         name = ProductIdentity.TOOL_NAME,
         description = "Find JAR hell before production.",
         mixinStandardHelpOptions = true,
-        version = ProductIdentity.VERSION_BANNER)
+        version = ProductIdentity.VERSION_BANNER,
+        subcommands = ExplainCommand.class)
 final class RootCommand implements Runnable {
     @Spec
     private CommandSpec spec;
