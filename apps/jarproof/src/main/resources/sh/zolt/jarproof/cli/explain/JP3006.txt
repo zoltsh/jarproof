@@ -1,0 +1,20 @@
+JP3006 invalid nested application archive layout
+
+An application archive carries its own dependencies, and the layout it carries
+them in does not hold together.
+
+How the JVM gets there
+  Such an archive is not a classpath entry the JVM understands. Its launcher
+  builds the real classpath from a classes root and a library directory inside
+  the archive, adds the libraries in the order a classpath index names, and
+  reads each one in place, which works only while the entry is stored rather
+  than compressed. An index naming a library the archive does not hold drops
+  every class in it, and a library nested inside another library is on nobody's
+  classpath at all, so both are errors. A compressed library is a warning: it
+  reads here, and every other finding about it holds, but a launcher addressing
+  it directly cannot.
+
+Typical fix
+  Repackage with a launcher-aware packager rather than repairing the archive by
+  hand: it writes the index, stores the nested libraries, and keeps each
+  dependency exactly one level deep.
