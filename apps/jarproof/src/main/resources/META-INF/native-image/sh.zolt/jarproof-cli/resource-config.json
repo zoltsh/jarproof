@@ -1,0 +1,9 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "sh/zolt/jarproof/cli/explain/JP[0-9]{4}\\.txt"
+      }
+    ]
+  }
+}
