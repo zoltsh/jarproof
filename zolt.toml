@@ -1,0 +1,29 @@
+[workspace]
+name = "jarproof"
+members = [
+    "modules/jarproof-api",
+    "modules/jarproof-engine",
+    "apps/jarproof",
+    "guardrails/jarproof-architecture-tests",
+]
+defaultMembers = ["apps/jarproof"]
+
+[repositories]
+central = "https://repo.maven.apache.org/maven2"
+
+[toolchain.zolt]
+version = "0.1.0-zap.20260804.6ccff768b7bc"
+
+[toolchain.java]
+version = "21"
+distribution = "graalvm-community"
+features = ["native-image"]
+policy = "require-managed"
+
+[coverage]
+minLine = 90.0
+minBranch = 80.0
+
+[commands.tasks.check]
+description = "Run the complete Jarproof repository gate"
+cmd = ["scripts/check"]

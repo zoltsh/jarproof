@@ -1,0 +1,255 @@
+version = 5
+projectResolutionFingerprint = "sha256:82b3259410ef3a53f937581a1c8f9800a90954ef9d3c85706c90700217e05a78"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:554d923868d774c400b43213f6bd6c358a07bd696b5abcf4b6d6961d939c1626", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:96765cba55ffae48438025865d9644106b089364c14710d20d94e3a44c82cae0", "framework.quarkus=sha256:ada24de6f7d1b72f63a8553396805f65eb7a56b6ce4258faed6044d88369b67a", "framework.springBoot.native=sha256:047953cbb8f28f8be16615aeadc2157424765e6d8a0440232c81a12d23a7a649", "java=sha256:366b013002b45eee5144809101f79326c36cd2bfb56c1b955f815f992dd6af74", "package=sha256:ab23b3b17c162a5dc6f72025342ba22a472a62ad12f34c223aa582be8d0ee85f", "repositories=sha256:747fc0a4e7744ae0e55547796d4d3e0c814e4ff601ef334a6b6e99f72ea53fc6", "schema=sha256:44836ee091c83e22eafff1b78003cd29926b0b6f5c40dcdc87b5244a0258338e"]
+
+[[package]]
+id = "args4j:args4j"
+version = "2.0.28"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "args4j/args4j/2.0.28/args4j-2.0.28.jar"
+pom = "args4j/args4j/2.0.28/args4j-2.0.28.pom"
+jarSha256 = "11b029a602e787e2bc08eb3b77eda1a4f5e8b263d22e3c5d6220cd5c51f30b18"
+pomSha256 = "1f821c93660b7fa573692c305ca97092eab647cefeccfcb3f54771117c3737d3"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = []
+
+[[package]]
+id = "info.picocli:picocli"
+version = "4.7.6"
+source = "maven-central"
+scope = "compile"
+direct = true
+jar = "info/picocli/picocli/4.7.6/picocli-4.7.6.jar"
+pom = "info/picocli/picocli/4.7.6/picocli-4.7.6.pom"
+jarSha256 = "ed441183f309b93f104ca9e071e314a4062a893184e18a3c7ad72ec9cba12ba0"
+pomSha256 = "2d2248cccf487ad9ce208dec751745df15cd1e1924a4cc3d36841b5f1990c6fb"
+members = ["apps/jarproof"]
+dependencies = []
+
+[[package]]
+id = "org.jacoco:org.jacoco.agent"
+version = "0.8.14"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar"
+pom = "org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14.pom"
+jarSha256 = "3fb76eea65f81bd9415202bab34b6571728841dff1ab8e6bbe81adc2e299face"
+pomSha256 = "943e77ed5ccb99aeeb3fe5643fea5a636f6f828e3958f8605f426ddc9afab8c9"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = []
+
+[[package]]
+id = "org.jacoco:org.jacoco.cli"
+version = "0.8.14"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14.jar"
+pom = "org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14.pom"
+jarSha256 = "12d5d78351c638efeea71ac840f6a5cf7bcff89001ddb05eb89f956d1079a2c6"
+pomSha256 = "240a1cdc87a5510fde23fbe14067589823b6b057d88e17a8b6fb984a4f54fbdd"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = ["args4j:args4j:2.0.28:jar:tool-coverage", "org.jacoco:org.jacoco.core:0.8.14:jar:tool-coverage", "org.jacoco:org.jacoco.report:0.8.14:jar:tool-coverage"]
+
+[[package]]
+id = "org.jacoco:org.jacoco.core"
+version = "0.8.14"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.jar"
+pom = "org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.pom"
+jarSha256 = "28abbf0eea5a08e4f24097f2fbac663ca17c341c25c3a04d90d6cd325943c995"
+pomSha256 = "7b75bae2c1779af544369833afe1d68f5a3955e91d166cb19dff886534b1ad6c"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = ["org.ow2.asm:asm-commons:9.9:jar:tool-coverage", "org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9.9:jar:tool-coverage"]
+
+[[package]]
+id = "org.jacoco:org.jacoco.report"
+version = "0.8.14"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/jacoco/org.jacoco.report/0.8.14/org.jacoco.report-0.8.14.jar"
+pom = "org/jacoco/org.jacoco.report/0.8.14/org.jacoco.report-0.8.14.pom"
+jarSha256 = "a3e2026060ab8b8d5c650706406234bb4c033dfd5376afeb8b1666e8ed27c453"
+pomSha256 = "e2ebf2c580f86afa7f75f43a28109dd894c42463928bc9911777e35275108e58"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = ["org.jacoco:org.jacoco.core:0.8.14:jar:tool-coverage"]
+
+[[package]]
+id = "org.junit.platform:junit-platform-console-standalone"
+version = "1.11.4"
+source = "maven-central"
+scope = "test"
+direct = true
+jar = "org/junit/platform/junit-platform-console-standalone/1.11.4/junit-platform-console-standalone-1.11.4.jar"
+pom = "org/junit/platform/junit-platform-console-standalone/1.11.4/junit-platform-console-standalone-1.11.4.pom"
+jarSha256 = "b016ef6b1c3454d6d7c2c88ce081dabf289699686af6622d6e4e2e1b54b4a2fc"
+pomSha256 = "f44619c18edb94360cc382e6baf943e9300625d1a0a949ee158977eace5713d1"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = []
+
+[[package]]
+id = "org.ow2.asm:asm-commons"
+version = "9.9"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/ow2/asm/asm-commons/9.9/asm-commons-9.9.jar"
+pom = "org/ow2/asm/asm-commons/9.9/asm-commons-9.9.pom"
+jarSha256 = "db2f6f26150bbe7c126606b4a1151836bcc22a1e05a423b3585698bece995ff8"
+pomSha256 = "18a5d3ef1377e7544b3ca3210f261396b987f6010ef591d3872adae63119ee43"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = ["org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9.9:jar:tool-coverage"]
+
+[[package]]
+id = "org.ow2.asm:asm-tree"
+version = "9.9"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/ow2/asm/asm-tree/9.9/asm-tree-9.9.jar"
+pom = "org/ow2/asm/asm-tree/9.9/asm-tree-9.9.pom"
+jarSha256 = "42178f3775c9c63f9e5e1446747d29b4eca4d91bd6e75e5c43cfa372a47d38c6"
+pomSha256 = "d01788ed8e6e8e24acaf6cb4a7bdcc2733416252faa00232959e3e2e9df1bf44"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = ["org.ow2.asm:asm:9.9:jar:tool-coverage"]
+
+[[package]]
+id = "org.ow2.asm:asm"
+version = "9.9"
+source = "maven-central"
+scope = "compile"
+direct = true
+jar = "org/ow2/asm/asm/9.9/asm-9.9.jar"
+pom = "org/ow2/asm/asm/9.9/asm-9.9.pom"
+jarSha256 = "03d99a74ad1ee5c71334ef67437f4ef4fe3488caa7c96d8645abc73c8e2017d4"
+pomSha256 = "cf861ef1e745d57154af79ae14df340ed5341e5dcd0157cefcd2eb7f1aa05c57"
+members = ["modules/jarproof-engine"]
+dependencies = []
+
+[[package]]
+id = "org.ow2.asm:asm"
+version = "9.9"
+source = "maven-central"
+scope = "tool-coverage"
+direct = false
+jar = "org/ow2/asm/asm/9.9/asm-9.9.jar"
+pom = "org/ow2/asm/asm/9.9/asm-9.9.pom"
+jarSha256 = "03d99a74ad1ee5c71334ef67437f4ef4fe3488caa7c96d8645abc73c8e2017d4"
+pomSha256 = "cf861ef1e745d57154af79ae14df340ed5341e5dcd0157cefcd2eb7f1aa05c57"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+dependencies = []
+
+[[package]]
+id = "sh.zolt:jarproof-api"
+version = "0.1.0-alpha.1-SNAPSHOT"
+source = "workspace"
+scope = "compile"
+direct = true
+workspace = "modules/jarproof-api"
+workspaceOutput = "target/classes"
+members = ["apps/jarproof", "modules/jarproof-engine"]
+dependencies = []
+
+[[package]]
+id = "sh.zolt:jarproof-api"
+version = "0.1.0-alpha.1-SNAPSHOT"
+source = "workspace"
+scope = "test"
+direct = true
+workspace = "modules/jarproof-api"
+workspaceOutput = "target/classes"
+members = ["guardrails/jarproof-architecture-tests"]
+dependencies = []
+
+[[package]]
+id = "sh.zolt:jarproof-engine"
+version = "0.1.0-alpha.1-SNAPSHOT"
+source = "workspace"
+scope = "compile"
+direct = true
+workspace = "modules/jarproof-engine"
+workspaceOutput = "target/classes"
+members = ["apps/jarproof"]
+dependencies = ["org.ow2.asm:asm:9.9:jar:compile"]
+
+[[toolchain.java]]
+id = "java-graalvm-community-21-native-image"
+request.version = "21"
+request.distribution = "graalvm-community"
+request.features = ["native-image"]
+request.policy = "require-managed"
+platform.os = "linux"
+platform.arch = "x64"
+resolved.version = "21.0.2"
+resolved.distribution = "graalvm-community"
+artifact.catalog = "builtin:java-graalvm-community-21-native-image"
+artifact.uri = "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz"
+artifact.sha256 = "b048069aaa3a99b84f5b957b162cc181a32a4330cbc35402766363c5be76ae48"
+layout.javaHome = "."
+layout.executables.java = "bin/java"
+layout.executables.javac = "bin/javac"
+layout.executables.jar = "bin/jar"
+layout.executables.nativeImage = "lib/svm/bin/native-image"
+
+[[toolchain.java]]
+id = "java-graalvm-community-21-native-image"
+request.version = "21"
+request.distribution = "graalvm-community"
+request.features = ["native-image"]
+request.policy = "require-managed"
+platform.os = "linux"
+platform.arch = "aarch64"
+resolved.version = "21.0.2"
+resolved.distribution = "graalvm-community"
+artifact.catalog = "builtin:java-graalvm-community-21-native-image"
+artifact.uri = "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-aarch64_bin.tar.gz"
+artifact.sha256 = "a34be691ce68f0acf4655c7c6c63a9a49ed276a11859d7224fd94fc2f657cd7a"
+layout.javaHome = "."
+layout.executables.java = "bin/java"
+layout.executables.javac = "bin/javac"
+layout.executables.jar = "bin/jar"
+layout.executables.nativeImage = "lib/svm/bin/native-image"
+
+[[toolchain.java]]
+id = "java-graalvm-community-21-native-image"
+request.version = "21"
+request.distribution = "graalvm-community"
+request.features = ["native-image"]
+request.policy = "require-managed"
+platform.os = "macos"
+platform.arch = "x64"
+resolved.version = "21.0.2"
+resolved.distribution = "graalvm-community"
+artifact.catalog = "builtin:java-graalvm-community-21-native-image"
+artifact.uri = "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-x64_bin.tar.gz"
+artifact.sha256 = "7a8aa93fa45d1721908477abf4732a32637d420ffcb66ada9fb6456440b0d9e1"
+layout.javaHome = "Contents/Home"
+layout.executables.java = "bin/java"
+layout.executables.javac = "bin/javac"
+layout.executables.jar = "bin/jar"
+layout.executables.nativeImage = "lib/svm/bin/native-image"
+
+[[toolchain.java]]
+id = "java-graalvm-community-21-native-image"
+request.version = "21"
+request.distribution = "graalvm-community"
+request.features = ["native-image"]
+request.policy = "require-managed"
+platform.os = "macos"
+platform.arch = "aarch64"
+resolved.version = "21.0.2"
+resolved.distribution = "graalvm-community"
+artifact.catalog = "builtin:java-graalvm-community-21-native-image"
+artifact.uri = "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-aarch64_bin.tar.gz"
+artifact.sha256 = "515e3a93acc7e1938daba83eda4272e5495fd302d7cdd99ec7ebf408ed505ab7"
+layout.javaHome = "Contents/Home"
+layout.executables.java = "bin/java"
+layout.executables.javac = "bin/javac"
+layout.executables.jar = "bin/jar"
+layout.executables.nativeImage = "lib/svm/bin/native-image"
