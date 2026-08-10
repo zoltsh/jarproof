@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 final class RepositoryLayout {
+    private static final String FIXTURE_MEMBER_PREFIX = "fixtures/";
     private static final Pattern MEMBER_BLOCK = Pattern.compile("members\\s*=\\s*\\[(.*?)]", Pattern.DOTALL);
     private static final Pattern QUOTED_VALUE = Pattern.compile("\"([^\"]+)\"");
     private static final Pattern WORKSPACE_DEPENDENCY = Pattern.compile("workspace\\s*=\\s*\"([^\"]+)\"");
@@ -42,11 +43,39 @@ final class RepositoryLayout {
         return files(source, path -> path.toString().endsWith(".java"));
     }
 
+    /**
+     * Production sources of the core members, which is the scope every product-code rule measures:
+     * the public-type census, the abstraction allowlists, naming, literal deduplication, method
+     * design and complexity, and package cycles.
+     *
+     * @see #coreMembers()
+     */
     static List<Path> productionJavaFiles() {
+        return productionJavaFiles(coreMembers());
+    }
+
+    /**
+     * Production sources of every member, fixtures included. Only the rules that must hold for all
+     * checked-in Java use this scope: repository hygiene (file length, one top-level type,
+     * package-matches-path, no tests under {@code src/main}) and the module boundary.
+     */
+    static List<Path> everyProductionJavaFile() {
+        return productionJavaFiles(workspaceMembers());
+    }
+
+    /**
+     * Members that hold product code. A fixture member — any member under {@code fixtures/} — is
+     * analysis corpus instead: it exists so the verifier has real broken linkage to find, so it
+     * deliberately declares public types, duplicate fully qualified classes, split packages,
+     * abstract service providers, and pairs of the same class that disagree. Measuring product-code
+     * policy against that corpus would mean either weakening the policy for the whole repository or
+     * faking the corpus, so the corpus is scoped out of it instead. This is the narrow, deliberate
+     * rule change PLAN.md decision 4 reserves for fixtures; every other guardrail still applies.
+     */
+    static Set<String> coreMembers() {
         return workspaceMembers().stream()
-                .flatMap(member -> productionJavaFiles(member).stream())
-                .sorted()
-                .toList();
+                .filter(member -> !member.startsWith(FIXTURE_MEMBER_PREFIX))
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
     static Set<String> workspaceMembers() {
@@ -86,6 +115,13 @@ final class RepositoryLayout {
 
     static String relative(Path path) {
         return root().relativize(path.toAbsolutePath().normalize()).toString().replace('\\', '/');
+    }
+
+    private static List<Path> productionJavaFiles(Set<String> members) {
+        return members.stream()
+                .flatMap(member -> productionJavaFiles(member).stream())
+                .sorted()
+                .toList();
     }
 
     private static List<Path> files(Path start, java.util.function.Predicate<Path> predicate) {

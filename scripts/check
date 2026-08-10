@@ -3,6 +3,6 @@ set -eu
 
 zolt resolve --workspace --locked
 zolt test --workspace --all
-zolt coverage --workspace --all
+zolt coverage --workspace --members modules/jarproof-api,modules/jarproof-engine,apps/jarproof,guardrails/jarproof-architecture-tests
 zolt package --workspace --all
 zolt check --workspace --all --context ci --require-package

@@ -1,5 +1,6 @@
 package sh.zolt.jarproof.architecture;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,6 +45,20 @@ final class RepositoryPolicyArchitectureTest {
         assertTrue(manifest.contains("[toolchain.zolt]"));
         assertTrue(manifest.matches("(?s).*\\[toolchain\\.zolt].*version = \"[^\"]+\".*"));
         assertFalse(manifest.matches("(?s).*\\[toolchain\\.zolt].*version = \"(?:latest|.*SNAPSHOT)\".*"));
+    }
+
+    /**
+     * The workspace coverage aggregate cannot include fixture members: they carry no tests, and
+     * the corpus deliberately declares the same class in two members, which the coverage analyzer
+     * rejects outright. The gate therefore names the measured members explicitly — and this rule
+     * keeps that list honest, so a new core member cannot silently escape the coverage floors.
+     */
+    @Test
+    void coverageGateMeasuresExactlyTheCoreMembers() {
+        String gate = RepositoryLayout.text(RepositoryLayout.root().resolve("scripts/check"));
+        Matcher coverage = Pattern.compile("(?m)^zolt coverage --workspace --members (\\S+)$").matcher(gate);
+        assertTrue(coverage.find(), "scripts/check must run coverage over an explicit member list");
+        assertEquals(RepositoryLayout.coreMembers(), Set.of(coverage.group(1).split(",")));
     }
 
     @Test

@@ -32,17 +32,30 @@ final class JavaSourceParser {
     private JavaSourceParser() {
     }
 
+    /** Parsed product code: the scope every product-code rule measures. */
     static List<JavaSourceUnit> productionSources() {
+        return parse(RepositoryLayout.productionJavaFiles());
+    }
+
+    /**
+     * Parsed production code of every member, fixtures included. The module boundary stays
+     * repository-wide, so its fully-qualified-reference rule reads this scope rather than the
+     * product-code one.
+     */
+    static List<JavaSourceUnit> everyProductionSource() {
+        return parse(RepositoryLayout.everyProductionJavaFile());
+    }
+
+    private static List<JavaSourceUnit> parse(List<Path> files) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             throw new IllegalStateException("Architecture tests require a JDK, not a JRE");
         }
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-        try (StandardJavaFileManager files = compiler.getStandardFileManager(diagnostics, Locale.ROOT, null)) {
-            Iterable<? extends JavaFileObject> inputs =
-                    files.getJavaFileObjectsFromPaths(RepositoryLayout.productionJavaFiles());
+        try (StandardJavaFileManager manager = compiler.getStandardFileManager(diagnostics, Locale.ROOT, null)) {
+            Iterable<? extends JavaFileObject> inputs = manager.getJavaFileObjectsFromPaths(files);
             JavacTask task = (JavacTask) compiler.getTask(
-                    null, files, diagnostics, List.of("-proc:none"), null, inputs);
+                    null, manager, diagnostics, List.of("-proc:none"), null, inputs);
             List<JavaSourceUnit> sources = new ArrayList<>();
             Trees trees = Trees.instance(task);
             for (CompilationUnitTree unit : task.parse()) {
