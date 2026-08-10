@@ -31,8 +31,7 @@ final class ExplainCommand implements Callable<Integer> {
     private static final String NOT_A_CODE = "Not a jarproof diagnostic code: ";
     private static final String FORMAT_HINT = "A code is JP followed by four digits, such as JP1003.";
     private static final String UNDOCUMENTED = "No explanation is available for ";
-    private static final String RESERVED_HINT =
-            "Codes stay reserved until their check ships; DESIGN.md lists the ranges.";
+    private static final String RESERVED_HINT = "Codes stay reserved until their check ships in a release.";
 
     @Parameters(
             index = "0",

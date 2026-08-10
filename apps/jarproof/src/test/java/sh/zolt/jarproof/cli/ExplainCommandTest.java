@@ -52,7 +52,7 @@ final class ExplainCommandTest {
         assertEquals(
                 """
                 No explanation is available for JP1008
-                Codes stay reserved until their check ships; DESIGN.md lists the ranges.
+                Codes stay reserved until their check ships in a release.
                 """,
                 invocation.err());
     }
@@ -99,6 +99,7 @@ final class ExplainCommandTest {
                 JP3004  unparseable class file
                 JP3005  mixed bytecode levels in one artifact
                 JP3006  invalid nested application archive layout
+                JP3007  application root contributes no classes
                 JP4001  service provider class missing
                 JP4002  provider does not implement the service type
                 JP4003  malformed META-INF/services file

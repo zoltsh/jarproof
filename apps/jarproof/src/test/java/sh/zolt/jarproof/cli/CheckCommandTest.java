@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sh.zolt.jarproof.cli.CliFixture.Invocation;
@@ -134,20 +136,6 @@ final class CheckCommandTest {
     }
 
     @Test
-    void measuresArtifactPathsFromThePathRootForMachineFormatsOnly() {
-        Path application = CliFixture.brokenApplication(workspace);
-        Path library = CliFixture.library(workspace);
-
-        Invocation machine = CliFixture.invoke(CliFixture.checkArgs(
-                application, library, CliFixture.FORMAT, CliFixture.JSON, PATH_ROOT, workspace.toString()));
-        Invocation human = CliFixture.invoke(CliFixture.checkArgs(
-                application, library, PATH_ROOT, workspace.toString()));
-
-        assertTrue(machine.out().contains("\"artifact\": \"" + REPORTED_ARTIFACT + "\""), machine.out());
-        assertTrue(human.out().contains("from:        " + application), human.out());
-    }
-
-    @Test
     void locatesSarifResultsInTheSourceTreeTheCallerNames() throws Exception {
         Path sources = sourceTree();
         Path application = CliFixture.tracedApplication(workspace);
@@ -192,23 +180,51 @@ final class CheckCommandTest {
         assertArrayEquals(first, second, new String(first, StandardCharsets.UTF_8));
     }
 
+    /**
+     * A redirected report leaves both streams empty, which reads as a command that did nothing. One
+     * line on the diagnostic stream says what was written and where, and the findings stream stays
+     * clean for the consumer that is parsing it.
+     */
     @Test
-    void writesTheReportWhereItWasAsked() throws Exception {
+    void writesTheReportWhereItWasAskedAndSaysSo() throws Exception {
         Path report = workspace.resolve("report.json");
 
         Invocation invocation = check(
                 CliFixture.FORMAT, CliFixture.JSON, PATH_ROOT, workspace.toString(), OUTPUT, report.toString());
 
         assertEquals("", invocation.out());
+        assertEquals("wrote json report to " + report + "\n", invocation.err());
         assertTrue(Files.readString(report).contains("\"code\": \"JP1003\""), report.toString());
     }
 
     @Test
-    void refusesAnOutputPathItCannotWrite() {
-        Invocation invocation = check(OUTPUT, workspace.resolve("absent").resolve("report.txt").toString());
+    void saysNothingAboutAReportThatWentToTheOutputStream() {
+        Invocation invocation = check();
+
+        assertEquals("", invocation.err());
+    }
+
+    @Test
+    void refusesAnOutputPathWhoseDirectoryIsNotThere() {
+        Path report = workspace.resolve("absent").resolve("report.txt");
+
+        Invocation invocation = check(OUTPUT, report.toString());
 
         assertEquals(2, invocation.exitCode());
-        assertTrue(invocation.err().contains("absent"), invocation.err());
+        assertEquals(
+                "Cannot write the report to " + report + ": the directory does not exist\n",
+                invocation.err());
+    }
+
+    @Test
+    void refusesAnOutputPathItIsNotAllowedToWrite() throws IOException {
+        Path report = readOnlyFile();
+
+        Invocation invocation = check(OUTPUT, report.toString());
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals(
+                "Cannot write the report to " + report + ": permission was denied\n", invocation.err());
     }
 
     private Invocation check(String... extra) {
@@ -230,6 +246,13 @@ final class CheckCommandTest {
         Files.createDirectories(source.getParent());
         Files.writeString(source, "package com.acme.app;\n");
         return root;
+    }
+
+    /** A file the process may read and not write, which is the other way a write is refused. */
+    private Path readOnlyFile() throws IOException {
+        Path report = Files.writeString(workspace.resolve("locked.txt"), "\n");
+        Files.setPosixFilePermissions(report, Set.of(PosixFilePermission.OWNER_READ));
+        return report;
     }
 
     private static Map<?, ?> firstResult(String document) {

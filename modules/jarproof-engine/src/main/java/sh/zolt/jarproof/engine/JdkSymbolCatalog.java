@@ -79,6 +79,9 @@ final class JdkSymbolCatalog {
             Collections.unmodifiableSortedSet(new TreeSet<>(Set.of(8, 11, 17, 21, 25)));
     private static final String RESOURCE_PREFIX = "jdk-symbols-";
     private static final String RESOURCE_SUFFIX = ".bin";
+    private static final String UNBUNDLED = " has no bundled JDK symbols; bundled releases are ";
+    private static final String LAST_OF_LIST = "and ";
+    private static final String OVERRIDE = ". Pass --jdk <path> to read symbols from a local JDK.";
 
     private final int javaRelease;
     private final Map<String, JdkSymbolEntry> entriesByName;
@@ -91,14 +94,34 @@ final class JdkSymbolCatalog {
     /**
      * Loads the catalog committed for a bundled release.
      *
+     * <p>A release nothing is bundled for is not the end of the road, so the refusal says so: the
+     * releases that are bundled are listed as prose rather than as a printed collection, and the
+     * override that serves every other release is named. A caller who reads only this line has to be
+     * able to fix the run from it.
+     *
      * @throws IllegalArgumentException when no resource is bundled for the release
      */
     static JdkSymbolCatalog forRelease(int javaRelease) {
         if (!BUNDLED_RELEASES.contains(javaRelease)) {
-            throw new IllegalArgumentException("Java " + javaRelease
-                    + " has no bundled JDK symbols; bundled releases are " + BUNDLED_RELEASES);
+            throw new IllegalArgumentException("Java " + javaRelease + UNBUNDLED + bundledProse() + OVERRIDE);
         }
         return fromResource(resourceName(javaRelease), javaRelease);
+    }
+
+    /** The bundled releases as a reader would say them: ascending, comma-separated, final "and". */
+    private static String bundledProse() {
+        List<Integer> releases = List.copyOf(BUNDLED_RELEASES);
+        StringBuilder prose = new StringBuilder();
+        for (int index = 0; index < releases.size(); index++) {
+            if (index > 0) {
+                prose.append(',').append(' ');
+            }
+            if (index > 0 && index == releases.size() - 1) {
+                prose.append(LAST_OF_LIST);
+            }
+            prose.append(releases.get(index));
+        }
+        return prose.toString();
     }
 
     /**

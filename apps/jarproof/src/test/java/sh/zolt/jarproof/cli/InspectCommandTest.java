@@ -6,14 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sh.zolt.jarproof.cli.CliFixture.Invocation;
 
 final class InspectCommandTest {
     private static final String INSPECT = "inspect";
+    private static final String PATH_ROOT = "--path-root";
     private static final String CODEC = "com.acme.spi.Codec";
     private static final String MODERN = "com/acme/app/Modern";
     private static final int JAVA_8_MAJOR = 52;
@@ -79,6 +82,11 @@ final class InspectCommandTest {
      * whatever the renderer happens to write next. {@code inspectJsonVersion} comes first and stays
      * first; an optional member may only ever join the end of this list, and renaming or dropping one
      * a consumer already reads is a version bump.
+     *
+     * <p>Which spelling of a path the {@code artifact} member carries is not part of that promise and
+     * never was: the contract says the member names the artifact the caller named, and the caller
+     * decides how. Measuring it from {@code --path-root} therefore changes the spelling inside a
+     * version rather than the version, exactly as it does for the {@code check} envelope.
      */
     @Test
     void pinsTheMemberSetAndOrderOfTheVersionedEnvelope() {
@@ -173,15 +181,69 @@ final class InspectCommandTest {
     }
 
     @Test
-    void refusesAnOutputPathItCannotWrite() {
+    void refusesAnOutputPathWhoseDirectoryIsNotThere() {
+        Path facts = workspace.resolve("absent").resolve("facts.txt");
+
         Invocation invocation = CliFixture.invoke(
-                INSPECT,
-                multiReleaseArchive().toString(),
-                "--output",
-                workspace.resolve("absent").resolve("facts.txt").toString());
+                INSPECT, multiReleaseArchive().toString(), "--output", facts.toString());
 
         assertEquals(2, invocation.exitCode());
-        assertTrue(invocation.err().contains("absent"), invocation.err());
+        assertEquals(
+                "Cannot write the report to " + facts + ": the directory does not exist\n", invocation.err());
+    }
+
+    @Test
+    void refusesAnOutputPathItIsNotAllowedToWrite() throws Exception {
+        Path facts = Files.writeString(workspace.resolve("locked.txt"), "\n");
+        Files.setPosixFilePermissions(facts, Set.of(PosixFilePermission.OWNER_READ));
+
+        Invocation invocation = CliFixture.invoke(
+                INSPECT, multiReleaseArchive().toString(), "--output", facts.toString());
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals(
+                "Cannot write the report to " + facts + ": permission was denied\n", invocation.err());
+    }
+
+    /**
+     * The {@code artifact} member is measured from {@code --path-root} exactly as the {@code check}
+     * envelope's is. That is not a change to the contract: the contract has always said this member
+     * carries the path the caller named, and which spelling of it is the caller's own decision. The
+     * member set and its order are what a consumer may rely on, and both are pinned above.
+     */
+    @Test
+    void measuresTheArtifactFromThePathRootForTheVersionedEnvelope() {
+        Path archive = multiReleaseArchive();
+
+        Invocation invocation = CliFixture.invoke(
+                INSPECT, archive.toString(), CliFixture.FORMAT, CliFixture.JSON, PATH_ROOT, workspace.toString());
+
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertTrue(invocation.out().contains("\"artifact\": \"app.jar\""), invocation.out());
+    }
+
+    /** A person reads the path they typed, whatever root the machine form measures from. */
+    @Test
+    void keepsTheTableNamingTheArtifactAsItWasGiven() {
+        Path archive = multiReleaseArchive();
+
+        Invocation invocation =
+                CliFixture.invoke(INSPECT, archive.toString(), PATH_ROOT, workspace.toString());
+
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertTrue(invocation.out().contains("artifact:         " + archive), invocation.out());
+    }
+
+    @Test
+    void refusesAPathRootThatIsNotADirectory() {
+        Path absent = workspace.resolve("nowhere");
+
+        Invocation invocation = CliFixture.invoke(
+                INSPECT, multiReleaseArchive().toString(), PATH_ROOT, absent.toString());
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals(
+                "This path root is not a directory that exists: " + absent + "\n", invocation.err());
     }
 
     @Test

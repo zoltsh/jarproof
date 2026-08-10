@@ -31,6 +31,11 @@ import sh.zolt.jarproof.cli.CorpusCheck.Reported;
  * are compiled Java and this shape is a packaging decision applied to them. Storing the nested library
  * uncompressed is what a launcher-aware packager does, and doing the same here keeps the assertion about
  * the linkage break instead of about the packaging.
+ *
+ * <p>The archive is built in a temporary directory, which is outside the path root every corpus run
+ * measures from, so the reported artifact is the absolute text the caller supplied: measuring it would
+ * take a chain of {@code ..} segments whose length depends on where the temporary directory happens to
+ * be. Only the outer archive is measured either way -- the position inside it stays an entry name.
  */
 final class NestedLayoutCorpusTest {
     private static final String CONSUMER = "missing-method-consumer";
@@ -58,7 +63,7 @@ final class NestedLayoutCorpusTest {
                         "JP1003",
                         "error",
                         "NoSuchMethodError",
-                        FixtureCorpus.relativePath(application) + "!/BOOT-INF/classes",
+                        application + "!/BOOT-INF/classes",
                         SUBJECT)),
                 check.findings(),
                 check.report());

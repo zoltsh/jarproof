@@ -144,10 +144,10 @@ final class HumanReport {
         for (Severity severity : List.of(Severity.ERROR, Severity.WARNING, Severity.INFO)) {
             long occurrences = findings.stream().filter(finding -> finding.severity() == severity).count();
             if (occurrences > 0) {
-                counts.add(quantity(occurrences, CanonicalName.of(severity)));
+                counts.add(Quantity.of(occurrences, CanonicalName.of(severity)));
             }
         }
-        counts.add(quantity(findings.size(), FINDING));
+        counts.add(Quantity.of(findings.size(), FINDING));
         StringBuilder line = new StringBuilder();
         for (String count : counts) {
             if (!line.isEmpty()) {
@@ -156,10 +156,5 @@ final class HumanReport {
             line.append(count);
         }
         return line.toString();
-    }
-
-    private static String quantity(long occurrences, String noun) {
-        String counted = occurrences + " " + noun;
-        return occurrences == 1 ? counted : counted + 's';
     }
 }

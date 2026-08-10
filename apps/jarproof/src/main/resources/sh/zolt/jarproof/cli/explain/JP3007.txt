@@ -1,0 +1,18 @@
+JP3007 application root contributes no classes
+
+An artifact or directory named with --application was read successfully and
+holds no class files, so nothing of yours was examined through it.
+
+How the JVM gets there
+  Nothing fails. An empty classpath entry is legal, and the launcher is happy
+  to start with one. The problem is what a clean report then means: jarproof
+  reports linkage errors for references originating in application bytecode,
+  and a root with no bytecode originates none. The usual causes are a path
+  pointing at a build directory nothing has written yet, output that moved to
+  a different directory, or an archive that carries only resources.
+
+Typical fix
+  Point --application at the directory or archive that really holds the
+  compiled classes, or build it before verifying. Nothing needs fixing when
+  the root is deliberately empty and another root carries the classes; this
+  finding is informational and never fails a run on its own.

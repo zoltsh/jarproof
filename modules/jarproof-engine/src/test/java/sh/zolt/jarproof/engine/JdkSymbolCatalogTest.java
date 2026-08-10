@@ -89,12 +89,19 @@ final class JdkSymbolCatalogTest {
         assertEquals(Optional.empty(), catalog.classShape("com/example/NotAPlatformClass"));
     }
 
+    /**
+     * The refusal is the whole answer a caller gets, so it lists the releases that are bundled as
+     * prose rather than as a printed collection and names the flag that serves every other release.
+     */
     @Test
-    void unsupportedReleasesNameTheBundledSet() {
+    void unsupportedReleasesNameTheBundledSetAndTheWayRound() {
         IllegalArgumentException failure =
                 assertThrows(IllegalArgumentException.class, () -> JdkSymbolCatalog.forRelease(20));
 
-        assertTrue(failure.getMessage().contains("Java 20"), failure::getMessage);
+        assertEquals(
+                "Java 20 has no bundled JDK symbols; bundled releases are 8, 11, 17, 21, and 25."
+                        + " Pass --jdk <path> to read symbols from a local JDK.",
+                failure.getMessage());
         assertTrue(failure.getMessage().contains(String.valueOf(BUNDLED_RELEASE)), failure::getMessage);
         assertThrows(IllegalArgumentException.class, () -> JdkSymbolCatalog.forRelease(24));
     }

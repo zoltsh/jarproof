@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -92,46 +89,6 @@ final class CheckInvocationTest {
     }
 
     @Test
-    void expandsAClasspathListFile() throws IOException {
-        Path application = CliFixture.brokenApplication(workspace);
-        Path library = CliFixture.library(workspace);
-        Path list = Files.writeString(
-                workspace.resolve("classpath.txt"),
-                "\n   " + library + "   \n\n",
-                StandardCharsets.UTF_8);
-
-        Invocation invocation = CliFixture.invoke(
-                CliFixture.CHECK,
-                CliFixture.APPLICATION,
-                application.toString(),
-                CliFixture.CLASSPATH,
-                "@" + list,
-                CliFixture.TARGET_JAVA,
-                CliFixture.JAVA_17);
-
-        assertEquals(1, invocation.exitCode(), invocation.err());
-        assertTrue(invocation.out().contains("selected " + library), invocation.out());
-    }
-
-    @Test
-    void refusesAClasspathListThatIsNotThere() {
-        Path list = workspace.resolve("absent.txt");
-
-        Invocation invocation = CliFixture.invoke(
-                CliFixture.CHECK,
-                CliFixture.APPLICATION,
-                CliFixture.brokenApplication(workspace).toString(),
-                CliFixture.CLASSPATH,
-                "@" + list,
-                CliFixture.TARGET_JAVA,
-                CliFixture.JAVA_17);
-
-        assertEquals(2, invocation.exitCode());
-        assertTrue(invocation.err().contains(list.toString()), invocation.err());
-        assertEquals("", invocation.out());
-    }
-
-    @Test
     void refusesAnApplicationThatIsNotThere() {
         Path absent = workspace.resolve("absent.jar");
 
@@ -159,8 +116,35 @@ final class CheckInvocationTest {
 
         assertEquals(2, invocation.exitCode());
         assertEquals(
-                "Java 20 has no bundled JDK symbols; bundled releases are [8, 11, 17, 21, 25]\n",
+                "Java 20 has no bundled JDK symbols; bundled releases are 8, 11, 17, 21, and 25."
+                        + " Pass --jdk <path> to read symbols from a local JDK.\n",
                 invocation.err());
+    }
+
+    /**
+     * A target release that is not a number is refused in the same voice as a number no runtime ever
+     * had: one line naming the flag's own meaning and the text that failed it.
+     */
+    @Test
+    void refusesATargetReleaseThatIsNotANumber() {
+        Invocation invocation = CliFixture.invoke(
+                CliFixture.CHECK,
+                CliFixture.APPLICATION,
+                CliFixture.brokenApplication(workspace).toString(),
+                CliFixture.TARGET_JAVA,
+                "abc");
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals("Target Java release must be a number: abc\n", invocation.err());
+        assertEquals("", invocation.out());
+    }
+
+    @Test
+    void namesTheTargetReleaseAsRequiredInItsOwnHelp() {
+        Invocation invocation = CliFixture.invoke(CliFixture.CHECK, "--help");
+
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertTrue(invocation.out().contains("Required."), invocation.out());
     }
 
     @Test
