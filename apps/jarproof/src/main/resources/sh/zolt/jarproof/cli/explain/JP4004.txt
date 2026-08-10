@@ -1,0 +1,17 @@
+JP4004 duplicate service provider entry
+
+The same provider class is named more than once for one service, either twice
+in a single configuration file or in configuration files from two artifacts.
+
+How the JVM gets there
+  ServiceLoader deduplicates provider names as it reads, so a repeated name
+  yields one provider instance and nothing fails. That is why this is reported
+  as information. The value is diagnostic: a provider listed by two artifacts
+  usually means the same library is present twice, or that a shaded bundle and
+  its original both contribute service files, which are conditions worth
+  knowing about for other reasons.
+
+Typical fix
+  Nothing is required for correctness. If the duplication comes from two copies
+  of one library, resolving that removes the duplicate entry and the classpath
+  conflicts that travel with it.

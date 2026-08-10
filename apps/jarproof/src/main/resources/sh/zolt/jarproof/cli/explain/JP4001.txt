@@ -1,0 +1,20 @@
+JP4001 service provider class missing
+
+A META-INF/services file names a provider class that no artifact on the
+classpath declares.
+
+How the JVM gets there
+  ServiceLoader reads every META-INF/services/<service> resource on the
+  classpath, treats each non-comment line as a binary class name, and loads
+  those classes lazily as the iterator advances. A name that cannot be loaded
+  is not skipped: ServiceLoader wraps the failure in a ServiceConfigurationError
+  and throws it from hasNext or next, which takes down the whole iteration and
+  every provider after it, not just the broken one.
+
+Typical fix
+  Add the artifact that declares the provider, or remove the line from the
+  services file. This commonly appears after shading, when class relocation
+  rewrote the provider's package but not the services resource, so check
+  whether the file needs relocating too.
+
+Predicted runtime error: ServiceConfigurationError

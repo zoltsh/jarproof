@@ -1,0 +1,20 @@
+JP4003 malformed META-INF/services file
+
+A service configuration file does not follow the format ServiceLoader accepts.
+
+How the JVM gets there
+  The format is deliberately narrow: UTF-8 text, one binary class name per
+  line, a number sign starting a comment, surrounding whitespace ignored, blank
+  lines ignored, and at most one name per line. Anything else -- a comma
+  separated list, a file path instead of a class name, an illegal Java
+  identifier, invalid UTF-8, or a stray second token -- makes ServiceLoader
+  throw ServiceConfigurationError while parsing, before any provider is
+  constructed.
+
+Typical fix
+  Rewrite the file with one fully qualified class name per line. Watch for
+  resource merging during shading or uber-JAR packaging: concatenating service
+  files is correct, overwriting them loses providers, and appending without a
+  trailing newline joins two class names into one invalid token.
+
+Predicted runtime error: ServiceConfigurationError

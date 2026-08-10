@@ -1,0 +1,20 @@
+JP4002 provider does not implement the service type
+
+A declared provider class exists but is not a subtype of the service the
+META-INF/services file registers it under.
+
+How the JVM gets there
+  ServiceLoader loads the provider class and then casts it to the service type
+  it was asked for. A provider that does not implement or extend that type
+  fails the check, and ServiceLoader raises ServiceConfigurationError from the
+  iterator rather than skipping the entry, so one wrong line disables every
+  provider for that service.
+
+Typical fix
+  Implement the service interface on the provider, or register the provider
+  under the service it actually implements. When the service type moved
+  packages between versions, the provider may implement an old type with the
+  same simple name; confirm the fully qualified names match, since a shaded
+  copy of the service interface is a different type to the JVM.
+
+Predicted runtime error: ServiceConfigurationError

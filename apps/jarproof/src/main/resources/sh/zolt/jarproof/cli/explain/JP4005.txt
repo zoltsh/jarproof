@@ -1,0 +1,20 @@
+JP4005 provider not instantiable
+
+A declared provider class cannot be constructed the way a classpath
+ServiceLoader constructs providers: it is abstract, not public, or has no
+public no-argument constructor.
+
+How the JVM gets there
+  For providers found on the classpath, ServiceLoader requires a public class
+  with a public zero-argument constructor and instantiates it reflectively.
+  Failure to construct becomes ServiceConfigurationError from the iterator, so
+  the service ends up with no providers at all. The static provider() factory
+  method is a module-path feature; on a classpath the constructor is required.
+
+Typical fix
+  Make the provider class public and concrete and give it a public no-argument
+  constructor, or register a small public adapter that constructs the real
+  implementation. ServiceLoader can supply no arguments, so move any work that
+  needs them out of the constructor.
+
+Predicted runtime error: ServiceConfigurationError
