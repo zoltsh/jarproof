@@ -43,11 +43,20 @@ fixture_jar() {
     member_jar "fixtures/$1"
 }
 
+# The managed toolchain's own launcher, asked for once. The JVM engine is then started directly
+# rather than through `zolt exec` for every scenario: `zolt exec` expands a leading `@` in the
+# command line it forwards, so an argument-file scenario would reach java already spliced into
+# separate arguments and the harness would be comparing two different command lines. Zolt still
+# decides which JDK this is -- that is what the question below asks it.
+managed_java() {
+    zolt exec --quiet -- sh -c 'command -v java'
+}
+
 cli() {
     engine=$1
     shift
     if [ "$engine" = jvm ]; then
-        zolt exec --quiet -- java -jar "$UBER" "$@"
+        "$JAVA" -jar "$UBER" "$@"
     else
         "$NATIVE" "$@"
     fi
@@ -91,6 +100,24 @@ invoke() {
     inspect)
         cli "$engine" inspect --format json --output "$report" "$MISSING_METHOD_API_V2"
         ;;
+    # A classpath list is jarproof's own feature, and the command-line parser has one of the same
+    # spelling. The native binary reads lists through jarproof; a JVM build whose parser expanded
+    # `@file` first would see a different classpath from the same command line -- one entry and one
+    # unmatched argument -- so a multi-entry list is the scenario that catches it.
+    classpath-list)
+        printf '%s\n%s\n' "$MISSING_METHOD_API_V2" "$NEWER_BYTECODE" > "$WORK/classpath.txt"
+        cli "$engine" check --application "$MISSING_METHOD_CONSUMER" \
+            --classpath "@$WORK/classpath.txt" --target-java "$TARGET_JAVA" \
+            --path-root . --format json --output "$report"
+        ;;
+    # A refused command line is product surface too, and it is the surface most likely to differ:
+    # usage text is assembled from the annotated command model, which is exactly what the native
+    # image has to be told about. The refusal goes into the compared file, so the assertion is on
+    # the diagnostic stream byte for byte.
+    usage-error)
+        cli "$engine" check --application "$MISSING_METHOD_CONSUMER" \
+            --target-java abc 2> "$report"
+        ;;
     explain)
         cli "$engine" explain JP1003 > "$report"
         ;;
@@ -104,18 +131,26 @@ invoke() {
     esac
 }
 
+# Both engines write to the same path and the result is moved aside afterwards, because a report
+# path is part of what a run says: `--output` is confirmed on the diagnostic stream by name, so
+# per-engine file names would make every scenario's stderr differ by construction.
 report_of() {
     engine=$1
     scenario=$2
     expected=$3
-    report=$WORK/$scenario.$engine
+    written=$WORK/$scenario.report
+    destination=$WORK/$scenario.$engine
+    rm -f "$written"
     set +e
-    invoke "$engine" "$scenario" "$report" > "$report.stdout" 2> "$report.stderr"
+    invoke "$engine" "$scenario" "$written" > "$destination.stdout" 2> "$destination.stderr"
     status=$?
     set -e
     if [ "$status" != "$expected" ]; then
         fail "$scenario ($engine) exited $status, expected $expected"
-        cat "$report.stderr" >&2
+        cat "$destination.stderr" >&2
+    fi
+    if [ -f "$written" ]; then
+        mv "$written" "$destination"
     fi
 }
 
@@ -164,6 +199,7 @@ zolt native --workspace --member apps/jarproof
 # binary against a jar that cannot even start.
 zolt package --workspace --member apps/jarproof
 
+JAVA=$(managed_java)
 UBER=$(member_jar apps/jarproof)
 MISSING_METHOD_CONSUMER=$(fixture_jar missing-method-consumer)
 MISSING_METHOD_API_V1=$(fixture_jar missing-method-api-v1)
@@ -181,6 +217,7 @@ cp "$(fixture_jar duplicate-class-a)" "$DUPLICATES"
 cp "$(fixture_jar duplicate-class-b)" "$DUPLICATES"
 
 printf '%s\n' "jvm:    $UBER"
+printf '%s\n' "java:   $JAVA"
 printf '%s\n' "native: $NATIVE"
 
 parity missing-method 1
@@ -192,6 +229,8 @@ parity sarif 1
 parity inspect 0
 parity explain-listing 0
 parity explain 0
+parity classpath-list 1
+parity usage-error 2
 
 if [ "$failures" -ne 0 ]; then
     printf 'native parity: %s failures\n' "$failures" >&2
