@@ -56,9 +56,20 @@ final class ModuleClaimReader {
         return List.copyOf(reader.claims);
     }
 
+    /**
+     * A nested position never makes a module claim: the module path takes whole files, a nested
+     * library is reachable only through its launcher, and the outer archive's manifest belongs to
+     * the host position alone — reading it for every position would hand one Automatic-Module-Name
+     * to three artifacts at once.
+     */
     private void add(IndexedArtifact artifact) {
+        EntryKind stored = artifact.entry().kind();
+        if (stored == EntryKind.NESTED_CLASSES || stored == EntryKind.NESTED_ARCHIVE) {
+            claims.add(new ModuleClaim(artifact, Optional.empty(), Optional.empty()));
+            return;
+        }
         Optional<String> entryName = descriptorEntry(artifact);
-        if (artifact.entry().kind() == EntryKind.DIRECTORY) {
+        if (stored == EntryKind.DIRECTORY) {
             claims.add(new ModuleClaim(artifact, Optional.empty(), fromDirectory(artifact, entryName)));
             return;
         }

@@ -230,6 +230,33 @@ final class ModuleClaimCheckTest {
         assertEquals(forward, reversed);
     }
 
+    @Test
+    void nestedPositionsNeverInheritTheOuterModuleClaim() {
+        Map<String, byte[]> library = EngineFixture.entries(
+                LEGACY + ArchiveLayout.CLASS_SUFFIX, EngineFixture.classFile(LEGACY));
+        Path bootJar = BootLayoutFixture.archive()
+                .with("META-INF/MANIFEST.MF", manifestBytes(LEGAL_NAME))
+                .with(BootLayoutFixture.CLASSES_ROOT + ORDER + ArchiveLayout.CLASS_SUFFIX,
+                        EngineFixture.classFile(ORDER))
+                .withLibrary(BootLayoutFixture.LIBRARY_DIRECTORY + "legacy.jar", library)
+                .write(workspace, "app-boot.jar");
+
+        assertEquals(List.of(), ModuleFixture.findings(bootJar));
+    }
+
+    private static byte[] manifestBytes(String automaticName) {
+        Manifest manifest = new Manifest();
+        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        manifest.getMainAttributes().putValue("Automatic-Module-Name", automaticName);
+        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        try {
+            manifest.write(bytes);
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+        return bytes.toByteArray();
+    }
+
     private static List<String> faults(List<Finding> findings) {
         List<Finding> ordered = new ArrayList<>(findings);
         ordered.sort(FindingOrder.CANONICAL);
