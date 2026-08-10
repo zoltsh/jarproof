@@ -1,0 +1,18 @@
+JP2008 sealed package split across artifacts
+
+A package is declared sealed by one artifact's manifest, and another classpath
+artifact also contains classes in that package.
+
+How the JVM gets there
+  Sealing is a manifest promise that every class in a package comes from one
+  JAR. The class loader enforces it: once a package has been defined from a
+  sealed JAR, loading a class of that package from anywhere else is rejected
+  with a SecurityException from the loader, surfacing as a linkage failure at
+  the first use. Unlike a plain split package, this one is a hard error rather
+  than a modernization signal.
+
+Typical fix
+  Remove the intruding classes, or stop sealing the package. When the split is
+  caused by a patch or extension JAR that deliberately adds to a sealed
+  library, fold those classes into the sealed artifact or rename their package
+  so the seal stays intact.

@@ -1,0 +1,19 @@
+JP1006 inaccessible class
+
+The referenced type exists but the referencing class is not permitted to see
+it: a package-private type referenced from another package, or a non-public
+nested type referenced from outside its nest.
+
+How the JVM gets there
+  Access control is checked during resolution, after the type has been found.
+  The JVM compares the referencing class and the resolved class, taking run
+  time packages -- name plus defining loader -- and nestmate membership into
+  account, and raises IllegalAccessError when the reference is not allowed.
+
+Typical fix
+  Make the type public, move the referencing class into the same package and
+  artifact, or route the call through published API. If the two classes really
+  do belong to one package, ship them in one artifact so the runtime package
+  is not split.
+
+Predicted runtime error: IllegalAccessError

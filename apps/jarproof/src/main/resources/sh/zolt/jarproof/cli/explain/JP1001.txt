@@ -1,0 +1,20 @@
+JP1001 missing class
+
+A class file on the analyzed classpath names a type that no artifact on that
+classpath declares. The reference was compiled against something that is not
+present at runtime, so it can never be linked.
+
+How the JVM gets there
+  Linkage is lazy. The constant-pool entry naming the type is resolved the
+  first time an instruction that uses it executes. Resolution asks the defining
+  loader for the type, the loader finds no class file, and the JVM raises
+  NoClassDefFoundError wrapping the loader's ClassNotFoundException. Because
+  nothing is resolved until it runs, an untaken branch hides this indefinitely.
+
+Typical fix
+  Put the artifact that declares the type on the runtime classpath, or delete
+  the code path that references it. When the reference belongs to a library's
+  optional integration your application never touches, confirm that and record
+  the finding in a baseline instead of shipping a dependency you do not need.
+
+Predicted runtime error: NoClassDefFoundError

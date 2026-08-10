@@ -1,0 +1,18 @@
+JP2003 split package across artifacts
+
+One package name is declared by classes in more than one classpath artifact.
+
+How the JVM gets there
+  On the flat classpath a split package is legal and common: the application
+  loader merges entries, so a package can be assembled from many artifacts and
+  everything resolves. It matters for two reasons. Package-private access
+  depends on the run time package, so a later split across different loaders
+  turns working code into IllegalAccessError, and the same package split across
+  the module path is rejected outright. This is reported as information because
+  on a classpath, by itself, it is not a fault.
+
+Typical fix
+  Nothing is required for a plain classpath application. Treat it as a signal
+  when you plan to modularize, when the split package uses package-private
+  access across artifacts, or when the split is the accidental result of two
+  versions of one library both being present.

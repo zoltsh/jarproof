@@ -1,0 +1,18 @@
+JP2001 duplicate class with identical bytecode
+
+Two or more artifacts on the classpath contain the same class name, and every
+copy has byte-identical content.
+
+How the JVM gets there
+  The application class loader searches classpath entries in order and stops at
+  the first entry that declares the class. Later copies are never read. Because
+  the copies are identical here, whichever one wins produces the same linkage
+  outcome, so nothing breaks at runtime. This is reported as information rather
+  than a warning so that shading and repackaging do not drown a release gate in
+  noise.
+
+Typical fix
+  Usually none is required. If the duplication came from a shaded artifact
+  published alongside its unshaded original, or from the same library
+  republished under two coordinates, dropping one copy makes the classpath
+  smaller and keeps future version drift from turning this into JP2002.

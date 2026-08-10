@@ -1,0 +1,19 @@
+JP2007 manifest Class-Path entry not found
+
+A JAR manifest names a Class-Path entry that does not exist relative to the
+JAR that declares it.
+
+How the JVM gets there
+  A manifest Class-Path is resolved against the URL of its own JAR and appended
+  to the classpath, recursively. The launcher ignores entries that are missing
+  and prints nothing, so an application that depends on such an entry fails
+  later with NoClassDefFoundError for a reason that looks unrelated. jarproof
+  reports the broken link itself, at the artifact that declared it, as
+  information: many published JARs carry stale Class-Path text that nothing
+  actually needs.
+
+Typical fix
+  Place the named file next to the declaring JAR, correct the manifest, or drop
+  the stale entry. If the intent was to bundle dependencies, prefer an explicit
+  classpath or an uber JAR over manifest chaining, which depends on layout that
+  travels badly between machines.

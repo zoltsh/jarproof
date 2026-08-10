@@ -1,0 +1,19 @@
+JP3003 invalid multi-release JAR layout
+
+An artifact uses the META-INF/versions layout in a way the specification does
+not allow.
+
+How the JVM gets there
+  A multi-release JAR must set Multi-Release: true in its main manifest, and
+  every entry under META-INF/versions must sit beneath a directory named for a
+  Java release of 9 or higher. A versioned class must also declare the same
+  fully qualified name as the base entry it overrides. When the layout breaks
+  these rules the runtime silently falls back to the base entry, or picks up a
+  class whose name does not match its path, so behaviour differs between
+  releases for reasons nothing reports.
+
+Typical fix
+  Add the Multi-Release manifest attribute, place versioned entries under a
+  numeric release directory, and keep versioned classes name-identical to their
+  base versions. Rebuilding the artifact with a toolchain that understands
+  multi-release packaging is usually faster than repairing it by hand.

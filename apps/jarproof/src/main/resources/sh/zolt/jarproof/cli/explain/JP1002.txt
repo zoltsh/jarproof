@@ -1,0 +1,20 @@
+JP1002 missing field
+
+A class file reads or writes a field that the resolved owner does not declare,
+and that no superclass or superinterface of the owner declares either.
+
+How the JVM gets there
+  Field resolution walks the owner, then the owner's superinterfaces (this is
+  how interface constants are found), then the superclass chain. When the walk
+  finds no matching name and descriptor, the getfield, putfield, getstatic or
+  putstatic instruction fails with NoSuchFieldError the first time it executes.
+  A field whose type changed also fails here: the descriptor is part of the
+  reference, so widening a field from int to long breaks every compiled reader.
+
+Typical fix
+  Align the runtime version of the declaring artifact with the version the
+  referencing class was compiled against. If the field was deliberately
+  removed or retyped, recompile the referencing code against the new version;
+  a source-compatible change is not automatically binary compatible.
+
+Predicted runtime error: NoSuchFieldError

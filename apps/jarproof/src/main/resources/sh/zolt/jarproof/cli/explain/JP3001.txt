@@ -1,0 +1,20 @@
+JP3001 class file newer than the target release
+
+A class file declares a major bytecode version higher than the Java release the
+application is verified against.
+
+How the JVM gets there
+  Every class file starts with a major and minor version, and a JVM refuses any
+  major version it does not implement. The check happens when the class loads,
+  before any of its code runs, and produces UnsupportedClassVersionError naming
+  both the class version and the running JVM. Java 17 reads major 61 and below,
+  Java 21 reads 65 and below. Because loading is lazy, a class compiled too new
+  can sit unnoticed until the first request that touches it.
+
+Typical fix
+  Raise the target runtime, or rebuild the offending artifact for the release
+  you deploy on. When only part of an artifact is too new, check whether it is
+  a multi-release JAR whose versioned entries were selected incorrectly before
+  concluding the library is unusable.
+
+Predicted runtime error: UnsupportedClassVersionError

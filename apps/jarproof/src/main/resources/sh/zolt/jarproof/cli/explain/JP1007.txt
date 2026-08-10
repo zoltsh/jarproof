@@ -1,0 +1,20 @@
+JP1007 inaccessible member
+
+The referenced field or method exists on the resolved type, but the referencing
+class may not use it: a private member reached from outside its nest, a
+protected member from an unrelated type, or a package-private member from
+another run time package.
+
+How the JVM gets there
+  Access control runs after the member is resolved. Since Java 11 the compiler
+  encodes nest membership in NestHost and NestMembers attributes instead of
+  generating access bridges, so private members are referenced directly across
+  nested classes and the JVM consults the nest to allow it. Applying pre-11
+  rules to modern bytecode invents violations that never occur.
+
+Typical fix
+  Widen the member, move the caller into the same nest or package and artifact,
+  or use published API. If the caller and target were compiled as one nest and
+  later split across artifacts, keep the nest together in one artifact.
+
+Predicted runtime error: IllegalAccessError

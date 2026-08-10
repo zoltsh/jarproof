@@ -1,0 +1,20 @@
+JP1004 static and instance mismatch
+
+The referenced member exists, but its static-ness contradicts the instruction
+that uses it: an instance member reached through getstatic, putstatic or
+invokestatic, or a static member reached through getfield, putfield,
+invokevirtual, invokespecial or invokeinterface.
+
+How the JVM gets there
+  Resolution succeeds -- the name and descriptor match -- and then the JVM
+  checks the resolved member against the instruction that referenced it. A
+  mismatch is not a missing symbol, so it is not NoSuchMethodError or
+  NoSuchFieldError; the JVM reports IncompatibleClassChangeError, the category
+  reserved for a class that changed shape after its callers were compiled.
+
+Typical fix
+  Restore the modifier or recompile the referencing code. Adding or removing
+  static is a binary-incompatible change even when the source still compiles,
+  so a library that flipped it owes its consumers a major-version signal.
+
+Predicted runtime error: IncompatibleClassChangeError

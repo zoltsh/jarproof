@@ -1,0 +1,19 @@
+JP2004 same artifact present in multiple versions
+
+Two classpath entries look like the same library at different versions, judged
+from Maven pom.properties descriptors and manifest implementation metadata.
+
+How the JVM gets there
+  Nothing in the JVM notices this directly; the loader only sees class names.
+  The damage is indirect. Every class the two versions share resolves to
+  whichever copy comes first, so the effective library is a mixture: one
+  version's classes plus the other version's classes for anything that was
+  added or removed. Callers compiled against either version can then fail to
+  link, and which copy wins depends on classpath order rather than on any
+  decision your build made deliberately.
+
+Typical fix
+  Converge on one version in your dependency graph and remove the other entry.
+  If both must ship, relocate one of them so the class names no longer
+  collide. Because this evidence is heuristic, confirm the coordinates in the
+  reported metadata before acting on it.

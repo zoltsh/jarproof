@@ -1,0 +1,20 @@
+JP1003 missing method
+
+A class file calls a method that the resolved owner does not declare with that
+exact name and descriptor, and no superclass or superinterface supplies it.
+
+How the JVM gets there
+  Method resolution starts at the named owner, walks the superclass chain, and
+  then considers the maximally specific superinterface methods. The descriptor
+  participates in the match, so a changed parameter type or return type is a
+  different method as far as the JVM is concerned. When nothing matches, the
+  call site fails with NoSuchMethodError the first time it executes -- which
+  may be long after startup, on a code path your tests never took.
+
+Typical fix
+  Align the runtime classpath with the version the caller was compiled
+  against. This is the classic symptom of a dependency manager resolving an
+  older version than the compile classpath used, so check which version won
+  and why before pinning. Recompiling the caller is the other correct answer.
+
+Predicted runtime error: NoSuchMethodError

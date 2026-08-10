@@ -1,0 +1,20 @@
+JP3002 preview class file used incorrectly
+
+A class file is marked as using preview features, and either the target release
+does not match the release it was compiled by or preview features are not
+enabled for the run.
+
+How the JVM gets there
+  A preview class file sets its minor version to 0xFFFF. The JVM accepts it
+  only when its own major version equals the class file's major version and
+  --enable-preview is on the command line. Anything else -- a preview class
+  from an older release, or the right release without the flag -- fails at load
+  time with UnsupportedClassVersionError. Each release invalidates the last.
+
+Typical fix
+  Rebuild the artifact without preview features for anything you publish or
+  deploy long term. If preview use is intentional, run on exactly the release
+  it was compiled by, pass --enable-preview to the JVM, and pass
+  --enable-preview to jarproof so the verification models the same policy.
+
+Predicted runtime error: UnsupportedClassVersionError

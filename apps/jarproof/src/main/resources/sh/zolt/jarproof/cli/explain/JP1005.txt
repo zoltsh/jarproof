@@ -1,0 +1,20 @@
+JP1005 class and interface kind mismatch
+
+The referenced type exists but is the other kind of type than the reference
+assumes: a class used where an interface is required, or an interface used
+where a class is required.
+
+How the JVM gets there
+  The kind of a type is baked into the referencing bytecode. invokeinterface
+  and CONSTANT_InterfaceMethodref require an interface owner; invokevirtual
+  and CONSTANT_Methodref require a class owner; extends requires a class and
+  implements requires an interface. When the resolved type disagrees, the JVM
+  raises IncompatibleClassChangeError at the point of use.
+
+Typical fix
+  Recompile the referencing code against the artifact that is actually on the
+  runtime classpath. Turning a class into an interface is a common
+  modernization, and it is binary-incompatible for every compiled caller even
+  though the source usually keeps compiling unchanged.
+
+Predicted runtime error: IncompatibleClassChangeError

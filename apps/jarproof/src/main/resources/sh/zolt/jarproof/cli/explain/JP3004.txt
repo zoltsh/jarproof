@@ -1,0 +1,18 @@
+JP3004 unparseable class file
+
+An entry that ends in .class could not be parsed as a class file.
+
+How the JVM gets there
+  Before any code runs, the JVM reads the class file's structure: magic number,
+  version, constant pool, and members. A truncated download, a corrupted
+  archive, a text file renamed to .class, or a broken bytecode rewriter all
+  fail here, with ClassFormatError when the structure is malformed and
+  NoClassDefFoundError when the entry no longer declares the class its path
+  promises. Verification cannot reason about the entry either, so findings that
+  would have involved it are missing rather than clean.
+
+Typical fix
+  Re-fetch or rebuild the artifact and confirm its checksum against the
+  publisher. If the entry is not meant to be a class file, rename it. Treat
+  this finding as a gap in coverage as much as a defect: nothing else jarproof
+  reports about that class can be trusted.

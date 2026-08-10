@@ -1,0 +1,19 @@
+JP2006 duplicate winner depends on wildcard expansion order
+
+A class is declared by more than one artifact with differing content, and the
+competing copies arrive through the same classpath wildcard, so no rule
+determines which one the JVM will choose.
+
+How the JVM gets there
+  The java launcher documents the expansion order of a classpath wildcard as
+  unspecified: it depends on the file system and is not guaranteed to be
+  alphabetical or stable across machines. jarproof expands wildcards in sorted
+  order so its own analysis is deterministic, but that order is an analysis
+  convention, not a runtime promise. When the winner of a differing duplicate
+  depends on it, the honest answer is that the selection is unpredictable, and
+  two hosts can link the same application differently.
+
+Typical fix
+  Name the entries explicitly, in the order you intend, instead of relying on a
+  wildcard, and remove one of the conflicting copies. Fixing the underlying
+  duplicate reported as JP2002 also resolves this finding.

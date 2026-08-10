@@ -1,0 +1,18 @@
+JP3005 mixed bytecode levels in one artifact
+
+One artifact contains class files compiled for more than one Java release,
+outside the multi-release layout that exists to express exactly that.
+
+How the JVM gets there
+  Nothing fails immediately. Each class is checked against the running JVM as
+  it loads, so an artifact whose highest level the JVM supports works, and one
+  containing a single class above that level fails only when that class is
+  first needed. The mix itself is the signal: it usually means a build reused
+  stale output, merged modules with different release settings, or shaded a
+  dependency compiled for a newer release than the bundle claims.
+
+Typical fix
+  Nothing is required when every level is at or below your target. Rebuild the
+  artifact from clean output if the mix was accidental, and use a proper
+  multi-release JAR when several releases are intended. The reported
+  histogram shows which classes sit above the rest.

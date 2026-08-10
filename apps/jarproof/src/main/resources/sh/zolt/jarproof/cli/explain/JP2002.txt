@@ -1,0 +1,18 @@
+JP2002 duplicate class with differing bytecode
+
+Two or more artifacts on the classpath declare the same class name with
+different content, so exactly one definition wins and the others are dead.
+
+How the JVM gets there
+  The application class loader returns the first matching entry in classpath
+  order and never looks at the rest. Whichever copy loses simply does not
+  exist at runtime, even for callers that were compiled against it. The result
+  is a class that has the members of one version and the callers of another,
+  which is how a classpath produces NoSuchMethodError or NoSuchFieldError from
+  code that compiled cleanly.
+
+Typical fix
+  Remove the losing artifact, or converge on one version of the library that
+  owns the class. When the duplication comes from a shaded bundle, prefer
+  either the bundle or the plain dependency, not both. Check the reported
+  selected artifact against the one your build expected to win.
