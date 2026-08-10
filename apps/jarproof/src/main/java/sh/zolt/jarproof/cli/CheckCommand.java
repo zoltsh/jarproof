@@ -1,6 +1,7 @@
 package sh.zolt.jarproof.cli;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -24,9 +25,11 @@ import sh.zolt.jarproof.engine.Jarproof;
  *
  * <p>The order of the work is deliberate. The engine answers first, a baseline is applied second, and
  * the process status is decided from what survived, so an accepted finding cannot fail a build and a
- * new one cannot be hidden. Invalid input and a breached engine ceiling both end the run with one
- * explanatory line and the invocation status, because a partial report of a run that could not be
- * completed is worse than a clear refusal.
+ * new one cannot be hidden. {@code --prune-stale} then rewrites that baseline from the comparison
+ * already made, which is why pruning cannot move the verdict: the report and the status are read from
+ * what the comparison said, not from what the file ended up holding. Invalid input and a breached
+ * engine ceiling both end the run with one explanatory line and the invocation status, because a
+ * partial report of a run that could not be completed is worse than a clear refusal.
  */
 @Command(
         name = "check",
@@ -34,11 +37,23 @@ import sh.zolt.jarproof.engine.Jarproof;
         mixinStandardHelpOptions = true,
         version = ProductIdentity.VERSION_BANNER)
 final class CheckCommand implements Callable<Integer> {
+    private static final String BASELINE = "--baseline";
+    private static final String PRUNE_STALE = "--prune-stale";
+    private static final String NEEDS_A_BASELINE = " has nothing to prune without ";
+
     @Mixin
     private RequestOptions options;
 
-    @Option(names = "--baseline", description = "Suppress the findings this file already accepts.")
+    @Option(names = BASELINE, description = "Suppress the findings this file already accepts.")
     private Path baseline;
+
+    @Option(
+            names = PRUNE_STALE,
+            description = "Rewrite the file named by " + BASELINE + " to hold only the entries this run"
+                    + " still observed, keeping everything it records about what was accepted."
+                    + " A run with nothing stale writes nothing, so the file changes only when the"
+                    + " baseline really ratcheted down.")
+    private boolean pruneStale;
 
     @Option(
             names = "--fail-on",
@@ -66,6 +81,7 @@ final class CheckCommand implements Callable<Integer> {
     }
 
     private ExitCode check() throws IOException {
+        refuseAPruneWithNothingToPrune();
         VerificationRequest request = options.request();
         VerificationResult result = Jarproof.verify(request);
         VerificationResult reported = accepted(request, result);
@@ -76,11 +92,23 @@ final class CheckCommand implements Callable<Integer> {
         return failOn.verdict(reported);
     }
 
+    /** Refuses a prune that has no file to rewrite, before any analysis is done for it. */
+    private void refuseAPruneWithNothingToPrune() {
+        if (pruneStale && baseline == null) {
+            throw new IllegalArgumentException(PRUNE_STALE + NEEDS_A_BASELINE + BASELINE);
+        }
+    }
+
     private VerificationResult accepted(VerificationRequest request, VerificationResult result) throws IOException {
         if (baseline == null) {
             return result;
         }
-        return AcceptedBaseline.read(baseline)
-                .applyTo(request, options.profile(), result, spec.commandLine().getErr());
+        PrintWriter err = spec.commandLine().getErr();
+        AcceptedBaseline accepted = AcceptedBaseline.read(baseline);
+        BaselineComparison comparison = accepted.applyTo(request, options.profile(), result, err);
+        if (pruneStale) {
+            accepted.pruneStale(comparison, err);
+        }
+        return new VerificationResult(comparison.newFindings());
     }
 }

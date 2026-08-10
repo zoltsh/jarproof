@@ -52,4 +52,18 @@ record BaselineDocument(
                 profile,
                 result.findings().stream().map(BaselineFingerprint::of).toList());
     }
+
+    /**
+     * Returns this baseline carrying a different set of accepted fingerprints.
+     *
+     * <p>Every envelope field travels unchanged. Rewriting a file therefore records the acceptance it
+     * already held over a shorter list, instead of quietly rebranding it as measured against the
+     * release, scope, or profile of whichever run happened to do the rewriting.
+     *
+     * @param fingerprints the accepted fingerprints the rewritten file holds
+     * @return the baseline to write
+     */
+    BaselineDocument withFingerprints(List<String> fingerprints) {
+        return new BaselineDocument(targetJava, preview, scope, profile, fingerprints);
+    }
 }
