@@ -32,8 +32,11 @@ import java.util.zip.ZipInputStream;
  *
  * <p>Nesting stops here. An archive inside this library is a finding rather than another level of
  * reading: no launcher unpacks it, so its classes are on nobody's classpath, and descending anyway
- * would report a classpath that does not exist. Multi-release selection, by contrast, is this library's
- * own business and is answered by this library's own manifest.
+ * would report a classpath that does not exist. Multi-release selection and publication identity, by
+ * contrast, are this library's own business and are answered by this library's own manifest and its own
+ * published records — which is why the walk captures those records as it passes them. A library shipped
+ * inside an application is a published artifact like any other, and a coordinate nobody read is a
+ * version conflict nobody reports.
  */
 final class NestedArchiveReader {
     private final ClasspathEntry entry;
@@ -42,6 +45,7 @@ final class NestedArchiveReader {
     private final int targetRelease;
     private final ArtifactScan scan;
     private final List<String> entryNames = new ArrayList<>();
+    private final List<byte[]> records = new ArrayList<>();
     private Optional<Manifest> manifest = Optional.empty();
 
     private NestedArchiveReader(ClasspathEntry entry, ResourceBudget budget, int targetRelease) {
@@ -103,7 +107,7 @@ final class NestedArchiveReader {
         return new IndexedArtifact(
                 entry,
                 classes,
-                Optional.empty(),
+                ArtifactCoordinateReader.of(records, manifest),
                 ArchiveManifest.sealedPackages(manifest, classes),
                 scan.findings());
     }
@@ -126,6 +130,9 @@ final class NestedArchiveReader {
         if (JarFile.MANIFEST_NAME.equals(next.getName())) {
             manifest = Optional.of(new Manifest(new ByteArrayInputStream(read(stream, next))));
         }
+        if (ArtifactCoordinateReader.isPublishedRecord(next.getName())) {
+            records.add(record(stream, next));
+        }
     }
 
     /** Collects the bytes of the selected entries, keyed and ordered by the base name naming each class. */
@@ -142,6 +149,21 @@ final class NestedArchiveReader {
             }
         }
         return bytes;
+    }
+
+    /**
+     * Reads one published record, which is no class file and answers to the ceiling on an entry read
+     * whole instead — charged against the very budget the rest of this walk is charged against, because
+     * a record read out of the outer archive costs the run exactly what every other read costs it.
+     */
+    private byte[] record(ZipInputStream stream, ZipEntry next) throws IOException {
+        String entryName = next.getName();
+        budget.checkNestedEntryBytes(next.getSize(), entryName);
+        budget.checkCompressionRatio(next.getCompressedSize(), next.getSize(), entryName);
+        byte[] content = stream.readNBytes(ResourceBudget.MAXIMUM_NESTED_ENTRY_BYTES + 1);
+        budget.checkNestedEntryBytes(content.length, entryName);
+        budget.addExpandedBytes(content.length, entryName);
+        return content;
     }
 
     private byte[] read(ZipInputStream stream, ZipEntry next) throws IOException {
