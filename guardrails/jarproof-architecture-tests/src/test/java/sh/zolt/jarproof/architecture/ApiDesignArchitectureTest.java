@@ -13,23 +13,53 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
+import sh.zolt.jarproof.api.ArtifactLocation;
+import sh.zolt.jarproof.api.Evidence;
+import sh.zolt.jarproof.api.Finding;
 import sh.zolt.jarproof.api.FindingCode;
+import sh.zolt.jarproof.api.PredictedError;
 import sh.zolt.jarproof.api.PreviewMode;
+import sh.zolt.jarproof.api.Remediation;
 import sh.zolt.jarproof.api.Scope;
 import sh.zolt.jarproof.api.Severity;
 import sh.zolt.jarproof.api.TargetRuntime;
+import sh.zolt.jarproof.api.VerificationRequest;
+import sh.zolt.jarproof.api.VerificationResult;
 
 final class ApiDesignArchitectureTest {
     private static final Set<String> APPROVED_PUBLIC_TYPES = Set.of(
+            "sh.zolt.jarproof.api.ArtifactLocation",
+            "sh.zolt.jarproof.api.Evidence",
+            "sh.zolt.jarproof.api.Finding",
             "sh.zolt.jarproof.api.FindingCode",
+            "sh.zolt.jarproof.api.PredictedError",
             "sh.zolt.jarproof.api.PreviewMode",
+            "sh.zolt.jarproof.api.Remediation",
             "sh.zolt.jarproof.api.Scope",
             "sh.zolt.jarproof.api.Severity",
             "sh.zolt.jarproof.api.TargetRuntime",
+            "sh.zolt.jarproof.api.VerificationRequest",
+            "sh.zolt.jarproof.api.VerificationResult",
             "sh.zolt.jarproof.cli.Main");
-    private static final List<Class<?>> API_TYPES =
-            List.of(FindingCode.class, PreviewMode.class, Scope.class, Severity.class, TargetRuntime.class);
-    private static final Set<String> APPROVED_COLLECTION_RETURNS = Set.of();
+    private static final List<Class<?>> API_TYPES = List.of(
+            ArtifactLocation.class,
+            Evidence.class,
+            Finding.class,
+            FindingCode.class,
+            PredictedError.class,
+            PreviewMode.class,
+            Remediation.class,
+            Scope.class,
+            Severity.class,
+            TargetRuntime.class,
+            VerificationRequest.class,
+            VerificationResult.class);
+    private static final Set<String> APPROVED_COLLECTION_RETURNS = Set.of(
+            "sh.zolt.jarproof.api.Finding.evidence",
+            "sh.zolt.jarproof.api.Finding.remediation",
+            "sh.zolt.jarproof.api.VerificationRequest.applications",
+            "sh.zolt.jarproof.api.VerificationRequest.classpath",
+            "sh.zolt.jarproof.api.VerificationResult.findings");
     private static final Pattern AMBIGUOUS_DOMAIN_STATE = Pattern.compile(
             "\\b(?:String|boolean|Boolean)\\s+"
                     + "(?:status|state|mode|kind|type|format|scope|severity|previewEnabled|predictedError)\\b");

@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 final class MethodDesignArchitectureTest {
@@ -18,10 +20,11 @@ final class MethodDesignArchitectureTest {
     void productionMethodsStayReadable() {
         List<String> violations = new ArrayList<>();
         for (JavaSourceUnit source : JavaSourceParser.productionSources()) {
+            Set<String> records = recordNames(source);
             for (JavaMethodShape method : source.methods()) {
                 String subject = method.owner() + "." + method.name();
                 addIfOver(violations, subject, "lines", method.lineCount(), MAXIMUM_METHOD_LINES);
-                addIfOver(violations, subject, "parameters", method.parameterCount(), MAXIMUM_PARAMETERS);
+                addIfOver(violations, subject, "parameters", method.parameterCount(), parameterCeiling(method, records));
                 addIfOver(violations, subject, "complexity", method.complexity(), MAXIMUM_COMPLEXITY);
                 addIfOver(violations, subject, "nesting", method.maximumNesting(), MAXIMUM_NESTING);
             }
@@ -41,6 +44,23 @@ final class MethodDesignArchitectureTest {
         }
 
         assertTrue(violations.isEmpty(), () -> "Split unfocused production types:\n" + String.join("\n", violations));
+    }
+
+    /**
+     * A record constructor restates the component list rather than inventing parameter plumbing, so
+     * it is measured against the component ceiling that {@link #productionTypesStayFocused} already
+     * enforces. Every other method keeps the tighter parameter ceiling.
+     */
+    private static int parameterCeiling(JavaMethodShape method, Set<String> records) {
+        boolean recordConstructor = method.name().equals("<init>") && records.contains(method.owner());
+        return recordConstructor ? MAXIMUM_FIELDS : MAXIMUM_PARAMETERS;
+    }
+
+    private static Set<String> recordNames(JavaSourceUnit source) {
+        return source.types().stream()
+                .filter(type -> type.kind().equals("RECORD"))
+                .map(JavaTypeShape::qualifiedName)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private static void addIfOver(List<String> violations, String subject, String metric, int actual, int maximum) {
