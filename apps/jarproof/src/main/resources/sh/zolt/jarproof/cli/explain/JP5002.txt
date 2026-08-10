@@ -1,0 +1,17 @@
+JP5002 exposed package holds no classes here
+
+A module descriptor exports or opens a package that the artifact declaring the
+descriptor has no classes in.
+
+How the JVM gets there
+  A classpath never reads the clause, so nothing fails there. On a module path
+  the descriptor is validated when the module is defined: exporting or opening
+  a package the module does not contain is refused at that moment, before any
+  code runs, so the application fails to start over a clause a rename probably
+  left behind. A qualified clause is no weaker than an unqualified one, since
+  a package that is not there cannot be exposed to anybody.
+
+Typical fix
+  Delete the clause, correct the package name, or ship the classes the package
+  was meant to hold. When the package moved to another artifact, the clause
+  belongs in that artifact's descriptor rather than this one.

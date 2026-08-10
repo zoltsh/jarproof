@@ -1,0 +1,18 @@
+JP5004 consumed service type resolves nowhere
+
+A module descriptor declares that it uses a service whose type is not present:
+neither the target platform nor any supplied artifact declares it.
+
+How the JVM gets there
+  The uses clause itself costs nothing at run time; it grants the module the
+  right to call ServiceLoader for that type. The code behind it has to name
+  the same type, so an absent type means the first lookup reaches a class that
+  is not there and fails with NoClassDefFoundError, whether the deployment is
+  a classpath or a module path. Existence is checked across the whole run
+  rather than inside one module graph: a type present but unreadable from this
+  module is a different fault, and calling it absent would name the wrong one.
+
+Typical fix
+  Supply the artifact that declares the service type, or delete the uses
+  clause together with the code that consumed it. A stale clause is common
+  after an optional integration is dropped from a build.

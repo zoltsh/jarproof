@@ -1,0 +1,20 @@
+JP5003 module service provider unusable
+
+A provides clause names a provider the module system cannot use: the module does
+not declare it, it does not carry the service type, or it cannot be constructed.
+
+How the JVM gets there
+  A module's provides clause is honoured by the same ServiceLoader that reads
+  META-INF/services on a classpath, and a registration it cannot use is never
+  skipped: it becomes a ServiceConfigurationError thrown from the iterator,
+  which ends the iteration and costs the service every provider behind it.
+  A module path also accepts a public static provider() method taking no
+  arguments and returning the service, in place of any usable constructor.
+
+Typical fix
+  Declare the provider in the module that registers it, carry the service
+  type, and offer a public no-argument constructor or a public static
+  provider() method. Registering a class from another module is the common
+  mistake: move the clause to that module's own descriptor.
+
+Predicted runtime error: ServiceConfigurationError

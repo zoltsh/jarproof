@@ -1,0 +1,19 @@
+JP5006 reserved automatic module name is not a legal module name
+
+An artifact reserves a module name through the Automatic-Module-Name manifest
+attribute, and the value is not a module name: one or more Java identifiers
+joined by single dots, with no empty segment.
+
+How the JVM gets there
+  A classpath run never reads the attribute, so nothing fails in the
+  deployment being verified. The attribute exists so an artifact with no
+  descriptor can still be required by name on a module path. When the value is
+  not a legal name, no module can be derived from the artifact at all: the
+  module finder rejects it, and every descriptor that requires that name fails
+  to resolve along with it.
+
+Typical fix
+  Correct the attribute to a dotted sequence of Java identifiers, usually the
+  reverse-domain name the artifact publishes under. Watch for a doubled dot, a
+  trailing dot, a segment starting with a digit, and a hyphen, none of which a
+  Java identifier allows.

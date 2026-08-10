@@ -1,0 +1,20 @@
+JP5001 required module resolves nowhere
+
+A module descriptor requires a module nothing in this run supplies: no artifact
+declares it, no manifest reserves the name, and the target platform does not
+own it.
+
+How the JVM gets there
+  Nothing happens on a classpath, where module-info.class is never read. This
+  is reported because the artifact carrying that descriptor is offering itself
+  for the module path, and there the module graph is resolved before any code
+  runs. A requirement that resolves to nothing ends resolution with a
+  FindException naming the missing module, and the application never starts.
+  A requires static clause is compile-only and exempt, as is java.base, which
+  every module requires implicitly.
+
+Typical fix
+  Put the required module's artifact on the path as well, or relax the clause
+  to requires static when the dependency genuinely is compile-only. If the
+  name looks nearly right, check the provider's descriptor: a module name need
+  not resemble the artifact id it ships under.

@@ -1,0 +1,19 @@
+JP5005 package split across module-capable artifacts
+
+More than one artifact that advertises module-path deployability declares
+classes in the same package. Each either carries a module descriptor or reserves
+a module name in its manifest.
+
+How the JVM gets there
+  On the flat classpath the contributions merge and everything resolves, which
+  is all JP2003 reports and why that finding is only information. The module
+  system does not merge: a package belongs to exactly one module, so two
+  modules that both contain it cannot be read together, in either order. A
+  layer refuses to resolve and reports the split package by name. Artifacts
+  making no module claim are outside this finding entirely, because nothing
+  proposes reading them as modules.
+
+Typical fix
+  Give the package one owning module. Failing that, keep the overlapping
+  artifacts off the module path and read them as plain classpath libraries,
+  which is a supported deployment rather than a workaround.
