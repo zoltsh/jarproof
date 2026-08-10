@@ -86,13 +86,16 @@ final class RepositoryPolicyArchitectureTest {
 
     private static List<Path> filesUnder(Path root) {
         try (Stream<Path> paths = Files.walk(root)) {
-            return paths.filter(path -> !path.toString().contains("/target/"))
-                    .filter(path -> !path.toString().contains("/.zolt/"))
-                    .filter(path -> !path.toString().contains("/.claude/"))
+            return paths.filter(path -> insideRepository(root.relativize(path)))
                     .sorted()
                     .toList();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
+    }
+
+    private static boolean insideRepository(Path relative) {
+        String inside = "/" + relative.toString().replace('\\', '/');
+        return !inside.contains("/target/") && !inside.contains("/.zolt/") && !inside.contains("/.claude/");
     }
 }

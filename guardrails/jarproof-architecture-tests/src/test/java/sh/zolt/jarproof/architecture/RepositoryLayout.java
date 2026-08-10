@@ -127,14 +127,23 @@ final class RepositoryLayout {
     private static List<Path> files(Path start, java.util.function.Predicate<Path> predicate) {
         try (Stream<Path> paths = Files.walk(start)) {
             return paths.filter(Files::isRegularFile)
-                    .filter(path -> !path.toString().contains("/target/"))
-                    .filter(path -> !path.toString().contains("/.claude/"))
+                    .filter(path -> insideRepositoryScope(start.relativize(path)))
                     .filter(predicate)
                     .sorted()
                     .toList();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
+    }
+
+    /**
+     * Excludes build output and session tooling by the path inside the walked tree, never by the
+     * absolute path — a checkout that itself lives under such a directory (an agent worktree under
+     * {@code .claude/worktrees/}) must still see every one of its own source files.
+     */
+    private static boolean insideRepositoryScope(Path relative) {
+        String inside = "/" + relative.toString().replace('\\', '/');
+        return !inside.contains("/target/") && !inside.contains("/.claude/");
     }
 
     private static Set<String> quotedValues(String source) {
