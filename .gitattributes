@@ -2,3 +2,4 @@
 *.jar binary
 *.png binary
 *.zip binary
+*.bin binary

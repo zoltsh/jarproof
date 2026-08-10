@@ -1,0 +1,7 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": "sh/zolt/jarproof/engine/jdk-symbols-.*\\.bin"}
+    ]
+  }
+}
