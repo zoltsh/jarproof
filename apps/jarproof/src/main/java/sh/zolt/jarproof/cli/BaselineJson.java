@@ -15,9 +15,11 @@ import sh.zolt.jarproof.api.Scope;
  * an unchanged file and a review diff shows only real movement.
  */
 final class BaselineJson {
+    /** Member holding the identity of the runtime symbol profile a baseline was recorded against. */
+    static final String PROFILE = "profile";
+
     private static final String BASELINE_VERSION = "baselineVersion";
     private static final String CURRENT_VERSION = "1";
-    private static final String PROFILE = "profile";
     private static final String FINGERPRINTS = "fingerprints";
     private static final String NOT_AN_OBJECT = "A baseline file must contain a JSON object";
     private static final String UNSUPPORTED_VERSION = "Unsupported baseline version: ";

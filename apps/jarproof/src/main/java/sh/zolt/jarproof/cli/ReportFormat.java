@@ -31,6 +31,19 @@ enum ReportFormat {
     }
 
     /**
+     * Returns whether this format reports artifact paths relative to {@code --path-root}.
+     *
+     * <p>A person reads the paths they typed, so the human report repeats them. A machine consumer
+     * reads paths that stay the same across checkouts, so both machine formats measure them from the
+     * root instead (DESIGN §6).
+     *
+     * @return whether artifact paths are measured from the path root
+     */
+    boolean rootsArtifactPaths() {
+        return this != HUMAN;
+    }
+
+    /**
      * Renders a completed run in this format.
      *
      * @param request the request the run answered
