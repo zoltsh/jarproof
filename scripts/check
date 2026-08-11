@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+if [ "${JARPROOF_MANAGED_TOOLCHAIN:-}" != "1" ]; then
+    exec zolt exec -- env JARPROOF_MANAGED_TOOLCHAIN=1 scripts/check
+fi
+
 zolt resolve --workspace --locked
 zolt test --workspace --all
 zolt coverage --workspace --members modules/jarproof-api,modules/jarproof-engine,apps/jarproof,guardrails/jarproof-architecture-tests
