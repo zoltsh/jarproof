@@ -73,7 +73,11 @@ final class EmptyRootTest {
         assertTrue(invocation.out().endsWith("2 infos, 2 findings\n"), invocation.out());
     }
 
-    /** A classpath entry with no classes is ordinary, and saying anything about it would be noise. */
+    /**
+     * A classpath entry with no classes is ordinary, and saying anything about it would be noise. It
+     * was still read, so it is counted: the tally says two artifacts were opened and one class came
+     * out of them, which is the honest description of this classpath.
+     */
     @Test
     void saysNothingAboutAnEmptyClasspathEntry() throws IOException {
         Path empty = Files.createDirectory(workspace.resolve("empty"));
@@ -88,7 +92,7 @@ final class EmptyRootTest {
                 CliFixture.JAVA_17);
 
         assertEquals(0, invocation.exitCode(), invocation.err());
-        assertEquals("no findings\n", invocation.out());
+        assertEquals("no findings — analyzed 1 class across 2 artifacts\n", invocation.out());
     }
 
     @Test

@@ -81,6 +81,41 @@ final class HumanReportTest {
         assertEquals("no findings\n", HumanReport.render(SampleFindings.result()));
     }
 
+    /**
+     * The line that closes a clean run has to distinguish a verified classpath from a run that opened
+     * nothing, and the numbers are the only thing that can do it.
+     */
+    @Test
+    void saysWhatItExaminedToFindNothing() {
+        assertEquals(
+                "no findings — analyzed 5000 classes across 40 artifacts\n",
+                HumanReport.render(SampleFindings.examined(5000, 40)));
+    }
+
+    @Test
+    void countsOneClassAndOneArtifactAsOneEach() {
+        assertEquals(
+                "no findings — analyzed 1 class across 1 artifact\n",
+                HumanReport.render(SampleFindings.examined(1, 1)));
+    }
+
+    /** A position that presents no classes was still read, so the run says what it read. */
+    @Test
+    void saysSoWhenTheArtifactsItReadPresentedNoClassesAtAll() {
+        assertEquals(
+                "no findings — analyzed 0 classes across 2 artifacts\n",
+                HumanReport.render(SampleFindings.examined(0, 2)));
+    }
+
+    /** The count line of a report that found something already says what a reader needs. */
+    @Test
+    void leavesTheCountLineAloneWhenThereAreFindings() {
+        String report = HumanReport.render(SampleFindings.examined(5000, 40, SampleFindings.splitPackage()));
+
+        assertTrue(report.endsWith("\n1 info, 1 finding\n"), report);
+        assertFalse(report.contains("analyzed"), report);
+    }
+
     @Test
     void omitsTheSourceLineForAClassCompiledWithoutDebugInformation() {
         String report = HumanReport.render(SampleFindings.result(SampleFindings.missingMethod()));

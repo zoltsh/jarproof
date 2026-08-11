@@ -13,12 +13,20 @@ import sh.zolt.jarproof.api.VerificationResult;
  * {@code findings}, {@code summary}, and findings are emitted in the order the engine produced
  * them, which is already canonical. The summary counts every severity, including the ones that did
  * not occur, so a consumer can read a zero instead of inferring one from a missing key.
+ *
+ * <p>{@code analyzedClasses} and {@code analyzedArtifacts} follow {@code total} and say how much the
+ * run examined, which is what lets a consumer tell a clean report from a report of nothing. They are
+ * optional members of a version that already exists, which the format allows: they arrive after the
+ * keys a consumer already reads, and a result that states no tallies omits both rather than claiming
+ * zero work. Anything the engine ran states them.
  */
 final class JsonReport {
     private static final String JARPROOF_JSON_VERSION = "jarproofJsonVersion";
     private static final String REQUEST = "request";
     private static final String FINDINGS = "findings";
     private static final String TOTAL = "total";
+    private static final String ANALYZED_CLASSES = "analyzedClasses";
+    private static final String ANALYZED_ARTIFACTS = "analyzedArtifacts";
 
     private JsonReport() {
     }
@@ -49,18 +57,29 @@ final class JsonReport {
             FindingJson.append(json, finding);
         }
         json.endArray();
-        appendSummary(json, result.findings());
+        appendSummary(json, result);
         json.endObject();
         return json.document();
     }
 
-    private static void appendSummary(JsonText json, List<Finding> findings) {
+    private static void appendSummary(JsonText json, VerificationResult result) {
+        List<Finding> findings = result.findings();
         json.name(FindingJson.SUMMARY).beginObject();
         for (Severity severity : Severity.values()) {
             json.name(CanonicalName.of(severity)).value(count(findings, severity));
         }
         json.name(TOTAL).value(findings.size());
+        appendExamined(json, result);
         json.endObject();
+    }
+
+    /** Writes what the run examined, or nothing at all when the result states no tallies. */
+    private static void appendExamined(JsonText json, VerificationResult result) {
+        if (result.analyzedClassCount() == 0 && result.analyzedArtifactCount() == 0) {
+            return;
+        }
+        json.name(ANALYZED_CLASSES).value(result.analyzedClassCount());
+        json.name(ANALYZED_ARTIFACTS).value(result.analyzedArtifactCount());
     }
 
     private static int count(List<Finding> findings, Severity severity) {

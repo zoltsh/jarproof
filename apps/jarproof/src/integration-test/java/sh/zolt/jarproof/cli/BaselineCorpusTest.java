@@ -35,7 +35,12 @@ final class BaselineCorpusTest {
     private static final String NEWER = "newer-bytecode";
     private static final String BASELINE_FILE = "jarproof-baseline.json";
     private static final String ACCEPTED = "suppressed 1 accepted finding; 0 baseline entries are stale\n";
-    private static final String NOTHING_NEW = "no findings\n";
+    /**
+     * A ratcheted run still reports what it examined. The two fixture artifacts declare one class
+     * each, so the line that used to be a bare {@code no findings} now distinguishes this run from one
+     * that never opened them.
+     */
+    private static final String NOTHING_NEW = "no findings — analyzed 2 classes across 2 artifacts\n";
     private static final String WROTE_ONE = "wrote 1 accepted finding to ";
     private static final String FINGERPRINTS = "fingerprints";
     private static final String RECORDED = "JP1003|fixtures/missing-method-consumer/target/"

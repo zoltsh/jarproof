@@ -143,6 +143,37 @@ final class JsonReportTest {
                 document);
     }
 
+    /** The additive keys follow the ones a consumer of JSON v1 already reads, never before them. */
+    @Test
+    void reportsWhatTheRunExaminedAfterTheCountsItAlreadyCarried() {
+        String document = JsonReport.render(
+                SampleFindings.request(), SampleFindings.examined(5000, 40, SampleFindings.missingMethod()));
+
+        assertTrue(
+                document.endsWith("\n  \"summary\": {\n    \"info\": 0,\n    \"warning\": 0,\n"
+                        + "    \"error\": 1,\n    \"total\": 1,\n    \"analyzedClasses\": 5000,\n"
+                        + "    \"analyzedArtifacts\": 40\n  }\n}\n"),
+                document);
+    }
+
+    /** A result that states no tallies omits both keys rather than claiming a run examined nothing. */
+    @Test
+    void leavesBothTallyKeysOutOfAResultThatStatesNone() {
+        String document = JsonReport.render(
+                SampleFindings.request(), SampleFindings.result(SampleFindings.missingMethod()));
+
+        assertFalse(document.contains("\"analyzedClasses\""), document);
+        assertFalse(document.contains("\"analyzedArtifacts\""), document);
+    }
+
+    /** Zero classes read from artifacts that were really opened is a tally, not an absent one. */
+    @Test
+    void reportsArtifactsThatPresentedNoClassesAsATallyOfTheirOwn() {
+        String document = JsonReport.render(SampleFindings.request(), SampleFindings.examined(0, 2));
+
+        assertTrue(document.contains("\"analyzedClasses\": 0,\n    \"analyzedArtifacts\": 2\n"), document);
+    }
+
     @Test
     void escapesAwkwardFindingTextWithoutTouchingTheRest() {
         Finding awkward = new Finding(

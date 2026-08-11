@@ -40,6 +40,18 @@ import sh.zolt.jarproof.api.VerificationResult;
  * class file's own word, so no path and no source root take part in it. Blocks are separated by a
  * blank line and the report ends with one line of counts. Nothing here reads a clock, a locale, or the
  * file system, so the same findings always render the same bytes.
+ *
+ * <p>A run that found nothing says what it examined:
+ *
+ * <pre>
+ * no findings — analyzed 5000 classes across 40 artifacts
+ * </pre>
+ *
+ * <p>Without those numbers the most reassuring line jarproof prints is also the line a broken
+ * invocation prints, and a reader has no way to tell a verified classpath from a classpath nobody
+ * opened. A result that states no tallies renders the bare {@code no findings} instead of inventing
+ * them. A report that does carry findings gains nothing from the pair: its count line already says
+ * what a reader needs, and the findings themselves name the artifacts they came from.
  */
 final class HumanReport {
     private static final String SYMBOL = "symbol";
@@ -70,7 +82,7 @@ final class HumanReport {
             appendFinding(out, finding);
             out.append('\n');
         }
-        return out.append(countLine(result.findings())).append('\n').toString();
+        return out.append(countLine(result)).append('\n').toString();
     }
 
     private static void appendFinding(StringBuilder out, Finding finding) {
@@ -136,9 +148,10 @@ final class HumanReport {
         out.append(line).append(value).append('\n');
     }
 
-    private static String countLine(List<Finding> findings) {
+    private static String countLine(VerificationResult result) {
+        List<Finding> findings = result.findings();
         if (findings.isEmpty()) {
-            return NOTHING_FOUND;
+            return NOTHING_FOUND + examined(result);
         }
         List<String> counts = new ArrayList<>();
         for (Severity severity : List.of(Severity.ERROR, Severity.WARNING, Severity.INFO)) {
@@ -156,5 +169,32 @@ final class HumanReport {
             line.append(count);
         }
         return line.toString();
+    }
+
+    /**
+     * What the run examined, as the tail of a line that found nothing.
+     *
+     * <p>Both counts zero means a result that states no tallies rather than a run that opened
+     * nothing, so nothing is appended and the line stays the bare form it has always been. Every run
+     * the engine completes reads at least the application it was given, so it always has a number.
+     *
+     * <p>The sentence is spelt here rather than hoisted into constants because it is one-off prose
+     * that belongs beside the behaviour it explains, and because {@code classes} already has its
+     * named home in the {@code inspect} renderer -- one literal, one place, so this one composes the
+     * irregular plural from the label above instead of spelling it a second time.
+     *
+     * @param result the completed run
+     * @return the tail naming the classes and artifacts examined, or empty text
+     */
+    private static String examined(VerificationResult result) {
+        int classes = result.analyzedClassCount();
+        int artifacts = result.analyzedArtifactCount();
+        if (classes == 0 && artifacts == 0) {
+            return "";
+        }
+        return " — analyzed "
+                + Quantity.of(classes, CLASS, CLASS + "es")
+                + " across "
+                + Quantity.of(artifacts, FindingJson.ARTIFACT);
     }
 }

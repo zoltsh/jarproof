@@ -104,7 +104,9 @@ final class CheckCommandTest {
                     "info": 0,
                     "warning": 0,
                     "error": 1,
-                    "total": 1
+                    "total": 1,
+                    "analyzedClasses": 2,
+                    "analyzedArtifacts": 2
                   }
                 }
                 """,

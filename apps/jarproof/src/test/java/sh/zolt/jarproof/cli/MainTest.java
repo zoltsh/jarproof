@@ -129,6 +129,36 @@ final class MainTest {
                 invocation.err());
     }
 
+    /**
+     * Two characters the wrong way round is the commonest typo there is, and the parser's own matcher
+     * compares by leading characters, so it has nothing to say about one. The reader was being told
+     * their flag was unknown and left to spot the difference themselves; the line they get instead is
+     * indistinguishable from the one a truncation gets.
+     */
+    @Test
+    void suggestsTheFlagATransposedSpellingMeant() {
+        Invocation invocation = complete("--fromat", CliFixture.JSON);
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals(
+                """
+                Unknown option: '--fromat'
+                Possible solutions: --format
+                """
+                        + POINTS_AT_CHECK,
+                invocation.err());
+        assertEquals(3, invocation.err().lines().count(), invocation.err());
+    }
+
+    /** Nothing is offered when nothing is close, because a wrong guess is worse than no guess. */
+    @Test
+    void offersNoSpellingForAnOptionThatResemblesNone() {
+        Invocation invocation = complete("--zzz");
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals("Unknown option: '--zzz'\n" + POINTS_AT_CHECK, invocation.err());
+    }
+
     @Test
     void keepsEveryRefusalOffTheOutputStreamAndUnderThreeLines() {
         Invocation invocation = CliFixture.invoke("inspect", CliFixture.FORMAT, "yaml", "app.jar");

@@ -15,6 +15,9 @@ final class CheckInvocationTest {
     private static final String SCOPE = "--scope";
     private static final String HEALTHY = "com/acme/app/Healthy";
 
+    /** What a clean run over one single-class artifact says it examined. */
+    private static final String NOTHING_IN_ONE_CLASS = "no findings — analyzed 1 class across 1 artifact\n";
+
     @TempDir
     Path workspace;
 
@@ -31,7 +34,34 @@ final class CheckInvocationTest {
                 CliFixture.JAVA_17);
 
         assertEquals(0, invocation.exitCode(), invocation.err());
-        assertEquals("no findings\n", invocation.out());
+        assertEquals(NOTHING_IN_ONE_CLASS, invocation.out());
+    }
+
+    /**
+     * The machine envelope of the same clean run states the same tallies. A consumer reading
+     * {@code "total": 0} beside one artifact really opened has a verified classpath; the same zero
+     * with no tallies at all could be a run that never read anything.
+     */
+    @Test
+    void statesWhatACleanRunExaminedInTheMachineEnvelopeToo() {
+        Path application = CliFixture.jar(workspace, "healthy.jar",
+                CliFixture.entries(HEALTHY + ".class", CliFixture.classFile(HEALTHY, CliFixture.JAVA_17_MAJOR)));
+
+        Invocation invocation = CliFixture.invoke(
+                CliFixture.CHECK,
+                CliFixture.APPLICATION,
+                application.toString(),
+                CliFixture.TARGET_JAVA,
+                CliFixture.JAVA_17,
+                CliFixture.FORMAT,
+                CliFixture.JSON);
+
+        assertEquals(0, invocation.exitCode(), invocation.err());
+        assertTrue(
+                invocation.out().endsWith("\n  \"summary\": {\n    \"info\": 0,\n    \"warning\": 0,\n"
+                        + "    \"error\": 0,\n    \"total\": 0,\n    \"analyzedClasses\": 1,\n"
+                        + "    \"analyzedArtifacts\": 1\n  }\n}\n"),
+                invocation.out());
     }
 
     @Test
@@ -64,7 +94,7 @@ final class CheckInvocationTest {
         assertEquals(1, withoutPreview.exitCode(), withoutPreview.err());
         assertTrue(withoutPreview.out().contains("JP3002"), withoutPreview.out());
         assertEquals(0, withPreview.exitCode(), withPreview.err());
-        assertEquals("no findings\n", withPreview.out());
+        assertEquals(NOTHING_IN_ONE_CLASS, withPreview.out());
     }
 
     @Test

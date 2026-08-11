@@ -17,7 +17,11 @@ final class BaselineRoundTripTest {
     private static final String BASELINE_FLAG = "--baseline";
     private static final String OUT = "--out";
     private static final String SECOND_VALIDATOR = "com/acme/app/PriceValidator";
-    private static final String NOTHING_NEW = "no findings\n";
+    /**
+     * A run whose every finding the baseline accepts still reports what it examined. The acceptance
+     * decides which findings are news, never how much was read to find them.
+     */
+    private static final String NOTHING_NEW = "no findings — analyzed 2 classes across 2 artifacts\n";
     private static final String ACCEPTED_ONE = "suppressed 1 accepted finding; 0 baseline entries are stale\n";
 
     @TempDir
