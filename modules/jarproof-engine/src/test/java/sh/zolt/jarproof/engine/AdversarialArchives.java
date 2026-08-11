@@ -30,6 +30,8 @@ import java.util.zip.ZipOutputStream;
  */
 final class AdversarialArchives {
     private static final int CRC_BYTES = 4;
+    private static final int STORED_SIZE_FIELDS = 4;
+    private static final int DEFLATED_SIZE_FIELDS = 2;
     private static final int BYTE_MASK = 0xFF;
     private static final int BYTE_BITS = 8;
     private static final int LOCAL_HEADER_BYTES = 30;
@@ -165,6 +167,43 @@ final class AdversarialArchives {
     }
 
     /**
+     * The same archive with one stored entry declaring a size nobody stored.
+     *
+     * <p>This is the archive that costs nothing to send and everything to read: a size is a claim written
+     * in a header, and {@code ZipFile} hands that claim to a caller without ever comparing it to the bytes
+     * behind it. A stored entry records one number as both its compressed and its uncompressed size, in
+     * the local header and again in the central directory, so all four copies carry it and all four are
+     * rewritten together — an archive whose copies disagreed would be one a reader could catch, and one
+     * whose compressed size stayed honest would be caught by the compression ratio instead.
+     *
+     * @param archive a complete archive whose named entry is stored
+     * @param storedBytes the length the entry really stores, which is the number in all four copies
+     * @param declaredBytes the size to declare instead
+     * @return the patched archive
+     */
+    static byte[] overstating(byte[] archive, int storedBytes, long declaredBytes) {
+        return replaced(archive, unsigned32(storedBytes), unsigned32(declaredBytes), STORED_SIZE_FIELDS);
+    }
+
+    /**
+     * The same archive with one deflated entry declaring fewer bytes than it delivers, the lie told the
+     * other way around.
+     *
+     * <p>A deflated entry declares its uncompressed size twice, in the data descriptor that follows its
+     * content and again in the central directory, and its compressed size is left honest here because that
+     * is the number the inflater is actually steered by: it stops when the compressed stream ends rather
+     * than when the declared size is reached, so an entry may promise eight bytes and hand over megabytes.
+     *
+     * @param archive a complete archive whose named entry is deflated
+     * @param deflatedBytes the length the entry really expands to, which is the number in both copies
+     * @param declaredBytes the size to declare instead
+     * @return the patched archive
+     */
+    static byte[] understating(byte[] archive, int deflatedBytes, long declaredBytes) {
+        return replaced(archive, unsigned32(deflatedBytes), unsigned32(declaredBytes), DEFLATED_SIZE_FIELDS);
+    }
+
+    /**
      * The CRC-32 of some content as an archive header records it: four bytes, least significant first.
      *
      * @param content the entry content
@@ -173,7 +212,16 @@ final class AdversarialArchives {
     static byte[] recordedCrc(byte[] content) {
         CRC32 digest = new CRC32();
         digest.update(content);
-        long value = digest.getValue();
+        return unsigned32(digest.getValue());
+    }
+
+    /**
+     * One of the archive format's four-byte header fields, least significant byte first.
+     *
+     * @param value the value the field holds
+     * @return the recorded bytes
+     */
+    static byte[] unsigned32(long value) {
         byte[] recorded = new byte[CRC_BYTES];
         for (int index = 0; index < CRC_BYTES; index++) {
             recorded[index] = (byte) (value >>> index * BYTE_BITS & BYTE_MASK);

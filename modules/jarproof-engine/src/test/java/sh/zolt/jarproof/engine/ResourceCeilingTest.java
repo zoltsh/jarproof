@@ -3,9 +3,13 @@ package sh.zolt.jarproof.engine;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.objectweb.asm.ClassWriter;
@@ -30,6 +34,10 @@ final class ResourceCeilingTest {
     private static final String CLASS_ENTRY = "com/acme/huge/Huge.class";
     private static final String INTERNAL_NAME = "com/acme/huge/Huge";
     private static final String LIBRARY_ENTRY = BootLayoutFixture.LIBRARY_DIRECTORY + "zeros.jar";
+    private static final String NESTED_LIBRARY = BootLayoutFixture.LIBRARY_DIRECTORY + "orders-1.0.jar";
+    private static final String RECORD_ENTRY = ArchiveLayout.MAVEN_PREFIX + "com.acme/orders/"
+            + ArchiveLayout.POM_PROPERTIES_NAME;
+    private static final String RECORD_TEXT = "groupId=com.acme\nartifactId=orders\nversion=1.0\n";
     private static final String ABSENT_PREFIX = "com/absent/A";
     private static final int COMPRESSIBLE_BYTES = 300_000;
     private static final int LOUD_REFERENCES = ResourceBudget.MAXIMUM_FINDINGS + 1;
@@ -84,6 +92,46 @@ final class ResourceCeilingTest {
     }
 
     /**
+     * The bytes of a class entry inside a nested library are charged to the run like any other bytes, and
+     * the refusal names that entry rather than the library it arrived in.
+     *
+     * <p>The budget here is charged to the ceiling less the library's own length, so reading the library
+     * lands exactly on the ceiling and the first byte read out of it is the one that breaches. A full
+     * pre-charge could not show this: it would refuse at the library itself and never reach inside.
+     */
+    @Test
+    void refusesAClassEntryInsideANestedLibraryThatWouldPushTheRunPastTheByteCeiling() {
+        byte[] library = BootLayoutFixture.jarBytes(
+                EngineFixture.entries(CLASS_ENTRY, EngineFixture.classFile(INTERNAL_NAME)));
+
+        assertRefusesNaming(carrying(library, "byte-ceiling-class.jar"), library.length, CLASS_ENTRY);
+    }
+
+    /** A published record read out of the same library is charged to the same total and named the same way. */
+    @Test
+    void refusesAPublishedRecordInsideANestedLibraryThatWouldPushTheRunPastTheByteCeiling() {
+        byte[] library = BootLayoutFixture.jarBytes(
+                EngineFixture.entries(RECORD_ENTRY, RECORD_TEXT.getBytes(StandardCharsets.UTF_8)));
+
+        assertRefusesNaming(carrying(library, "byte-ceiling-record.jar"), library.length, RECORD_ENTRY);
+    }
+
+    /**
+     * The launcher index is charged too, and this application holds nothing else a reader would charge for:
+     * no class files anywhere, and an index naming a library the archive does not carry. Reading the index
+     * is therefore the only charge the run makes, so the ceiling can only be reached by that read.
+     */
+    @Test
+    void refusesALauncherIndexThatWouldPushTheRunPastTheByteCeilingOnItsOwn()  {
+        Path application = BootLayoutFixture.archive()
+                .with(JarFile.MANIFEST_NAME, declaredAreas())
+                .withIndex(BootLayoutFixture.INDEX_PATH, NESTED_LIBRARY)
+                .write(workspace, "byte-ceiling-index.jar");
+
+        assertRefusesNaming(application, 0, BootLayoutFixture.INDEX_PATH);
+    }
+
+    /**
      * A run that produced more findings than the ceiling allows is refused rather than reported. One
      * class naming twenty thousand absent types is a small artifact and an enormous report, which is the
      * asymmetry the ceiling exists for: the analysis is cheap, and rendering what it found is not.
@@ -98,6 +146,44 @@ final class ResourceCeilingTest {
 
         assertTrue(failure.getMessage().contains(String.valueOf(ResourceBudget.MAXIMUM_FINDINGS)),
                 failure.getMessage());
+    }
+
+    /**
+     * Reads the application with the byte ceiling all but reached, and insists the refusal names the entry
+     * that crossed it.
+     *
+     * @param application the artifact to read
+     * @param allowance how many bytes to leave unspent, which is what the read must fit inside
+     * @param entryName the entry whose bytes are expected to exhaust that allowance
+     */
+    private void assertRefusesNaming(Path application, long allowance, String entryName) {
+        ResourceBudget budget = new ResourceBudget();
+        budget.addExpandedBytes(ResourceBudget.MAXIMUM_EXPANDED_BYTES - allowance, CLASS_ENTRY);
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class, () -> ArtifactCatalog.read(
+                EngineFixture.request(List.of(application), List.of(), 17), budget));
+
+        assertTrue(failure.getMessage().contains(String.valueOf(ResourceBudget.MAXIMUM_EXPANDED_BYTES)),
+                failure.getMessage());
+        assertTrue(failure.getMessage().contains(entryName), failure.getMessage());
+    }
+
+    /** An application whose classes root is empty, so the library it carries is all a reader charges for. */
+    private Path carrying(byte[] library, String name) {
+        return BootLayoutFixture.archive()
+                .with(JarFile.MANIFEST_NAME, declaredAreas())
+                .withStoredLibrary(NESTED_LIBRARY, library)
+                .write(workspace, name);
+    }
+
+    /** A manifest naming both nested areas, which is what makes an archive a layout without any entry. */
+    private static byte[] declaredAreas() {
+        Manifest manifest = EngineFixture.manifest();
+        manifest.getMainAttributes().put(
+                new Attributes.Name(BootLayoutFixture.DECLARED_CLASSES), BootLayoutFixture.CLASSES_ROOT);
+        manifest.getMainAttributes().put(
+                new Attributes.Name(BootLayoutFixture.DECLARED_LIBRARIES), BootLayoutFixture.LIBRARY_DIRECTORY);
+        return EngineFixture.manifestBytes(manifest);
     }
 
     /** Reads the artifact with a budget already charged to the byte ceiling, so the next byte refuses. */
