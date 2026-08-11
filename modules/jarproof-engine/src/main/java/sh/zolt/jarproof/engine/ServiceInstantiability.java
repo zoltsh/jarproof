@@ -9,8 +9,8 @@ import org.objectweb.asm.Opcodes;
  *
  * <p>On a classpath there is exactly one way in: a public class with a public no-argument
  * constructor. The static {@code provider()} factory is a module-path form and is deliberately not
- * accepted here, which is what DESIGN.md requires of 0.1, so a classpath provider that relies on it
- * still fails this check — which is what the runtime does to it too.
+ * accepted here, so a classpath provider that relies on it still fails this check — which is what
+ * the runtime does to it too.
  *
  * <p>Every criterion a provider fails is reported, so one reading of the diagnostic is enough to fix
  * the class. An interface is the single exception: it is reported only as an interface, because the

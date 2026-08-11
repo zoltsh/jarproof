@@ -11,8 +11,8 @@ import sh.zolt.jarproof.api.Finding;
  *
  * <p>Five questions, asked per configuration file: is the file's own name a service type name, is
  * every line a provider name, does each named provider exist, does it carry the service type, and
- * can it be constructed. Only classpath rules are applied, as DESIGN.md requires of 0.1 — a provider
- * reached through a classpath needs a public no-argument constructor, and the module-path
+ * can it be constructed. Only classpath rules are applied: a provider reached through a classpath
+ * needs a public no-argument constructor, and the module-path
  * {@code provider()} factory form is out of scope until the JP5xxx range ships.
  *
  * <p>Three situations are deliberately quiet, because a finding nobody can act on costs more than the

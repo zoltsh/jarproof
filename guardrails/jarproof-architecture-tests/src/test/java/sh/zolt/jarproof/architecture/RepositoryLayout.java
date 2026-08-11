@@ -70,7 +70,7 @@ final class RepositoryLayout {
      * abstract service providers, and pairs of the same class that disagree. Measuring product-code
      * policy against that corpus would mean either weakening the policy for the whole repository or
      * faking the corpus, so the corpus is scoped out of it instead. This is the narrow, deliberate
-     * rule change PLAN.md decision 4 reserves for fixtures; every other guardrail still applies.
+     * fixture exception; every other guardrail still applies.
      */
     static Set<String> coreMembers() {
         return workspaceMembers().stream()

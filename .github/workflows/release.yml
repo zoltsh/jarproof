@@ -1,7 +1,7 @@
 name: release
 
 # Tag a release and this workflow assembles it. It never publishes: the draft release is the
-# hand-off point, and Maven Central publication stays a manual step in alpha (docs/RELEASING.md).
+# hand-off point, and Maven Central publication stays a manual step in alpha.
 # `workflow_dispatch` runs the same build and gates without creating a release, so the pipeline can
 # be exercised from a branch before a tag exists.
 on:
@@ -17,7 +17,7 @@ concurrency:
 jobs:
   # One archive per supported platform, each built and gated on the platform it ships for --
   # a native binary is only proven by the machine that produced it. Windows is deliberately
-  # absent: the uber JAR is the Windows story until setup-zolt and Zolt support it (DESIGN 13).
+  # absent: the uber JAR is the Windows story until setup-zolt and Zolt support it.
   archive:
     strategy:
       fail-fast: false
@@ -147,7 +147,7 @@ jobs:
 
       # Dogfood contract rule 7: jarproof verifies its own packaged artifact before release. The
       # copy gives the analysis a version-stable relative path, because a baseline fingerprint
-      # carries the artifact it describes -- see docs/RELEASING.md before regenerating the baseline.
+      # carries the artifact it describes.
       - name: Verify jarproof against its own uber JAR
         run: |
           set -eu
@@ -174,7 +174,7 @@ jobs:
 
       # Publishing itself is manual in alpha. With no [publish] targets declared yet this step
       # proves lock freshness only -- it reports an empty publish family and cannot catch routing
-      # gaps until members declare targets (docs/ZOLT-NOTES.md records the limitation).
+      # gaps until members declare targets.
       - name: Check publishability
         run: zolt publish --workspace --members modules/jarproof-api,modules/jarproof-engine,apps/jarproof --dry-run
 

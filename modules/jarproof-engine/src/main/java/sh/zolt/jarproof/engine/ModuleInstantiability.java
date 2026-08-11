@@ -10,8 +10,8 @@ import org.objectweb.asm.Type;
  *
  * <p>A module path offers one way in that a classpath does not: a public static {@code provider}
  * method taking no arguments, whose returned type carries the service. When a class declares one, its
- * constructors stop mattering entirely. DESIGN.md deferred exactly this rule to the JP5xxx range, and
- * the classpath rule stays as it was — {@link ServiceInstantiability} still accepts nothing but a
+ * constructors stop mattering entirely. The classpath rule stays separate —
+ * {@link ServiceInstantiability} still accepts nothing but a
  * public no-argument constructor, because that is all a classpath {@code ServiceLoader} looks for.
  *
  * <p>Everything else the two worlds agree on, so the shared criterion is asked of the classpath rule

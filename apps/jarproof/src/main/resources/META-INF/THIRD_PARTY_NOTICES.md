@@ -116,10 +116,27 @@ descriptors, access flags, and inheritance relationships. They contain no
 bytecode, no method bodies, no constant values, no documentation, and no source
 code.
 
-jarproof's position on their provenance and redistribution, including the
-extraction procedure, the exact JDK build they came from, and the reasoning
-behind their inclusion, is stated in full in `docs/SYMBOL-DATA.md`. Read that
-document before redistributing these files.
+They are generated deterministically from the `lib/ct.sym` signature archive
+of GraalVM Community Edition 25.0.2, the repository's pinned managed
+toolchain. Each resource records its target release, class count, and exact
+generating runtime version in its header. The committed extraction code reads
+`ct.sym`; the test-scope generator rebuilds the compressed resources; and the
+freshness tests byte-compare all five generated files with the committed
+copies. The gzip stream uses a zero modification time and production code
+defines every ordering decision.
+
+The resources contain exhaustive factual interface metadata: type and member
+names, descriptors, access flags, module ownership, and inheritance and nest
+relationships. They contain no bytecode, method bodies, field values,
+documentation, source code, annotations, resources, or `ct.sym` bytes.
+
+jarproof's position is that this exhaustive factual API metadata is not a
+copyrightable work and therefore does not require or receive a license from
+the JDK's copyright holders. The project recognizes that compilation rights,
+derivative-work analysis, and database rights can be assessed differently by
+different jurisdictions. If a rights holder disagrees, open an issue with the
+project; the bundled resources can be removed and the existing `--jdk <path>`
+mode used instead without redesigning the verifier.
 
 Oracle and Java are registered trademarks of Oracle and/or its affiliates.
 jarproof is not affiliated with, endorsed by, or certified by Oracle, the

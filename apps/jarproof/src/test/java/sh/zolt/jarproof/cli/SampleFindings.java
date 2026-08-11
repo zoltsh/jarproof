@@ -15,7 +15,7 @@ import sh.zolt.jarproof.api.TargetRuntime;
 import sh.zolt.jarproof.api.VerificationRequest;
 import sh.zolt.jarproof.api.VerificationResult;
 
-/** Canned findings shared by the reporting tests, modelled on the diagnostics in DESIGN.md. */
+/** Canned findings shared by the reporting tests, modelled on product diagnostics. */
 final class SampleFindings {
     /** The application every specimen is reported against. */
     static final String APPLICATION = "app.jar";
@@ -35,7 +35,7 @@ final class SampleFindings {
     private SampleFindings() {
     }
 
-    /** The DESIGN section 1 specimen: an application-origin missing method. */
+    /** An application-origin missing-method specimen. */
     static Finding missingMethod() {
         return new Finding(
                 FindingCode.of("JP1003"),
