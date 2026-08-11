@@ -32,6 +32,9 @@ jobs:
           version: 0.1.0-zap.20260810.e45c94a87776
           sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
 
+      - name: Sync managed Java
+        run: zolt toolchain sync
+
       - name: Check repository
         run: scripts/check
 
@@ -56,6 +59,9 @@ jobs:
           channel: zap
           version: 0.1.0-zap.20260810.e45c94a87776
           sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
+
+      - name: Sync managed Java
+        run: zolt toolchain sync
 
       - name: Compare the native binary against the uber JAR
         run: scripts/native-parity

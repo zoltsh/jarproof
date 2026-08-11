@@ -66,6 +66,9 @@ jobs:
           version: 0.1.0-zap.20260810.e45c94a87776
           sha256: ${{ matrix.zoltSha256 }}
 
+      - name: Sync managed Java
+        run: zolt toolchain sync
+
       - name: Check repository
         run: scripts/check
 
@@ -122,6 +125,9 @@ jobs:
           channel: zap
           version: 0.1.0-zap.20260810.e45c94a87776
           sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
+
+      - name: Sync managed Java
+        run: zolt toolchain sync
 
       - name: Download the platform archives
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
