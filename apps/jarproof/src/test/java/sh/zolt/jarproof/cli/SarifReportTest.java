@@ -54,7 +54,8 @@ final class SarifReportTest {
                           "ruleId": "JP2003",
                           "level": "note",
                           "message": {
-                            "text": "split package across artifacts"
+                            "text": "split package across artifacts",
+                            "markdown": "**split package across artifacts**\\u000A\\u000AThe package is assembled from more than one artifact, which a classpath allows."
                           },
                           "locations": [
                             {
@@ -64,7 +65,11 @@ final class SarifReportTest {
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "properties": {
+                            "evidence": [],
+                            "remediation": []
+                          }
                         }
                       ]
                     }
@@ -136,7 +141,8 @@ final class SarifReportTest {
                           "ruleId": "JP1003",
                           "level": "error",
                           "message": {
-                            "text": "missing method"
+                            "text": "missing method",
+                            "markdown": "**missing method**\\u000A\\u000Aguava-18.0.jar declares no checkArgument(boolean, String, Object) on Preconditions.\\u000A\\u000A- selected guava-18.0.jar from lib/\\\\*\\u000A- app.jar was compiled against a newer guava\\u000A\\u000A**next:** align the runtime classpath with the version used to compile app.jar"
                           },
                           "locations": [
                             {
@@ -149,7 +155,17 @@ final class SarifReportTest {
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "properties": {
+                            "evidence": [
+                              "selected guava-18.0.jar from lib/*",
+                              "app.jar was compiled against a newer guava"
+                            ],
+                            "remediation": [
+                              "align the runtime classpath with the version used to compile app.jar",
+                              "or recompile app.jar against guava-18.0.jar"
+                            ]
+                          }
                         }
                       ]
                     }

@@ -15,6 +15,15 @@ import sh.zolt.jarproof.api.Severity;
  * and one location. Jarproof's {@code info} severity maps to the SARIF level {@code note};
  * {@code warning} and {@code error} keep their names.
  *
+ * <p>Three members carry the rest of what the finding knows, because a result holding only a summary
+ * makes a code-scanning UI a worse reader of the analysis than the human report is. The message gains
+ * a {@code markdown} rendering beside its bare {@code text} ({@link SarifMarkdown}); the evidence and
+ * the remediation reach a consumer verbatim in a {@code properties} bag ({@link SarifProperties}); and
+ * a finding whose evidence proved its referencing method executes gains a {@code codeFlows} entry
+ * ({@link SarifCodeFlow}) so the proving chain is a path a reader can step through rather than a
+ * sentence. All three are core SARIF 2.1.0, and all three are additions: what a consumer already read
+ * -- the rule id, the level, the message text, and the location -- is written exactly as before.
+ *
  * <p>A result is located in source only when the source file can be found. The candidate path is the
  * referencing class's package directory joined to the {@code SourceFile} attribute that class file
  * declared, and it counts only if one of the roots really holds that file -- the first root that does
@@ -33,11 +42,15 @@ final class SarifResult {
     /** Member holding a human-readable string inside a message or description. */
     static final String TEXT = "text";
 
+    /** Member holding the message an object shows, whether a result or one step of a code flow. */
+    static final String MESSAGE = "message";
+
+    /** Member holding a sequence of locations, whether a result's own or a thread flow's steps. */
+    static final String LOCATIONS = "locations";
+
     private static final String RESULTS = "results";
     private static final String RULE_ID = "ruleId";
     private static final String LEVEL = "level";
-    private static final String MESSAGE = "message";
-    private static final String LOCATIONS = "locations";
     private static final String PHYSICAL_LOCATION = "physicalLocation";
     private static final String ARTIFACT_LOCATION = "artifactLocation";
     private static final String URI = "uri";
@@ -79,8 +92,11 @@ final class SarifResult {
         json.name(LEVEL).value(levelOf(finding.severity()));
         json.name(MESSAGE).beginObject();
         json.name(TEXT).value(finding.summary());
+        SarifMarkdown.append(json, finding);
         json.endObject();
         appendLocation(json, finding.artifact(), mapped(finding.artifact(), sourceRoots));
+        SarifCodeFlow.append(json, finding.evidence());
+        SarifProperties.append(json, finding);
         json.endObject();
     }
 

@@ -25,6 +25,12 @@ final class FindingJson {
     /** Member holding an artifact path, and the label a report prints one under. */
     static final String ARTIFACT = "artifact";
 
+    /** Member holding the facts that prove a finding, here and in a SARIF property bag. */
+    static final String EVIDENCE = "evidence";
+
+    /** Member holding the steps that fix a finding, here and in a SARIF property bag. */
+    static final String REMEDIATION = "remediation";
+
     private static final String CODE = "code";
     private static final String SEVERITY = "severity";
     private static final String PREDICTED_ERROR = "predictedError";
@@ -33,8 +39,6 @@ final class FindingJson {
     private static final String LINE = "line";
     private static final String SUBJECT = "subject";
     private static final String EXPLANATION = "explanation";
-    private static final String EVIDENCE = "evidence";
-    private static final String REMEDIATION = "remediation";
 
     private FindingJson() {
     }
