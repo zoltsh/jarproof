@@ -59,6 +59,45 @@ final class DeterministicOutputTest {
         assertEquals(render(root, findings), render(root, resorted));
     }
 
+    /**
+     * The order is the documented one rather than merely a stable one. Re-sorting a shuffled copy with
+     * the comparator under test proves only that the comparator agrees with itself, so here every key is
+     * read back off each finding and the emitted sequence is required to ascend by all five in turn:
+     * artifact, code, subject, class entry, summary. A key the order forgot leaves the report out of
+     * sequence against keys it never consulted.
+     */
+    @Test
+    void emitsFindingsInAscendingCanonicalKeyOrder() {
+        Path root = workspace.resolve("keys");
+
+        List<List<String>> keys = EngineFixture.verify(messyClasspath(root, false)).stream()
+                .map(DeterministicOutputTest::keysOf)
+                .toList();
+
+        assertEquals(keys.stream().sorted(DeterministicOutputTest::compare).toList(), keys, keys.toString());
+        assertTrue(keys.size() > 6, keys.toString());
+    }
+
+    /** The five keys the canonical order reads, in the order it reads them. */
+    private static List<String> keysOf(Finding finding) {
+        return List.of(
+                finding.artifact().artifact(),
+                finding.code().value(),
+                finding.subject(),
+                finding.artifact().classEntry().orElse(""),
+                finding.summary());
+    }
+
+    private static int compare(List<String> left, List<String> right) {
+        for (int key = 0; key < left.size(); key++) {
+            int order = left.get(key).compareTo(right.get(key));
+            if (order != 0) {
+                return order;
+            }
+        }
+        return 0;
+    }
+
     private List<String> report(Path root, boolean shuffle) {
         return render(root, EngineFixture.verify(messyClasspath(root, shuffle)));
     }

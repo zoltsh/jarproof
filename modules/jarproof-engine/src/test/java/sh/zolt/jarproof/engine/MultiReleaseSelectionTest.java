@@ -114,6 +114,48 @@ final class MultiReleaseSelectionTest {
                 "reordered.jar");
 
         assertEquals(Map.of(WIDGET_ENTRY, "META-INF/versions/11/" + WIDGET_ENTRY), selection.classEntries());
+        assertEquals(List.of(), selection.layoutFindings());
+    }
+
+    /**
+     * Nine is the lowest release a versioned directory may name, and it is usable. The specification
+     * starts the layout there, so the archive that targets exactly it is the ordinary case rather than
+     * the edge one, and refusing it would drop the only copy of a class a Java 9 runtime would load.
+     */
+    @Test
+    void selectsAVersionedEntryForTheLowestReleaseTheLayoutAllows() {
+        MultiReleaseSelection selection = MultiReleaseSelection.versioned(
+                List.of("META-INF/versions/9/" + WIDGET_ENTRY), 9, "nine.jar");
+
+        assertEquals(Map.of(WIDGET_ENTRY, "META-INF/versions/9/" + WIDGET_ENTRY), selection.classEntries());
+        assertEquals(List.of(), selection.layoutFindings());
+    }
+
+    /**
+     * Two directories that name the same release are one release, and the first of them wins. A padded
+     * number parses to the release it spells, so the later directory has nothing new to offer and taking
+     * it anyway would make the selected entry depend on the order the archive happened to store them in.
+     */
+    @Test
+    void keepsTheFirstOfTwoDirectoriesThatNameTheSameRelease() {
+        MultiReleaseSelection selection = MultiReleaseSelection.versioned(
+                List.of("META-INF/versions/09/" + WIDGET_ENTRY, "META-INF/versions/9/" + WIDGET_ENTRY),
+                17,
+                "padded.jar");
+
+        assertEquals(Map.of(WIDGET_ENTRY, "META-INF/versions/09/" + WIDGET_ENTRY), selection.classEntries());
+    }
+
+    /** A version directory with no number at all is named as the directory it is, not as its contents. */
+    @Test
+    void namesTheEmptyVersionDirectoryRatherThanTheEntryBeneathIt() {
+        MultiReleaseSelection selection = MultiReleaseSelection.versioned(
+                List.of(ArchiveLayout.VERSIONS_PREFIX + "/" + WIDGET_ENTRY), 17, "double.jar");
+
+        assertEquals(Map.of(), selection.classEntries());
+        assertEquals(
+                List.of(ArchiveLayout.VERSIONS_PREFIX),
+                selection.layoutFindings().stream().map(Finding::subject).toList());
     }
 
     @Test

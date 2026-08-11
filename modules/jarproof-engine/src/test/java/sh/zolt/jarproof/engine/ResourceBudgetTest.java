@@ -62,6 +62,31 @@ final class ResourceBudgetTest {
         assertDoesNotThrow(() -> budget.checkClassFileBytes(-1L, ENTRY));
     }
 
+    /**
+     * Both size ceilings are inclusive. A class file or a nested entry of exactly the documented size is
+     * within its limit, so the boundary is asserted from the accepting side as well as the refusing one:
+     * a ceiling that refused the value it names would reject inputs the documentation promises to read.
+     */
+    @Test
+    void acceptsAClassFileAndANestedEntryAtTheirCeilings() {
+        ResourceBudget budget = new ResourceBudget();
+
+        assertDoesNotThrow(() -> budget.checkClassFileBytes(ResourceBudget.MAXIMUM_CLASS_FILE_BYTES, ENTRY));
+        assertDoesNotThrow(() -> budget.checkNestedEntryBytes(ResourceBudget.MAXIMUM_NESTED_ENTRY_BYTES, ENTRY));
+    }
+
+    @Test
+    void refusesANestedEntryLargerThanTheCeiling() {
+        ResourceBudget budget = new ResourceBudget();
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> budget.checkNestedEntryBytes(ResourceBudget.MAXIMUM_NESTED_ENTRY_BYTES + 1L, ENTRY));
+
+        assertTrue(failure.getMessage().contains(String.valueOf(ResourceBudget.MAXIMUM_NESTED_ENTRY_BYTES)),
+                failure.getMessage());
+        assertTrue(failure.getMessage().contains(ENTRY), failure.getMessage());
+    }
+
     @Test
     void refusesARunThatExpandsMoreBytesThanTheCeiling() {
         ResourceBudget budget = new ResourceBudget();

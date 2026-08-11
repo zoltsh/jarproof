@@ -1,7 +1,6 @@
 package sh.zolt.jarproof.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -30,10 +29,9 @@ final class SealedPackageCheckTest {
         assertEquals(Severity.ERROR, finding.severity());
         assertEquals(SEALED_PACKAGE, finding.subject());
         assertEquals(sealed.toString(), finding.artifact().artifact());
-        assertTrue(EngineFixture.evidence(finding).contains(sealed + " seals this package"),
-                EngineFixture.evidence(finding).toString());
-        assertTrue(EngineFixture.evidence(finding).contains(intruder + " adds classes to it anyway"),
-                EngineFixture.evidence(finding).toString());
+        assertEquals(
+                List.of(sealed + " seals this package", intruder + " adds classes to it anyway"),
+                EngineFixture.evidence(finding));
     }
 
     @Test
