@@ -2,6 +2,10 @@ package sh.zolt.jarproof.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +111,31 @@ final class ReachableScopeTest {
     }
 
     /**
+     * The chain reaches a code-scanning UI as a code flow, and this is the contract that keeps it
+     * reaching one.
+     *
+     * <p>The SARIF writer reconstructs the path by reading the engine's own evidence text -- the
+     * {@code reachable via: } prefix and the arrow between members -- and it cannot import those
+     * spellings, because the engine keeps them package-private. So the two members agree only by
+     * convention, and a convention nothing executes is a convention that drifts: rename the prefix and
+     * every report would keep validating while silently carrying no code flow at all. This asserts the
+     * whole path instead, from a real {@code --scope reachable} run of the broken pair to the last step
+     * of the rendered flow, which has to name the consumer's own {@code main} -- the method the removed
+     * call is written in, and the method the chain proved executes.
+     */
+    @Test
+    void carriesTheProvingChainIntoSarifAsACodeFlow() throws IOException {
+        Path report = workspace.resolve("missing-method-" + REACHABLE + ".sarif");
+        int status = sarif(report, List.of(
+                CorpusCommand.APPLICATION, FixtureCorpus.jar("missing-method" + CONSUMER).toString(),
+                CorpusCommand.CLASSPATH, FixtureCorpus.jar("missing-method" + BROKEN_API).toString()));
+        String document = Files.readString(report);
+
+        assertEquals(FIXTURE_SUBJECT + CONSUMER_MAIN, lastStepOfTheOnlyCodeFlow(document), document);
+        assertEquals(1, status, document);
+    }
+
+    /**
      * A method reference names its target through a bootstrap argument rather than a call instruction,
      * and the lambda body it names counts as reachable once the capture site is. That
      * over-approximation is deliberate, and asserting it here is what stops a later tightening from
@@ -143,6 +172,38 @@ final class ReachableScopeTest {
 
         assertEquals(List.of(), check.findings(), check.report());
         assertEquals(0, check.exitCode(), check.err());
+    }
+
+    /**
+     * Runs one reachable-scope check that writes SARIF, through the process entry point the harness
+     * uses everywhere else. The shared runner reports JSON, and a format is not a detail a report
+     * assertion can substitute for afterwards.
+     */
+    private static int sarif(Path report, List<String> subject) {
+        List<String> line = new ArrayList<>(List.of(CorpusCommand.CHECK));
+        line.addAll(subject);
+        line.addAll(List.of(
+                CorpusCommand.SCOPE, REACHABLE,
+                CorpusCommand.TARGET_JAVA, CorpusCommand.JAVA_17,
+                CorpusCommand.FORMAT, CanonicalName.of(ReportFormat.SARIF),
+                CorpusCommand.OUTPUT, report.toString(),
+                CorpusCommand.PATH_ROOT, FixtureCorpus.workspaceRoot().toString()));
+        StringWriter written = new StringWriter();
+        PrintWriter stream = new PrintWriter(written, true);
+        return Main.execute(stream, stream, line.toArray(new String[0]));
+    }
+
+    /**
+     * The member the last step of the only code flow names, read with the CLI's own scanner so the
+     * assertion measures the parsed document rather than a substring of it.
+     */
+    private static String lastStepOfTheOnlyCodeFlow(String document) {
+        Map<?, ?> run = object(array(object(JsonScanner.parse(document)).get("runs")).get(0));
+        Map<?, ?> result = object(array(run.get("results")).get(0));
+        Map<?, ?> flow = object(array(object(array(result.get("codeFlows")).get(0)).get("threadFlows")).get(0));
+        List<?> steps = array(flow.get("locations"));
+        Map<?, ?> last = object(object(steps.get(steps.size() - 1)).get("location"));
+        return (String) object(array(last.get("logicalLocations")).get(0)).get("fullyQualifiedName");
     }
 
     private CorpusCheck reachable(String name, List<String> subject) {
