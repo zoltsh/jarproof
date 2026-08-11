@@ -24,6 +24,7 @@ final class ReachabilityTest {
     private static final String SUB = "com/acme/lib/Sub";
     private static final String REGISTRY = "com/acme/lib/Registry";
     private static final String ABSENT = "com/acme/gone/Absent";
+    private static final String SECOND_ABSENT = "com/acme/gone/Other";
     private static final String PLATFORM_NAME = "java/lang/String";
     private static final String LINKAGE_ERROR = "java/lang/LinkageError";
     private static final String ORDINARY_ERROR = "java/lang/IllegalStateException";
@@ -128,6 +129,8 @@ final class ReachabilityTest {
         Path library = EngineFixture.jar(workspace, "lib/handles.jar", entries);
 
         assertEquals(List.of(), EngineFixture.codes(check(application, library, Scope.REACHABLE)));
+        assertFalse(ReachableFixture.graph(List.of(application), List.of(library))
+                .reaches(PLATFORM_NAME, "valueOf(I)Ljava/lang/String;"));
     }
 
     /**
@@ -153,6 +156,25 @@ final class ReachabilityTest {
                         + " -> " + SUB + "#" + ReachableFixture.CONSTRUCTOR,
                 ReachableFixture.graph(List.of(application), List.of(library))
                         .chain(SUB, ReachableFixture.CONSTRUCTOR));
+    }
+
+    /**
+     * Every method a class declares is expanded, not one method per class. The worklist is ordered by
+     * class and then by signature, so an ordering that stopped at the class name would make two methods
+     * of one class the same worklist entry: one of them would be analysed, and the break written in the
+     * other would be reported as unreachable.
+     */
+    @Test
+    void expandsEveryMethodOfOneClassRatherThanOnePerClass() {
+        Path application = app(ReachableFixture.type(MAIN_CLASS, ReachableFixture.and(
+                ReachableFixture.body(ReachableFixture.MAIN, ReachableFixture.call(ABSENT, ReachableFixture.WORK)),
+                ReachableFixture.WORK,
+                ReachableFixture.call(SECOND_ABSENT, ReachableFixture.WORK))));
+
+        List<Finding> findings = LinkageFixture.check(List.of(application), List.of(), Scope.REACHABLE);
+
+        assertEquals(List.of(MISSING_CLASS, MISSING_CLASS), EngineFixture.codes(findings));
+        assertEquals(List.of(ABSENT, SECOND_ABSENT), findings.stream().map(Finding::subject).sorted().toList());
     }
 
     /** A class whose bytes no parser accepted keeps its own diagnostic and joins no call graph. */

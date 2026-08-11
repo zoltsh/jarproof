@@ -14,6 +14,10 @@ final class ReferenceFixture {
     static final String TARGET = "com/acme/orders/Widget";
     static final String CATCH_TYPE = "java/lang/IllegalStateException";
     static final String ARRAY_TARGET = "com/acme/orders/Cell";
+    static final String MULTI_ARRAY_TARGET = "com/acme/orders/Grid";
+    static final String CONSTANT_TARGET = "com/acme/orders/Ledger";
+    static final String DEEPEST_CONSTANT_OWNER = "com/acme/orders/Depth8";
+    static final String BEYOND_DEPTH_OWNER = "com/acme/orders/Depth9";
     static final String NEST_HOST = "com/acme/orders/Host";
     static final String NEST_MEMBER = "com/acme/orders/Host$Inner";
     static final String BOOTSTRAP_OWNER = "com/acme/orders/Bootstraps";
@@ -27,6 +31,8 @@ final class ReferenceFixture {
                     + "Ljava/lang/invoke/CallSite;";
     private static final String CONSTANT_DESCRIPTOR =
             "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/Class;)I";
+    private static final int CONSTANT_DEPTH_CEILING = 8;
+    private static final String DEPTH_OWNER_PREFIX = "com/acme/orders/Depth";
 
     private ReferenceFixture() {
     }
@@ -74,12 +80,12 @@ final class ReferenceFixture {
         method.visitInsn(Opcodes.POP);
         method.visitInsn(Opcodes.ICONST_1);
         method.visitInsn(Opcodes.ICONST_1);
-        method.visitMultiANewArrayInsn("[[L" + ARRAY_TARGET + ";", 2);
+        method.visitMultiANewArrayInsn("[[L" + MULTI_ARRAY_TARGET + ";", 2);
         method.visitInsn(Opcodes.POP);
     }
 
     private static void constants(MethodVisitor method) {
-        method.visitLdcInsn(Type.getObjectType(TARGET));
+        method.visitLdcInsn(Type.getObjectType(CONSTANT_TARGET));
         method.visitInsn(Opcodes.POP);
         method.visitLdcInsn("a plain string constant reaches for nothing");
         method.visitInsn(Opcodes.POP);
@@ -88,6 +94,8 @@ final class ReferenceFixture {
         method.visitLdcInsn(handle(HANDLE_OWNER, "chosen"));
         method.visitInsn(Opcodes.POP);
         method.visitLdcInsn(deepConstant());
+        method.visitInsn(Opcodes.POP);
+        method.visitLdcInsn(depthChain());
         method.visitInsn(Opcodes.POP);
         method.visitInvokeDynamicInsn(
                 "apply",
@@ -106,6 +114,29 @@ final class ReferenceFixture {
                 "I",
                 new Handle(Opcodes.H_INVOKESTATIC, CONSTANT_OWNER, "compute", CONSTANT_DESCRIPTOR, false),
                 nested);
+    }
+
+    /**
+     * A chain of dynamic constants one level deeper than the collector follows, each level naming a
+     * bootstrap method of its own.
+     *
+     * <p>A constant that reaches through another constant is how a compiled condy nest arrives, and the
+     * ceiling on how far that is followed is a guard against a hostile constant pool rather than a shape
+     * any compiler emits. Naming every level separately is what lets a test say which levels were read:
+     * the deepest one inside the ceiling, and the first one past it.
+     */
+    private static ConstantDynamic depthChain() {
+        ConstantDynamic constant = new ConstantDynamic(
+                "depth", "I", depthHandle(CONSTANT_DEPTH_CEILING + 1));
+        for (int level = CONSTANT_DEPTH_CEILING; level >= 0; level--) {
+            constant = new ConstantDynamic("depth", "I", depthHandle(level), constant);
+        }
+        return constant;
+    }
+
+    private static Handle depthHandle(int level) {
+        return new Handle(
+                Opcodes.H_INVOKESTATIC, DEPTH_OWNER_PREFIX + level, "compute", CONSTANT_DESCRIPTOR, false);
     }
 
     private static Handle handle(String owner, String name) {

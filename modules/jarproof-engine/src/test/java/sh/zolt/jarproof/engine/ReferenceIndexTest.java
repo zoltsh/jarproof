@@ -41,6 +41,8 @@ final class ReferenceIndexTest {
         assertTrue(types.contains(ReferenceFixture.TARGET), types.toString());
         assertTrue(types.contains(ReferenceFixture.CATCH_TYPE), types.toString());
         assertTrue(types.contains(ReferenceFixture.ARRAY_TARGET), types.toString());
+        assertTrue(types.contains(ReferenceFixture.MULTI_ARRAY_TARGET), types.toString());
+        assertTrue(types.contains(ReferenceFixture.CONSTANT_TARGET), types.toString());
     }
 
     @Test
@@ -132,6 +134,22 @@ final class ReferenceIndexTest {
         assertTrue(owners.contains(ReferenceFixture.BOOTSTRAP_OWNER), owners.toString());
         assertTrue(owners.contains(ReferenceFixture.CONSTANT_OWNER), owners.toString());
         assertTrue(owners.contains(ReferenceFixture.NESTED_CONSTANT_OWNER), owners.toString());
+    }
+
+    /**
+     * The nesting ceiling is read from both sides. A constant chain is followed to the deepest level the
+     * ceiling allows and stops there, so a hostile constant pool cannot walk the reader down forever and
+     * an ordinary nest is still read whole.
+     */
+    @Test
+    void followsADynamicConstantChainAsDeepAsTheCeilingAndNoDeeper() {
+        List<String> owners = indexed().references().members().stream()
+                .filter(member -> member.kind() == ReferenceKind.METHOD_HANDLE)
+                .map(MemberReference::ownerInternalName)
+                .toList();
+
+        assertTrue(owners.contains(ReferenceFixture.DEEPEST_CONSTANT_OWNER), owners.toString());
+        assertFalse(owners.contains(ReferenceFixture.BEYOND_DEPTH_OWNER), owners.toString());
     }
 
     @Test
