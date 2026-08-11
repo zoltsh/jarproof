@@ -94,7 +94,6 @@ final class NestedArchiveReader {
 
     private IndexedArtifact index(byte[] library) throws IOException {
         walk(library);
-        budget.countArchiveEntries(entryNames.size(), entry.display());
         List<String> sorted = entryNames.stream().sorted().toList();
         MultiReleaseSelection selection = ArchiveManifest.isMultiRelease(manifest)
                 ? MultiReleaseSelection.versioned(sorted, targetRelease, entry.display())
@@ -122,8 +121,18 @@ final class NestedArchiveReader {
         }
     }
 
+    /**
+     * Records what one entry of the stream is, and charges it against the entry ceiling as it arrives.
+     *
+     * <p>The count is charged here rather than once the walk is over, because a ceiling consulted after
+     * the work it bounds has already been paid for is not bounding anything: a library declaring more
+     * entries than a run may read is refused at the entry that crosses the line, with none of the entries
+     * behind it inflated. What is charged is how many entries have been seen, which is what the finished
+     * walk would have reported, so a library refused before is refused now — same ceiling, same words.
+     */
     private void describe(ZipInputStream stream, ZipEntry next) throws IOException {
         entryNames.add(next.getName());
+        budget.countArchiveEntries(entryNames.size(), entry.display());
         if (ArchiveLayout.isNestedArchive(next.getName())) {
             scan.addFinding(NestedArchiveFinding.deeplyNested(position, next.getName()));
         }

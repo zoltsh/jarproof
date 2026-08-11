@@ -58,6 +58,12 @@ final class BootLayoutFixture {
         return with(entryName, jarBytes(content));
     }
 
+    /** Adds one nested library from archive bytes crafted elsewhere, stored as a launcher needs it. */
+    BootLayoutFixture withStoredLibrary(String entryName, byte[] content) {
+        stored.add(entryName);
+        return with(entryName, content);
+    }
+
     /** Adds one nested library the packager compressed instead of storing. */
     BootLayoutFixture withCompressedLibrary(String entryName, Map<String, byte[]> content) {
         return with(entryName, jarBytes(content));

@@ -51,14 +51,21 @@ final class NestedApplication {
     /**
      * Reads one application archive to see whether it carries its own dependencies.
      *
+     * <p>The entry ceiling answers before a single name is collected, because collecting them is the
+     * work that ceiling exists to bound. The count is a number the directory this open has already read
+     * declares, so refusing an archive that declares more entries than a run may read costs nothing,
+     * while accumulating one name for each of them first would cost precisely what it was sent for.
+     *
      * @param handle read handle of the archive, already resolved against the engine's base
      * @param display the caller's own text for that archive, which is all any report shows
      * @param budget the run's resource budget
      * @return the expansion, or empty when the archive is an ordinary one
      * @throws IllegalArgumentException when the path is not a readable archive
+     * @throws IllegalStateException when the archive declares more entries than a run may read
      */
     static Optional<NestedApplication> of(Path handle, String display, ResourceBudget budget) {
         try (ZipFile archive = new ZipFile(handle.toFile())) {
+            budget.countArchiveEntries(archive.size(), display);
             List<? extends ZipEntry> contents = archive.stream()
                     .filter(candidate -> !candidate.isDirectory())
                     .toList();
