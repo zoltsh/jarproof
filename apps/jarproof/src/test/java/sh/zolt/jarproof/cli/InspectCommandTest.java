@@ -166,6 +166,7 @@ final class InspectCommandTest {
 
         assertEquals(0, invocation.exitCode(), invocation.err());
         assertEquals("", invocation.out());
+        assertEquals("wrote the inspection to " + facts + "\n", invocation.err());
         assertTrue(Files.readString(facts).contains("\"classCount\": 3"), facts.toString());
     }
 

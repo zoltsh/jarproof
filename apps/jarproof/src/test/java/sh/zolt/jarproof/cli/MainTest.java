@@ -150,6 +150,36 @@ final class MainTest {
         assertEquals(3, invocation.err().lines().count(), invocation.err());
     }
 
+    /**
+     * When two declared names are both near enough, the nearer one is offered first even though the
+     * alphabet puts the other one there. {@code baseline} spells both {@code --out} and
+     * {@code --output}, so a dropped character lands one edit from the long name and two from the
+     * short one; ordering that list alphabetically would recommend the spelling further from what was
+     * written. The tie-break behind it is the alphabet, which is what makes the list repeatable.
+     */
+    @Test
+    void offersTheNearerSpellingFirstWhenTheAlphabetDisagrees() {
+        Invocation invocation = CliFixture.invoke(
+                "baseline",
+                CliFixture.APPLICATION,
+                CliFixture.brokenApplication(workspace).toString(),
+                CliFixture.TARGET_JAVA,
+                CliFixture.JAVA_17,
+                "--out",
+                workspace.resolve("baseline.json").toString(),
+                "--otput",
+                "elsewhere.json");
+
+        assertEquals(2, invocation.exitCode());
+        assertEquals(
+                """
+                Unknown option: '--otput'
+                Possible solutions: --output, --out
+                Run 'jarproof baseline --help' for details.
+                """,
+                invocation.err());
+    }
+
     /** Nothing is offered when nothing is close, because a wrong guess is worse than no guess. */
     @Test
     void offersNoSpellingForAnOptionThatResemblesNone() {

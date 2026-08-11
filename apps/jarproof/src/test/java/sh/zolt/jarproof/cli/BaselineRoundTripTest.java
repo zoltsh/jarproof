@@ -115,6 +115,7 @@ final class BaselineRoundTripTest {
         record();
         Files.writeString(baselineFile(), Files.readString(baselineFile())
                 .replace("\"targetJava\": 17", "\"targetJava\": 11")
+                .replace("\"preview\": \"disabled\"", "\"preview\": \"enabled\"")
                 .replace("\"scope\": \"application\"", "\"scope\": \"all\"")
                 .replace("\"profile\": \"bundled:17\"", "\"profile\": \"jdk:11:0badcafe\""));
 
@@ -123,6 +124,9 @@ final class BaselineRoundTripTest {
         assertEquals(0, invocation.exitCode(), invocation.err());
         assertEquals(NOTHING_NEW, invocation.out());
         assertTrue(invocation.err().contains("records targetJava 11, and this run measured 17"), invocation.err());
+        assertTrue(
+                invocation.err().contains("records preview enabled, and this run measured disabled"),
+                invocation.err());
         assertTrue(invocation.err().contains("records scope all, and this run measured application"), invocation.err());
         assertTrue(
                 invocation.err().contains("records profile jdk:11:0badcafe, and this run measured bundled:17"),

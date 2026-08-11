@@ -29,6 +29,16 @@ final class TargetRuntimeTest {
         assertThrows(IllegalArgumentException.class, () -> TargetRuntime.of(7));
     }
 
+    /**
+     * Release 8 is the oldest release jarproof analyses, so it is a supported release and not the
+     * first refused one. Pinning the refusal alone would leave the boundary free to move a release up
+     * and reject every Java 8 application with a message naming Java 8 as supported.
+     */
+    @Test
+    void acceptsTheOldestReleaseItSupports() {
+        assertEquals(8, TargetRuntime.of(8).javaRelease());
+    }
+
     @Test
     void rejectsMissingPreviewPolicy() {
         assertThrows(NullPointerException.class, () -> new TargetRuntime(21, null));

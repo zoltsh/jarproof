@@ -124,6 +124,19 @@ final class ArtifactLocationTest {
                 () -> ArtifactLocation.ofSource(ARTIFACT, CLASS_ENTRY, SOURCE, Optional.of(-1)));
     }
 
+    /**
+     * A line table counts from one, so line 1 is the first line a class file can record and not the
+     * last one refused. Pinning only the refusal would leave the boundary free to move up by one and
+     * reject the opening line of every file, which is where a class's own field initializers sit.
+     */
+    @Test
+    void acceptsTheFirstLineAFileHas() {
+        ArtifactLocation location =
+                ArtifactLocation.ofSource(ARTIFACT, CLASS_ENTRY, SOURCE, Optional.of(1));
+
+        assertEquals(Optional.of(1), location.line());
+    }
+
     @Test
     void rejectsALineWithoutTheClassEntryItIsALineOf() {
         assertThrows(

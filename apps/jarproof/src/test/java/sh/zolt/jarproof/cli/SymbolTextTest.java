@@ -54,4 +54,16 @@ final class SymbolTextTest {
         assertEquals("A.m(Foo)", SymbolText.readable("A#m(Lcom/acme/Foo)V"));
         assertEquals("A.m(Q)", SymbolText.readable("A#m(Q)V"));
     }
+
+    /**
+     * A separator in the opening position is a symbol whose owner or whose member name is missing, not
+     * a symbol carrying no separator at all. Reading it as the latter hands the reader back the raw
+     * bytecode text they were being spared -- the descriptors unrendered and the slashes still in -- so
+     * the part that is there is still rendered and only the missing part comes out empty.
+     */
+    @Test
+    void rendersTheHalfOfASymbolThatIsThereWhenTheOtherHalfIsMissing() {
+        assertEquals(".check()", SymbolText.readable("#check()V"));
+        assertEquals("com.acme.Api.(String)", SymbolText.readable("com/acme/Api#(Ljava/lang/String;)V"));
+    }
 }
