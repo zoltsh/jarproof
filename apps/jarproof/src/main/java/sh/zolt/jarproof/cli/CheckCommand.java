@@ -129,6 +129,14 @@ final class CheckCommand implements Callable<Integer> {
         }
     }
 
+    /**
+     * Applies the baseline, keeping only the findings it does not already accept.
+     *
+     * <p>What the run examined survives the filter untouched. A baseline decides which findings are
+     * news, not how much was analysed to find them, so a run whose every finding was accepted still
+     * reports the classes and artifacts it read -- which is the whole difference between a ratcheted
+     * clean report and a run that checked nothing.
+     */
     private VerificationResult accepted(VerificationRequest request, PathRoot root, VerificationResult result)
             throws IOException {
         if (baseline == null) {
@@ -140,6 +148,7 @@ final class CheckCommand implements Callable<Integer> {
         if (pruneStale) {
             accepted.pruneStale(comparison, err);
         }
-        return new VerificationResult(comparison.newFindings());
+        return new VerificationResult(
+                comparison.newFindings(), result.analyzedClassCount(), result.analyzedArtifactCount());
     }
 }

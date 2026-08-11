@@ -110,9 +110,27 @@ final class SampleFindings {
                 Scope.APPLICATION);
     }
 
-    /** Wraps findings as a result, in the order given. */
+    /**
+     * Wraps findings as a result, in the order given, stating no analysis tallies.
+     *
+     * <p>A specimen is a list of findings somebody wrote down, not a run, so it has no honest count of
+     * classes or artifacts to state. Renderers therefore see these results the way they see any
+     * caller-assembled one, and the tallied shape is asserted where a real run produces it.
+     */
     static VerificationResult result(Finding... findings) {
-        return new VerificationResult(List.of(findings));
+        return VerificationResult.of(List.of(findings));
+    }
+
+    /**
+     * The same findings, as a run that states what it examined.
+     *
+     * @param classes how many classes the run indexed
+     * @param artifacts how many classpath positions it read
+     * @param findings the findings, in the order given
+     * @return the result a renderer reads its tallies from
+     */
+    static VerificationResult examined(int classes, int artifacts, Finding... findings) {
+        return new VerificationResult(List.of(findings), classes, artifacts);
     }
 
     /**

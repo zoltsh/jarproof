@@ -69,6 +69,29 @@ final class ArtifactCatalogTest {
         assertEquals(List.of("JP3004"), EngineFixture.codes(catalog.findings()));
     }
 
+    /**
+     * The class tally counts what was really read, so a class two artifacts both declare is counted
+     * in each of them: both copies were opened, and the shadowed one cost the same work as the winner.
+     */
+    @Test
+    void countsEveryClassItIndexedOncePerPosition() {
+        ArtifactCatalog catalog = read(List.of(jar("lib/winner.jar", SHARED)), List.of(jar("lib/loser.jar", SHARED)));
+
+        assertEquals(2, catalog.analyzedClassCount());
+        assertEquals(2, catalog.artifacts().size());
+        assertEquals(1, catalog.declarations().size());
+    }
+
+    @Test
+    void countsNoClassesForAPositionThatDeclaresNone() {
+        Path resources = EngineFixture.jar(workspace, "lib/resources.jar",
+                EngineFixture.entries("META-INF/NOTICE", new byte[] {10}));
+        ArtifactCatalog catalog = read(List.of(resources), List.of());
+
+        assertEquals(0, catalog.analyzedClassCount());
+        assertEquals(1, catalog.artifacts().size());
+    }
+
     @Test
     void keepsBothIndexesUnmodifiable() {
         ArtifactCatalog catalog = read(List.of(jar("app.jar", "com/acme/App")), List.of());

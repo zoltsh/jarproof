@@ -94,6 +94,18 @@ final class ArtifactCatalog {
         return classpath;
     }
 
+    /**
+     * Returns how many classes this catalog indexed, counted across every position.
+     *
+     * <p>This is the size of what was really examined, so a class two artifacts both declare counts
+     * once per artifact: both copies were read, and a run that says it examined one of them would be
+     * understating its own work. It is the selected set for the target runtime, so a multi-release
+     * archive contributes the classes a launcher would present and not the versions it shadowed.
+     */
+    int analyzedClassCount() {
+        return artifacts.stream().mapToInt(artifact -> artifact.classes().size()).sum();
+    }
+
     /** Returns every claim on every class internal name, keyed by that name. */
     Map<String, List<ClassDeclaration>> declarations() {
         return declarations;

@@ -51,8 +51,13 @@ final class VerificationRun {
     /**
      * Runs one verification.
      *
+     * <p>The result states what the run examined as well as what it found, taken from the catalog
+     * rather than recounted: every class indexed across every position, and the positions themselves.
+     * A run that reaches this point has read its whole classpath, so it can always say so, and an
+     * empty finding list therefore arrives with the evidence that makes it mean something.
+     *
      * @param request the validated request
-     * @return the canonically ordered result
+     * @return the canonically ordered result, carrying the run's own tallies
      */
     static VerificationResult execute(VerificationRequest request) {
         ResourceBudget budget = new ResourceBudget();
@@ -71,7 +76,8 @@ final class VerificationRun {
         findings.addAll(ModuleCheck.run(catalog, platform));
         budget.checkFindingCount(findings.size());
         findings.sort(FindingOrder.CANONICAL);
-        return new VerificationResult(findings);
+        return new VerificationResult(
+                findings, catalog.analyzedClassCount(), catalog.artifacts().size());
     }
 
     private static JdkSymbolCatalog platformSymbols(VerificationRequest request) {

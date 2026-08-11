@@ -71,6 +71,39 @@ final class JarproofVerifyTest {
         assertFalse(result.hasErrors());
     }
 
+    /**
+     * A completed run says how much it examined, which is what makes an empty finding list mean
+     * something. Three positions are read here, the application and two libraries, and each presents
+     * one class. Each library owns its own package, so the classpath is healthy as well as counted.
+     */
+    @Test
+    void statesWhatItExaminedToReachThatAnswer() {
+        Path first = EngineFixture.jar(workspace, "lib/first.jar", EngineFixture.entries(
+                "com/acme/first/First.class", EngineFixture.classFile("com/acme/first/First")));
+        Path second = EngineFixture.jar(workspace, "lib/second.jar", EngineFixture.entries(
+                "com/acme/second/Second.class", EngineFixture.classFile("com/acme/second/Second")));
+
+        VerificationResult result = Jarproof.verify(
+                EngineFixture.request(List.of(application()), List.of(first, second), 17));
+
+        assertEquals(List.of(), result.findings());
+        assertEquals(3, result.analyzedClassCount());
+        assertEquals(3, result.analyzedArtifactCount());
+    }
+
+    /** An artifact that presents no classes was still read, so it is counted as a position. */
+    @Test
+    void countsAPositionThatPresentedNoClasses() {
+        Path resources = EngineFixture.jar(workspace, "lib/resources.jar",
+                EngineFixture.entries("META-INF/NOTICE", new byte[] {10}));
+
+        VerificationResult result = Jarproof.verify(
+                EngineFixture.request(List.of(application()), List.of(resources), 17));
+
+        assertEquals(1, result.analyzedClassCount());
+        assertEquals(2, result.analyzedArtifactCount());
+    }
+
     @Test
     void readsAClassDirectoryTheWayTheLauncherWould() {
         Path classes = EngineFixture.classDirectory(

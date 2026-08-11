@@ -133,12 +133,25 @@ final class PathRootTest {
 
     @Test
     void rewritesEveryFindingItIsGiven() {
-        VerificationResult measured = PathRoot.of(workspace).rewrite(request(), new VerificationResult(
+        VerificationResult measured = PathRoot.of(workspace).rewrite(request(), VerificationResult.of(
                 List.of(sample(workspace.resolve("app.jar").toString()), sample(workspace.resolve(LIBRARY).toString()))));
 
         assertEquals(
                 List.of("app.jar", LIBRARY),
                 measured.findings().stream().map(finding -> finding.artifact().artifact()).toList());
+    }
+
+    /** Measuring paths says nothing about how much was read, so the run's own tallies travel with it. */
+    @Test
+    void keepsWhatTheRunExaminedWhileItMeasuresThePaths() {
+        VerificationResult run = new VerificationResult(
+                List.of(sample(workspace.resolve("app.jar").toString())), 5000, 40);
+
+        VerificationResult measured = PathRoot.of(workspace).rewrite(request(), run);
+
+        assertEquals(5000, measured.analyzedClassCount());
+        assertEquals(40, measured.analyzedArtifactCount());
+        assertEquals("app.jar", measured.findings().get(0).artifact().artifact());
     }
 
     @Test
@@ -172,7 +185,7 @@ final class PathRootTest {
     }
 
     private static VerificationResult result(String artifact) {
-        return new VerificationResult(List.of(sample(artifact)));
+        return VerificationResult.of(List.of(sample(artifact)));
     }
 
     private static Finding sample(String artifact) {

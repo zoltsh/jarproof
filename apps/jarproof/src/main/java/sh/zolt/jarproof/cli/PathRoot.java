@@ -69,15 +69,20 @@ final class PathRoot {
     /**
      * Rewrites every path a completed run reports.
      *
+     * <p>What the run examined travels with it unchanged. Measuring a path from a root says nothing
+     * about how many classes were read, so a rewritten result that dropped its tallies would report
+     * less about the same run than the one it was made from.
+     *
      * @param request the request the run answered, which supplies the spellings to rewrite
      * @param result the findings the run produced
-     * @return the same findings, in the same order, measured from this root
+     * @return the same findings and the same tallies, in the same order, measured from this root
      */
     VerificationResult rewrite(VerificationRequest request, VerificationResult result) {
         EvidenceText spellings = EvidenceText.of(this, request);
         List<Finding> measured =
                 result.findings().stream().map(finding -> rewritten(finding, spellings)).toList();
-        return new VerificationResult(measured);
+        return new VerificationResult(
+                measured, result.analyzedClassCount(), result.analyzedArtifactCount());
     }
 
     /**
