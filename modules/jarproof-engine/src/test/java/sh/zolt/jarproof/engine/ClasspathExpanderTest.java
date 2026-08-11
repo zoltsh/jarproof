@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -67,6 +68,40 @@ final class ClasspathExpanderTest {
         assertEquals(application().toString(), classpath.entries().get(0).display());
         assertTrue(classpath.entries().stream().skip(1)
                 .allMatch(entry -> ArchiveLayout.isExpandableArchive(entry.display())));
+    }
+
+    /**
+     * A wildcard expands to the archives in a directory, and a directory whose own name ends in an archive
+     * suffix is not one of them. The launcher puts files on a classpath; a folder called {@code lib.jar}
+     * would be searched as a class directory that nobody named.
+     */
+    @Test
+    void expandsOnlyTheFilesOfAWildcardDirectory() throws IOException {
+        Path real = jar("lib/real.jar", "com/acme/lib/Real");
+        Files.createDirectories(workspace.resolve("lib").resolve("pretend.jar"));
+        Path wildcard = workspace.resolve("lib").resolve("*");
+
+        List<ClasspathEntry> entries = expand(List.of(application()), List.of(wildcard)).entries();
+
+        assertEquals(List.of(application().toString(), real.toString()), displays(entries));
+    }
+
+    /**
+     * An application archive that carries its own dependencies expands into several positions, and the
+     * manifest {@code Class-Path} chains from the one that is the archive itself. Chaining from a position
+     * derived inside it would resolve the declaration against the wrong directory; chaining from none at
+     * all would drop every class the declaration names.
+     */
+    @Test
+    void followsTheManifestChainFromThePositionTheArchiveItselfOccupies() {
+        Path chained = jar("chained.jar", "com/acme/chained/Chained");
+        Path application = carrier();
+
+        List<ClasspathEntry> entries = expand(List.of(application), List.of()).entries();
+
+        assertEquals(3, entries.size(), displays(entries).toString());
+        assertEquals(chained.toString(), displays(entries).get(entries.size() - 1),
+                "the chain follows the archive, so it lands after every position inside it");
     }
 
     @Test
@@ -202,6 +237,17 @@ final class ClasspathExpanderTest {
     private Path jar(String name, String internalName) {
         return EngineFixture.jar(workspace, name,
                 EngineFixture.entries(internalName + ".class", EngineFixture.classFile(internalName)));
+    }
+
+    /** An application archive that carries its own classes area and declares a {@code Class-Path} too. */
+    private Path carrier() {
+        Manifest manifest = EngineFixture.manifest();
+        manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, "chained.jar");
+        return BootLayoutFixture.archive()
+                .with(JarFile.MANIFEST_NAME, EngineFixture.manifestBytes(manifest))
+                .with(BootLayoutFixture.CLASSES_ROOT + "com/acme/app/App.class",
+                        EngineFixture.classFile("com/acme/app/App"))
+                .write(workspace, "carrier.jar");
     }
 
     private Path chainingJar(String name, String internalName, String classPath) {

@@ -41,6 +41,21 @@ final class SplitPackageCheckTest {
         assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2003"));
     }
 
+    /**
+     * An entry name that opens with a separator names a class in the unnamed package as well. A leading
+     * separator is no package, so two artifacts holding such an entry share nothing; reporting them would
+     * name a split package with an empty subject.
+     */
+    @Test
+    void staysQuietAboutAnEntryNameThatOpensWithASeparator() {
+        Path first = jar("lib/rooted-first.jar", "/Loose");
+        Path second = jar("lib/rooted-second.jar", "/Looser");
+
+        List<Finding> findings = EngineFixture.verify(List.of(first), List.of(second), 17);
+
+        assertEquals(Optional.empty(), EngineFixture.coded(findings, "JP2003"));
+    }
+
     @Test
     void staysQuietWhenOneArtifactOwnsThePackage() {
         Path owner = EngineFixture.jar(workspace, "lib/owner.jar", ownedPackage());

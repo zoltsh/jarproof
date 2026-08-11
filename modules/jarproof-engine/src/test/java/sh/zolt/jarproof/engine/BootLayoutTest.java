@@ -19,6 +19,8 @@ final class BootLayoutTest {
                 BootLayout.indexedPaths("- \"BOOT-INF/lib/one.jar\"\n\n- \"WEB-INF/lib/two.jar\"\n"));
         assertEquals(List.of("bare.jar"), BootLayout.indexedPaths("- bare.jar\n"));
         assertEquals(List.of("\"unterminated.jar"), BootLayout.indexedPaths("- \"unterminated.jar\n"));
+        assertEquals(List.of("\""), BootLayout.indexedPaths("- \"\n"),
+                "one quote is not a pair of them, so the line names the character it is");
         assertEquals(List.of("x"), BootLayout.indexedPaths("- x\n"));
         assertEquals(List.of(), BootLayout.indexedPaths("BOOT-INF/lib/unshaped.jar\n- \n"));
     }

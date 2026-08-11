@@ -108,6 +108,7 @@ final class InspectionTest {
     void ignoresLayoutNamesTheRuntimeWouldIgnoreToo() {
         Path archive = EngineFixture.jar(workspace, "odd.jar", Map.of(
                 "META-INF/services/nested/Deep", new byte[0],
+                "META-INF/services//" + CODEC, new byte[0],
                 "META-INF/versions/experimental/com/acme/Odd.class", EngineFixture.classFile("com/acme/Odd")));
 
         ArtifactSummary summary = Jarproof.inspect(archive);
@@ -119,6 +120,8 @@ final class InspectionTest {
     @Test
     void namesOnlyTheConfigurationFilesTheRuntimeConsults() {
         assertEquals(Optional.empty(), InspectionLayout.serviceName("META-INF/services/"));
+        assertEquals(Optional.empty(), InspectionLayout.serviceName("META-INF/services//" + CODEC),
+                "a name that opens with a separator names a folder, whatever follows it");
         assertEquals(Optional.empty(), InspectionLayout.serviceName("META-INF/MANIFEST.MF"));
         assertEquals(Optional.of(CODEC), InspectionLayout.serviceName(SERVICE_ENTRY));
     }
