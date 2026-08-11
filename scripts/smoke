@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+if [ "${JARPROOF_MANAGED_TOOLCHAIN:-}" != "1" ]; then
+    exec zolt exec -- env JARPROOF_MANAGED_TOOLCHAIN=1 scripts/smoke "$@"
+fi
+
+if [ "${JARPROOF_SMOKE_PREBUILT:-}" != "1" ]; then
+    zolt resolve --workspace --locked
+    zolt package --workspace --all
+fi
+
+NPM_CONFIG_CACHE="${NPM_CONFIG_CACHE:-/tmp/jarproof-smoque-npm-cache}"
+SMOQUE_PACKAGE="${SMOQUE_PACKAGE:-smoque@0.1.2}"
+export NPM_CONFIG_CACHE
+
+exec npx --yes "$SMOQUE_PACKAGE" run smoke/ "$@"

@@ -10,4 +10,5 @@ zolt test --workspace --all
 zolt coverage --workspace --members modules/jarproof-api,modules/jarproof-engine,apps/jarproof,guardrails/jarproof-architecture-tests
 zolt package --workspace --all
 zolt integration-test --workspace --member apps/jarproof
+JARPROOF_SMOKE_PREBUILT=1 scripts/smoke
 zolt check --workspace --all --context ci --require-package

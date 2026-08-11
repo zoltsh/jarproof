@@ -25,6 +25,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
       - name: Set up Zolt
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:

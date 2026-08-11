@@ -25,6 +25,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
       # Deliberately unpinned: following the moving channel is this workflow's entire purpose,
       # and it holds contents:read only. Every other workflow pins version + sha256.
       - name: Set up Zolt from the moving zap channel

@@ -79,6 +79,15 @@ final class RepositoryPolicyArchitectureTest {
     }
 
     @Test
+    void repositoryGateRunsSmokeTestsWithAPinnedSmoqueRelease() {
+        String gate = RepositoryLayout.text(RepositoryLayout.root().resolve("scripts/check"));
+        assertTrue(gate.contains("JARPROOF_SMOKE_PREBUILT=1 scripts/smoke"));
+        String smoke = RepositoryLayout.text(RepositoryLayout.root().resolve("scripts/smoke"));
+        assertTrue(smoke.matches("(?s).*SMOQUE_PACKAGE=.*smoque@[0-9]+\\.[0-9]+\\.[0-9]+.*"));
+        assertFalse(smoke.contains("smoque@latest"));
+    }
+
+    @Test
     void everyExternalActionUsesAFullCommitSha() {
         Path workflows = RepositoryLayout.root().resolve(".github/workflows");
         assertTrue(Files.isDirectory(workflows), "Missing GitHub workflows");

@@ -46,8 +46,8 @@ Jarproof is built with [Zolt](https://github.com/zoltsh/zolt).
 scripts/check
 ```
 
-The check resolves the locked workspace, runs unit and integration tests,
-checks coverage and architecture rules, and packages every member.
+The check resolves the locked workspace, runs unit, integration, and Smoque
+smoke tests, checks coverage and architecture rules, and packages every member.
 
 ## License
 
