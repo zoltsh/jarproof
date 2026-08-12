@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
+      actions: write
       contents: write
       pull-requests: write
 
@@ -27,9 +28,23 @@ jobs:
           persist-credentials: false
 
       - name: Update dependencies
+        id: updates
         uses: zoltsh/update-dependencies@b4d167f1519162bfdf8aef555fd213e3ebe36f21 # v0.1.0-preview.2
         with:
           workspace: "true"
           update-ceiling: minor
           open-pull-requests-limit: "5"
           dry-run: "false"
+
+      # Pull requests opened with GITHUB_TOKEN do not emit pull_request events.
+      - name: Validate changed dependency pull requests
+        if: steps.updates.outputs.created-pull-request-count != '0' || steps.updates.outputs.updated-pull-request-count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr list --state open --limit 100 --json headRefName --jq '.[].headRefName' |
+            while IFS= read -r branch; do
+              case "$branch" in
+                zolt/update/*) gh workflow run ci.yml --ref "$branch" ;;
+              esac
+            done
