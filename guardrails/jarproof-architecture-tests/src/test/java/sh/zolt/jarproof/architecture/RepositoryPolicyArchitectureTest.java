@@ -121,6 +121,7 @@ final class RepositoryPolicyArchitectureTest {
             assertFalse(literalJUnit.matcher(manifest).find(), member);
             if (RepositoryLayout.coreMembers().contains(member)) {
                 assertTrue(manifest.contains("\"org.junit.jupiter:junit-jupiter\" = {}"), member);
+                assertTrue(manifest.contains("\"org.junit.platform:junit-platform-console\" = {}"), member);
             }
         }
     }

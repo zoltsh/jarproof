@@ -11,6 +11,7 @@ central = "https://repo.maven.apache.org/maven2"
 
 [test.dependencies]
 "org.junit.jupiter:junit-jupiter" = {}
+"org.junit.platform:junit-platform-console" = {}
 
 [dependencyPolicy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
