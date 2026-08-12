@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:3607f04b04b18a0e8c0cdd817cdb603303164cb64c147c099a9ea00c84e3e839"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:260e899963f2662343a2c8b1f17d02da0e11a484376a7e0c178d1c56ccedf3cc", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:456d40f507b5fa4fd22ef1454d9c2f0a5c51a5cf7ff85dadcd883d7b787c32f0"
+projectResolutionFingerprint = "sha256:d8a36f4bc4b9b6abca77746a8030cb165f9786c4244e67a7531f6ea7775b8cd6"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:c77455d8d799d0b5280b6b25ac79c484368a1642245888c9b9e7ae3d089ce31e", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:260e899963f2662343a2c8b1f17d02da0e11a484376a7e0c178d1c56ccedf3cc", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:1533e31f3f823c995cf1b03db17ca36b07da63170d5c7a48fdb87968cf3833d3"
 
 [[package]]
 id = "args4j:args4j"
@@ -131,31 +131,31 @@ pom = "info/picocli/picocli-codegen/4.7.6/picocli-codegen-4.7.6.pom"
 jarSha256 = "245a2e5d7fc1f8c06b37b7aa0fc1781d47110cc7b4ec77dc3583cc505f99d827"
 pomSha256 = "b5e7f3167757bd6062f66b58be7f0d50e20e2d5db45507b9bd131f1bc750a345"
 members = ["apps/jarproof"]
-dependencies = ["info.picocli:picocli:4.7.6:jar:processor"]
+dependencies = ["info.picocli:picocli:4.7.7:jar:processor"]
 
 [[package]]
 id = "info.picocli:picocli"
-version = "4.7.6"
+version = "4.7.7"
 source = "maven-central"
 scope = "compile"
 direct = true
-jar = "info/picocli/picocli/4.7.6/picocli-4.7.6.jar"
-pom = "info/picocli/picocli/4.7.6/picocli-4.7.6.pom"
-jarSha256 = "ed441183f309b93f104ca9e071e314a4062a893184e18a3c7ad72ec9cba12ba0"
-pomSha256 = "2d2248cccf487ad9ce208dec751745df15cd1e1924a4cc3d36841b5f1990c6fb"
+jar = "info/picocli/picocli/4.7.7/picocli-4.7.7.jar"
+pom = "info/picocli/picocli/4.7.7/picocli-4.7.7.pom"
+jarSha256 = "f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8"
+pomSha256 = "1b18d363134df66631d2b9f7475068d734225ba389cdf9082a1bd8bda90d57d3"
 members = ["apps/jarproof"]
 dependencies = []
 
 [[package]]
 id = "info.picocli:picocli"
-version = "4.7.6"
+version = "4.7.7"
 source = "maven-central"
 scope = "processor"
 direct = false
-jar = "info/picocli/picocli/4.7.6/picocli-4.7.6.jar"
-pom = "info/picocli/picocli/4.7.6/picocli-4.7.6.pom"
-jarSha256 = "ed441183f309b93f104ca9e071e314a4062a893184e18a3c7ad72ec9cba12ba0"
-pomSha256 = "2d2248cccf487ad9ce208dec751745df15cd1e1924a4cc3d36841b5f1990c6fb"
+jar = "info/picocli/picocli/4.7.7/picocli-4.7.7.jar"
+pom = "info/picocli/picocli/4.7.7/picocli-4.7.7.pom"
+jarSha256 = "f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8"
+pomSha256 = "1b18d363134df66631d2b9f7475068d734225ba389cdf9082a1bd8bda90d57d3"
 members = ["apps/jarproof"]
 dependencies = []
 
@@ -435,6 +435,13 @@ workspace = "fixtures/static-instance-flip-api-v1"
 workspaceOutput = "target/classes"
 members = ["fixtures/static-instance-flip-consumer"]
 dependencies = []
+
+[[conflict]]
+id = "info.picocli:picocli"
+members = ["apps/jarproof"]
+selected = "4.7.7"
+requested = ["4.7.6", "4.7.7"]
+reason = "direct dependency wins"
 
 [[toolchain.java]]
 id = "java-graalvm-community-25-native-image"
