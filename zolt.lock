@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:3607f04b04b18a0e8c0cdd817cdb603303164cb64c147c099a9ea00c84e3e839"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:260e899963f2662343a2c8b1f17d02da0e11a484376a7e0c178d1c56ccedf3cc", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:456d40f507b5fa4fd22ef1454d9c2f0a5c51a5cf7ff85dadcd883d7b787c32f0"
+projectResolutionFingerprint = "sha256:04501b868be5e862ce3ebec714184148a8398c8e0d0f45f34033c23bcfebbaaf"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:f26c5b2f2eff475fcc54bd7bef673ec8625d1e8a9c20487d7eb35fa5f426fec7", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:256d25f428a274dbdc6a6ce0b0cf516414cabed1335885ae0ec04e7821eae3dc"
 
 [[package]]
 id = "args4j:args4j"
@@ -57,14 +57,14 @@ dependencies = ["com.fasterxml.jackson.core:jackson-annotations:2.18.9:jar:test"
 
 [[package]]
 id = "com.google.errorprone:error_prone_annotations"
-version = "2.36.0"
+version = "2.47.0"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "com/google/errorprone/error_prone_annotations/2.36.0/error_prone_annotations-2.36.0.jar"
-pom = "com/google/errorprone/error_prone_annotations/2.36.0/error_prone_annotations-2.36.0.pom"
-jarSha256 = "77440e270b0bc9a249903c5a076c36a722c4886ca4f42675f2903a1c53ed61a5"
-pomSha256 = "d79cfd37c85f76d6b754c7501ee1dc8447b7b2642c2382d778252166bd331e9c"
+jar = "com/google/errorprone/error_prone_annotations/2.47.0/error_prone_annotations-2.47.0.jar"
+pom = "com/google/errorprone/error_prone_annotations/2.47.0/error_prone_annotations-2.47.0.pom"
+jarSha256 = "5364bc6f22e72e98195e406a58d3ba1c09ffa11dea0729592cb870dc2de4056d"
+pomSha256 = "d80c889a4a6f711f6945fbee79e05ec247b178a567e9d5abf58eb26ebf0a0752"
 members = ["apps/jarproof"]
 dependencies = []
 
@@ -83,16 +83,16 @@ dependencies = []
 
 [[package]]
 id = "com.google.guava:guava"
-version = "33.4.8-jre"
+version = "33.6.0-jre"
 source = "maven-central"
 scope = "test"
 direct = true
-jar = "com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar"
-pom = "com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.pom"
-jarSha256 = "f3d7f57f67fd622f4d468dfdd692b3a5e3909246c28017ac3263405f0fe617ed"
-pomSha256 = "04365d4b6ef22c8cf9349fe628069fc3e81a2c838351402ef4e95f9e757beebc"
+jar = "com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.jar"
+pom = "com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.pom"
+jarSha256 = "dc573e1fca4fd5454f4a5fd3d7da2df03002876a4175bafc14a95980dd7713b3"
+pomSha256 = "b45b78944280054311c53da9270809fb40dcabc408ce66ce55730099b4f57d32"
 members = ["apps/jarproof"]
-dependencies = ["com.google.errorprone:error_prone_annotations:2.36.0:jar:test", "com.google.guava:failureaccess:1.0.3:jar:test", "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava:jar:test", "com.google.j2objc:j2objc-annotations:3.0.0:jar:test", "org.jspecify:jspecify:1.0.0:jar:test"]
+dependencies = ["com.google.errorprone:error_prone_annotations:2.47.0:jar:test", "com.google.guava:failureaccess:1.0.3:jar:test", "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava:jar:test", "com.google.j2objc:j2objc-annotations:3.1:jar:test", "org.jspecify:jspecify:1.0.0:jar:test"]
 
 [[package]]
 id = "com.google.guava:listenablefuture"
@@ -109,14 +109,14 @@ dependencies = []
 
 [[package]]
 id = "com.google.j2objc:j2objc-annotations"
-version = "3.0.0"
+version = "3.1"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "com/google/j2objc/j2objc-annotations/3.0.0/j2objc-annotations-3.0.0.jar"
-pom = "com/google/j2objc/j2objc-annotations/3.0.0/j2objc-annotations-3.0.0.pom"
-jarSha256 = "88241573467ddca44ffd4d74aa04c2bbfd11bf7c17e0c342c94c9de7a70a7c64"
-pomSha256 = "23b3d039e168ad89dd114698e6dd7be383f4a2c577b8877d82c73a6515e74a17"
+jar = "com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.jar"
+pom = "com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.pom"
+jarSha256 = "84d3a150518485f8140ea99b8a985656749629f6433c92b80c75b36aba3b099b"
+pomSha256 = "14570838500034fc1b47c8205ce1c9d6b255c1ccdd2d1afdcdcbf75e89b24a33"
 members = ["apps/jarproof"]
 dependencies = []
 
