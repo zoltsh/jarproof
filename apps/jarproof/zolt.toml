@@ -23,7 +23,7 @@ central = "https://repo.maven.apache.org/maven2"
 [test.dependencies]
 "org.junit.platform:junit-platform-console-standalone" = "1.11.4"
 "com.google.guava:guava" = "33.4.8-jre"
-"com.fasterxml.jackson.core:jackson-databind" = "2.18.9"
+"com.fasterxml.jackson.core:jackson-databind" = "2.22.1"
 "io.netty:netty-buffer" = "4.1.118.Final"
 
 [dependencyPolicy.licenses]
