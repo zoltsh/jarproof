@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:6024075a3430d038b080f1224b777355f2f0ec5bc7177e65db4af7497ae7d71b"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:c77455d8d799d0b5280b6b25ac79c484368a1642245888c9b9e7ae3d089ce31e", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:71c14bfdb4f6ed40a4ef3f43fa1395b2003cfec10d0ab757cebc81c141693845", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:6a08cc31c35a6b24baf9ac80fbe021fc85b61e40f5f9964bb156b6776579db6c"
+projectResolutionFingerprint = "sha256:519f43a97ef6da3e061b95dae375a85c71bf1e78a895047d8a70f9442c08366b"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:c77455d8d799d0b5280b6b25ac79c484368a1642245888c9b9e7ae3d089ce31e", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:fb8d4d0aeacb5b4a3de6383d6c6544b816d2289bd4c56e819744f4d60a4f5d2c", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:0903139c106c26ff23624592548371b25802601c502a946d0fd24c88d6bf003c"
 
 [[package]]
 id = "args4j:args4j"
@@ -252,14 +252,14 @@ dependencies = []
 
 [[package]]
 id = "org.junit.platform:junit-platform-console-standalone"
-version = "1.11.4"
+version = "1.14.4"
 source = "maven-central"
 scope = "test"
 direct = true
-jar = "org/junit/platform/junit-platform-console-standalone/1.11.4/junit-platform-console-standalone-1.11.4.jar"
-pom = "org/junit/platform/junit-platform-console-standalone/1.11.4/junit-platform-console-standalone-1.11.4.pom"
-jarSha256 = "b016ef6b1c3454d6d7c2c88ce081dabf289699686af6622d6e4e2e1b54b4a2fc"
-pomSha256 = "f44619c18edb94360cc382e6baf943e9300625d1a0a949ee158977eace5713d1"
+jar = "org/junit/platform/junit-platform-console-standalone/1.14.4/junit-platform-console-standalone-1.14.4.jar"
+pom = "org/junit/platform/junit-platform-console-standalone/1.14.4/junit-platform-console-standalone-1.14.4.pom"
+jarSha256 = "7c6968cbcaf4301c729f202b23b7d736c5d88be625fc7d27ad5d746146a8bc28"
+pomSha256 = "85cde188a8fd9b177d451edcc10b1e554608907d2a29a580a8f75112cff78849"
 members = ["apps/jarproof", "fixtures/bad-service-provider", "fixtures/class-to-interface-api-v1", "fixtures/class-to-interface-api-v2", "fixtures/class-to-interface-consumer", "fixtures/duplicate-class-a", "fixtures/duplicate-class-b", "fixtures/inaccessible-api-v1", "fixtures/inaccessible-api-v2", "fixtures/inaccessible-consumer", "fixtures/lambda-target-api-v1", "fixtures/lambda-target-api-v2", "fixtures/lambda-target-consumer", "fixtures/method-handle-poly", "fixtures/missing-class-api-v1", "fixtures/missing-class-api-v2", "fixtures/missing-class-consumer", "fixtures/missing-field-api-v1", "fixtures/missing-field-api-v2", "fixtures/missing-field-consumer", "fixtures/missing-method-api-v1", "fixtures/missing-method-api-v2", "fixtures/missing-method-consumer", "fixtures/nestmates", "fixtures/newer-bytecode", "fixtures/service-api", "fixtures/split-package-a", "fixtures/split-package-b", "fixtures/static-instance-flip-api-v1", "fixtures/static-instance-flip-api-v2", "fixtures/static-instance-flip-consumer", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
 dependencies = []
 
@@ -435,6 +435,244 @@ workspace = "fixtures/static-instance-flip-api-v1"
 workspaceOutput = "target/classes"
 members = ["fixtures/static-instance-flip-consumer"]
 dependencies = []
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member apps/jarproof"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/bad-service-provider"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/class-to-interface-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/class-to-interface-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/duplicate-class-a"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/duplicate-class-b"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/inaccessible-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/inaccessible-api-v2"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/inaccessible-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/lambda-target-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/lambda-target-api-v2"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/lambda-target-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/method-handle-poly"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-class-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-class-api-v2"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-class-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-field-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-field-api-v2"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-field-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-method-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-method-api-v2"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/missing-method-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/nestmates"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/newer-bytecode"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/service-api"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/split-package-a"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/split-package-b"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/static-instance-flip-api-v1"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/static-instance-flip-api-v2"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member fixtures/static-instance-flip-consumer"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member guardrails/jarproof-architecture-tests"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member modules/jarproof-api"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.junit.platform:junit-platform-console-standalone"
+requested = "1.11.4"
+source = "workspace member modules/jarproof-engine"
+policy = "workspace-mediation: org.junit.platform:junit-platform-console-standalone requested 1.11.4 -> 1.14.4"
+
+[[conflict]]
+id = "org.junit.platform:junit-platform-console-standalone"
+members = ["apps/jarproof", "fixtures/bad-service-provider", "fixtures/class-to-interface-api-v1", "fixtures/class-to-interface-api-v2", "fixtures/class-to-interface-consumer", "fixtures/duplicate-class-a", "fixtures/duplicate-class-b", "fixtures/inaccessible-api-v1", "fixtures/inaccessible-api-v2", "fixtures/inaccessible-consumer", "fixtures/lambda-target-api-v1", "fixtures/lambda-target-api-v2", "fixtures/lambda-target-consumer", "fixtures/method-handle-poly", "fixtures/missing-class-api-v1", "fixtures/missing-class-api-v2", "fixtures/missing-class-consumer", "fixtures/missing-field-api-v1", "fixtures/missing-field-api-v2", "fixtures/missing-field-consumer", "fixtures/missing-method-api-v1", "fixtures/missing-method-api-v2", "fixtures/missing-method-consumer", "fixtures/nestmates", "fixtures/newer-bytecode", "fixtures/service-api", "fixtures/split-package-a", "fixtures/split-package-b", "fixtures/static-instance-flip-api-v1", "fixtures/static-instance-flip-api-v2", "fixtures/static-instance-flip-consumer", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+selected = "1.14.4"
+requested = ["1.11.4", "1.14.4"]
+reason = "selected materialized graph wins"
 
 [[toolchain.java]]
 id = "java-graalvm-community-25-native-image"
