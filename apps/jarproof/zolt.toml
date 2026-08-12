@@ -11,14 +11,14 @@ central = "https://repo.maven.apache.org/maven2"
 [dependencies]
 "sh.zolt:jarproof-api" = { workspace = "modules/jarproof-api" }
 "sh.zolt:jarproof-engine" = { workspace = "modules/jarproof-engine" }
-"info.picocli:picocli" = "4.7.6"
+"info.picocli:picocli" = "4.7.7"
 
 # Picocli builds its command model from annotations at runtime, and native-image keeps no
 # annotation or reflective member it was not told about: without this processor the native
 # binary fails every invocation while the JVM build stays green. The processor emits the
 # reflection metadata for exactly the annotated commands, so the config cannot drift from them.
 [annotationProcessors]
-"info.picocli:picocli-codegen" = "4.7.6"
+"info.picocli:picocli-codegen" = "4.7.7"
 
 [test.dependencies]
 "org.junit.platform:junit-platform-console-standalone" = "1.11.4"
