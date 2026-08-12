@@ -97,6 +97,8 @@ final class RepositoryPolicyArchitectureTest {
                 RepositoryLayout.root().resolve(".github/workflows/dependency-updates.yml"));
         assertTrue(updates.contains("zoltsh/update-dependencies@"));
         assertTrue(updates.contains("dry-run: \"false\""));
+        assertTrue(updates.contains("actions: write"));
+        assertTrue(updates.contains("gh workflow run ci.yml"));
     }
 
     @Test
