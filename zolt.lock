@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:ea2eff90af514d33fe451d25bd3a2c6cb64e48781cb29798fe598f110263a5a2"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:a235512321423300aea45d1b6bf7d5d842809b99aeef98b4c6171a63de4e11b3", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:0fd0a124d6d4aaa5e618a69a50a74f939cc620dbd37e119e10e4fb3c6f515268"
+projectResolutionFingerprint = "sha256:a3c18f5cc85bf79b2541d2f7c96531c711f349328ca75a9b2c28c4ae3345dc6f"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:5043e85517a28c3dac7a38b61be9fbb2d4fa6469f3a25a0b8b271352b4466111", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:a6bd1828698ff19161923c5aa8c72f13f8e1c11e077e671a97f08a5487136ff7"
 
 [[package]]
 id = "args4j:args4j"
@@ -334,12 +334,13 @@ id = "org.junit.platform:junit-platform-console"
 version = "1.14.4"
 source = "maven-central"
 scope = "test"
-direct = false
+direct = true
 jar = "org/junit/platform/junit-platform-console/1.14.4/junit-platform-console-1.14.4.jar"
 pom = "org/junit/platform/junit-platform-console/1.14.4/junit-platform-console-1.14.4.pom"
 jarSha256 = "8fba295a9aaced613062b7a8486758b71418e1545a3775de8df9ed76cc062383"
 pomSha256 = "c9b4f431a7590f6b3c3969fbf45c275708645c3016263106beb69e82e8c02a2d"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+policies = ["managed-version: org.junit.platform:junit-platform-console -> 1.14.4 from org.junit:junit-bom:5.14.4"]
 dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.platform:junit-platform-reporting:1.14.4:jar:test"]
 
 [[package]]
