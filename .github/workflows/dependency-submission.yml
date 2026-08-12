@@ -1,4 +1,4 @@
-name: dependencies
+name: dependency submission
 
 on:
   push:
@@ -7,12 +7,18 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: jarproof-dependency-submission-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   submit:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    permissions:
+      contents: write
 
     steps:
       - name: Check out repository
@@ -21,4 +27,6 @@ jobs:
           persist-credentials: false
 
       - name: Submit dependency snapshot
-        uses: zoltsh/submit-dependencies@04ede689b0e33600bf68bc93a7848e549ebeb3a4 # main, no release tag yet
+        uses: zoltsh/submit-dependencies@485d4ab3d85599aacafaf76098b9f1d32fc4289c # v0.1.0
+        with:
+          workspace: "true"

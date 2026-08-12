@@ -88,6 +88,18 @@ final class RepositoryPolicyArchitectureTest {
     }
 
     @Test
+    void dependencyAutomationUsesTheZoltActions() {
+        String submission = RepositoryLayout.text(
+                RepositoryLayout.root().resolve(".github/workflows/dependency-submission.yml"));
+        assertTrue(submission.contains("zoltsh/submit-dependencies@"));
+        assertTrue(submission.contains("workspace: \"true\""));
+        String updates = RepositoryLayout.text(
+                RepositoryLayout.root().resolve(".github/workflows/dependency-updates.yml"));
+        assertTrue(updates.contains("zoltsh/update-dependencies@"));
+        assertTrue(updates.contains("dry-run: \"false\""));
+    }
+
+    @Test
     void everyExternalActionUsesAFullCommitSha() {
         Path workflows = RepositoryLayout.root().resolve(".github/workflows");
         assertTrue(Files.isDirectory(workflows), "Missing GitHub workflows");

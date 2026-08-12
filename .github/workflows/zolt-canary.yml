@@ -38,5 +38,8 @@ jobs:
           channel: zap
           version: latest
 
+      - name: Sync managed Java
+        run: zolt toolchain sync
+
       - name: Check repository against the newest Zolt
         run: scripts/check

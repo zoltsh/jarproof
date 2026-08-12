@@ -1,0 +1,35 @@
+name: dependency updates
+
+on:
+  schedule:
+    - cron: "37 11 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jarproof-dependency-updates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Update dependencies
+        uses: zoltsh/update-dependencies@b4d167f1519162bfdf8aef555fd213e3ebe36f21 # v0.1.0-preview.2
+        with:
+          workspace: "true"
+          update-ceiling: minor
+          open-pull-requests-limit: "5"
+          dry-run: "false"
