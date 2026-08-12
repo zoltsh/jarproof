@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:6515bbde8c105ce2da63eac2c227b52bb7d79502ca27dd8727c95b9bd4e77edc"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:c46db0c9b0f5fa2f3b1d01522c522a52aa81fe5f6921699a4a00d3562c2dfd0e", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:f672f326b75646b3bcf3a372c98467942e0e21f0da3761980c82e90a37ad152c"
+projectResolutionFingerprint = "sha256:3607f04b04b18a0e8c0cdd817cdb603303164cb64c147c099a9ea00c84e3e839"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:14b0ae3082c96ddf73e90f0e1759bd0b5d435e4d85db0311e55579afd24ae383", "dependencies.processor=sha256:7259384c9ad86d5ec34ccd53bebb9496f11f6c4400fe03061c7d0550e828b028", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:260e899963f2662343a2c8b1f17d02da0e11a484376a7e0c178d1c56ccedf3cc", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:456d40f507b5fa4fd22ef1454d9c2f0a5c51a5cf7ff85dadcd883d7b787c32f0"
 
 [[package]]
 id = "args4j:args4j"
@@ -18,42 +18,42 @@ dependencies = []
 
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-annotations"
-version = "2.18.3"
+version = "2.18.9"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "com/fasterxml/jackson/core/jackson-annotations/2.18.3/jackson-annotations-2.18.3.jar"
-pom = "com/fasterxml/jackson/core/jackson-annotations/2.18.3/jackson-annotations-2.18.3.pom"
-jarSha256 = "8aa5740d80b5a5025508b41bbadbaa1fb3772267c628b2e30681a4f45f8b8931"
-pomSha256 = "b9c98ba9e29ea61b693d4c8c801968feaae220b2b2002364a7bcec524998384b"
+jar = "com/fasterxml/jackson/core/jackson-annotations/2.18.9/jackson-annotations-2.18.9.jar"
+pom = "com/fasterxml/jackson/core/jackson-annotations/2.18.9/jackson-annotations-2.18.9.pom"
+jarSha256 = "798c85b86e7420d0b4eb91e7b3e37d4bee673c61de37a616ba51a7539631e6b7"
+pomSha256 = "1b8c49e135d294415736966cd54d872034adb9116ec3c277ff58b22acb7d8774"
 members = ["apps/jarproof"]
 dependencies = []
 
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-core"
-version = "2.18.3"
+version = "2.18.9"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "com/fasterxml/jackson/core/jackson-core/2.18.3/jackson-core-2.18.3.jar"
-pom = "com/fasterxml/jackson/core/jackson-core/2.18.3/jackson-core-2.18.3.pom"
-jarSha256 = "056bc4d3e5e53ce821450fa97b3f9e0f8dde125cf6da6884353bb1f09582e1d9"
-pomSha256 = "37dc6b8f6391a4709ac215ca98fa2341c6dd65613c2277d96a4fd82a2f50e3c9"
+jar = "com/fasterxml/jackson/core/jackson-core/2.18.9/jackson-core-2.18.9.jar"
+pom = "com/fasterxml/jackson/core/jackson-core/2.18.9/jackson-core-2.18.9.pom"
+jarSha256 = "e03144f48c8d5307da2894570b4972aab8c72f22440f8dcdb745be2485ce2024"
+pomSha256 = "178a2c07cf2c354bb558b0129fb9696cf3431cbb2441cab876695b47a306d73d"
 members = ["apps/jarproof"]
 dependencies = []
 
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-databind"
-version = "2.18.3"
+version = "2.18.9"
 source = "maven-central"
 scope = "test"
 direct = true
-jar = "com/fasterxml/jackson/core/jackson-databind/2.18.3/jackson-databind-2.18.3.jar"
-pom = "com/fasterxml/jackson/core/jackson-databind/2.18.3/jackson-databind-2.18.3.pom"
-jarSha256 = "510bdda75a7a6186c5bf33b851239488a1450906ae5757121f2e1cc48a7e108f"
-pomSha256 = "e58f48ac14e4dbd48595d69e20bad35019ec1281514ef7ef155e18072ada617f"
+jar = "com/fasterxml/jackson/core/jackson-databind/2.18.9/jackson-databind-2.18.9.jar"
+pom = "com/fasterxml/jackson/core/jackson-databind/2.18.9/jackson-databind-2.18.9.pom"
+jarSha256 = "71595a3f7ff58344ec0496a9f9ec9f623ef7b85b45402d88f1ca261f1bc4b42c"
+pomSha256 = "dd1cde47b5d6dee487b0dda67bbf09d94a002e72759326182a5540f2f25eb98a"
 members = ["apps/jarproof"]
-dependencies = ["com.fasterxml.jackson.core:jackson-annotations:2.18.3:jar:test", "com.fasterxml.jackson.core:jackson-core:2.18.3:jar:test"]
+dependencies = ["com.fasterxml.jackson.core:jackson-annotations:2.18.9:jar:test", "com.fasterxml.jackson.core:jackson-core:2.18.9:jar:test"]
 
 [[package]]
 id = "com.google.errorprone:error_prone_annotations"
@@ -161,27 +161,27 @@ dependencies = []
 
 [[package]]
 id = "io.netty:netty-buffer"
-version = "4.1.115.Final"
+version = "4.1.118.Final"
 source = "maven-central"
 scope = "test"
 direct = true
-jar = "io/netty/netty-buffer/4.1.115.Final/netty-buffer-4.1.115.Final.jar"
-pom = "io/netty/netty-buffer/4.1.115.Final/netty-buffer-4.1.115.Final.pom"
-jarSha256 = "4a7b331d3770c566ab70eb02a0d1feed63b95cf6e4d68c8fe778c4c9de2d116d"
-pomSha256 = "94a3581ea9e4ffc385bb237960f68ef1e84089f164eae8629e8fd66d8aaf0139"
+jar = "io/netty/netty-buffer/4.1.118.Final/netty-buffer-4.1.118.Final.jar"
+pom = "io/netty/netty-buffer/4.1.118.Final/netty-buffer-4.1.118.Final.pom"
+jarSha256 = "0eea4e8666a9636a28722661d8ba5fa8564477e75fec6dd2ff3e324e361f8b3c"
+pomSha256 = "95cbe6e3e341ee49bcffd3257cf78fa5785e465b77a734bcfc2f93509d43fe64"
 members = ["apps/jarproof"]
-dependencies = ["io.netty:netty-common:4.1.115.Final:jar:test"]
+dependencies = ["io.netty:netty-common:4.1.118.Final:jar:test"]
 
 [[package]]
 id = "io.netty:netty-common"
-version = "4.1.115.Final"
+version = "4.1.118.Final"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "io/netty/netty-common/4.1.115.Final/netty-common-4.1.115.Final.jar"
-pom = "io/netty/netty-common/4.1.115.Final/netty-common-4.1.115.Final.pom"
-jarSha256 = "39f1b5a2aaa4eab5d036dfd0486e35a4276df412e092d36b2d88b494705a134d"
-pomSha256 = "6286361f5dd6a7b26c42909242bb8629e3aeec255ad0d3ff131bcb5152c31b21"
+jar = "io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.jar"
+pom = "io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.pom"
+jarSha256 = "65cce901ecf0f9d6591cc7750772614ab401a84415dc9aec9da4d046f0f9a77c"
+pomSha256 = "34290415e3f7961b196f7637c82a617d1038112291b31cbbc47200d1da326e82"
 members = ["apps/jarproof"]
 dependencies = []
 
