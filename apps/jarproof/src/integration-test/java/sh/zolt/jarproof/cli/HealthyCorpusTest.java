@@ -59,11 +59,11 @@ final class HealthyCorpusTest {
      * or disagree with rather than an unexplained integer.
      *
      * What they are today, which is why the shape is worth pinning at all. Application scope sees only
-     * advisories: eleven artifacts in the closure mix bytecode levels (JP3005), which is ordinary in
+     * advisories: twenty-one artifacts in the closure mix bytecode levels (JP3005), which is ordinary in
      * released and repackaged jars and says nothing about linkage. Inspecting every library origin adds
      * warnings and no errors, and they are the textbook cases DESIGN section 4 exists for — Netty's
-     * optional log4j2 integration references a logging API nobody put on this classpath, and the JUnit
-     * console jar references the Kotlin runtime it only needs for Kotlin callers. Neither ever executes
+     * optional log4j2 integration references a logging API nobody put on this classpath, and JUnit's
+     * Kotlin-facing helpers reference the Kotlin runtime they only need for Kotlin callers. Neither executes
      * here, which is exactly why library-only evidence is warning-level and errors stay at zero.
      *
      * The closure is every jar this test JVM was launched with, so the runner and the engine's own ASM
@@ -71,11 +71,11 @@ final class HealthyCorpusTest {
      * releases like the rest, and they contribute the same kind of optional-dependency evidence.
      */
     private static final SeverityTally APPLICATION_ORIGIN =
-            SeverityTally.pinning(0, 0, 11, Map.of("JP3005 info", 11));
-    private static final SeverityTally EVERY_ORIGIN = SeverityTally.pinning(0, 41, 11, Map.of(
+            SeverityTally.pinning(0, 0, 21, Map.of("JP3005 info", 21));
+    private static final SeverityTally EVERY_ORIGIN = SeverityTally.pinning(0, 41, 21, Map.of(
             "JP1001 warnings", 34,
             "JP1003 warnings", 7,
-            "JP3005 info", 11));
+            "JP3005 info", 21));
 
     @TempDir
     static Path workspace;

@@ -21,7 +21,7 @@ central = "https://repo.maven.apache.org/maven2"
 "info.picocli:picocli-codegen" = "4.7.7"
 
 [test.dependencies]
-"org.junit.platform:junit-platform-console-standalone" = "1.11.4"
+"org.junit.jupiter:junit-jupiter" = {}
 "com.google.guava:guava" = "33.6.0-jre"
 "com.fasterxml.jackson.core:jackson-databind" = "2.22.1"
 "io.netty:netty-buffer" = "4.1.118.Final"

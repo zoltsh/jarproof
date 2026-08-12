@@ -6,7 +6,7 @@ if [ "${JARPROOF_MANAGED_TOOLCHAIN:-}" != "1" ]; then
 fi
 
 zolt resolve --workspace --locked
-zolt test --workspace --all
+zolt test --workspace --members modules/jarproof-api,modules/jarproof-engine,apps/jarproof,guardrails/jarproof-architecture-tests
 zolt coverage --workspace --members modules/jarproof-api,modules/jarproof-engine,apps/jarproof,guardrails/jarproof-architecture-tests
 zolt package --workspace --all
 zolt integration-test --workspace --member apps/jarproof

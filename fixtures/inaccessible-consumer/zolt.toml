@@ -10,8 +10,6 @@ central = "https://repo.maven.apache.org/maven2"
 [dependencies]
 "sh.zolt:jarproof-fixture-inaccessible-api-v1" = { workspace = "fixtures/inaccessible-api-v1" }
 
-[test.dependencies]
-"org.junit.platform:junit-platform-console-standalone" = "1.11.4"
 
 [dependencyPolicy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]

@@ -41,6 +41,9 @@ defaultMembers = ["apps/jarproof"]
 [repositories]
 central = "https://repo.maven.apache.org/maven2"
 
+[platforms]
+"org.junit:junit-bom" = "5.14.4"
+
 [toolchain.zolt]
 version = "0.1.0-zap.20260810.e45c94a87776"
 

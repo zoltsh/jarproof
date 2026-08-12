@@ -12,7 +12,7 @@ central = "https://repo.maven.apache.org/maven2"
 "org.ow2.asm:asm" = "9.9"
 
 [test.dependencies]
-"org.junit.platform:junit-platform-console-standalone" = "1.11.4"
+"org.junit.jupiter:junit-jupiter" = {}
 
 [dependencyPolicy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]

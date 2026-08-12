@@ -79,6 +79,14 @@ final class RepositoryPolicyArchitectureTest {
     }
 
     @Test
+    void testGateRunsExactlyTheCoreMembers() {
+        String gate = RepositoryLayout.text(RepositoryLayout.root().resolve("scripts/check"));
+        Matcher test = Pattern.compile("(?m)^zolt test --workspace --members (\\S+)$").matcher(gate);
+        assertTrue(test.find(), "scripts/check must test an explicit member list");
+        assertEquals(RepositoryLayout.coreMembers(), Set.of(test.group(1).split(",")));
+    }
+
+    @Test
     void repositoryGateRunsSmokeTestsWithAPinnedSmoqueRelease() {
         String gate = RepositoryLayout.text(RepositoryLayout.root().resolve("scripts/check"));
         assertTrue(gate.contains("JARPROOF_SMOKE_PREBUILT=1 scripts/smoke"));
@@ -99,6 +107,22 @@ final class RepositoryPolicyArchitectureTest {
         assertTrue(updates.contains("dry-run: \"false\""));
         assertTrue(updates.contains("actions: write"));
         assertTrue(updates.contains("gh workflow run ci.yml"));
+    }
+
+    @Test
+    void junitVersionIsOwnedByTheWorkspaceBom() {
+        String rootManifest = RepositoryLayout.text(RepositoryLayout.root().resolve("zolt.toml"));
+        assertTrue(rootManifest.matches(
+                "(?s).*\\[platforms].*\"org\\.junit:junit-bom\" = \"[0-9]+\\.[0-9]+\\.[0-9]+\".*"));
+        Pattern literalJUnit = Pattern.compile("(?m)^\"org\\.junit\\.[^\"]+\"\\s*=\\s*\"");
+        for (String member : RepositoryLayout.workspaceMembers()) {
+            String manifest = RepositoryLayout.text(RepositoryLayout.root().resolve(member).resolve("zolt.toml"));
+            assertFalse(manifest.contains("junit-platform-console-standalone"), member);
+            assertFalse(literalJUnit.matcher(manifest).find(), member);
+            if (RepositoryLayout.coreMembers().contains(member)) {
+                assertTrue(manifest.contains("\"org.junit.jupiter:junit-jupiter\" = {}"), member);
+            }
+        }
     }
 
     @Test
