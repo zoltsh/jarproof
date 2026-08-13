@@ -34,8 +34,8 @@ jobs:
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:
           channel: zap
-          version: 0.1.0-zap.20260810.e45c94a87776
-          sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
+          version: 0.1.0-zap.20260813.486974e1a11b
+          sha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
 
       - name: Sync managed Java
         run: zolt toolchain sync
@@ -62,8 +62,8 @@ jobs:
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:
           channel: zap
-          version: 0.1.0-zap.20260810.e45c94a87776
-          sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
+          version: 0.1.0-zap.20260813.486974e1a11b
+          sha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
 
       - name: Sync managed Java
         run: zolt toolchain sync

@@ -25,16 +25,16 @@ jobs:
         include:
           - runner: ubuntu-24.04
             platform: linux-x64
-            zoltSha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
+            zoltSha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
           - runner: ubuntu-24.04-arm
             platform: linux-arm64
-            zoltSha256: 829dac7b6a79f63a1b66a1810dbc5741b94e72c05f721329c60ef61beaa7dd4b
+            zoltSha256: 4e8b7f380f0191128fd284aebb9715604f611deab20061412227dbce5cc2339f
           - runner: macos-15-intel
             platform: macos-x64
-            zoltSha256: 62b71be7319c920157ebb1dfc7108af1c88b59dbfe20c776c46c6b4177d52a57
+            zoltSha256: 38011ee0dd7eda2cbbb1d23821ec4352c9dd02555532dc14e5c70bba8dd74cdd
           - runner: macos-15
             platform: macos-arm64
-            zoltSha256: 634efe024c58ce9e4400bf47a10d2e93298c423e4fcf9b80ff09086e71bb3a8f
+            zoltSha256: 2d3921173cb6262f156e1a0a1e758ac1fe322425415b1e93796b15e1a36188ed
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     permissions:
@@ -68,7 +68,7 @@ jobs:
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:
           channel: zap
-          version: 0.1.0-zap.20260810.e45c94a87776
+          version: 0.1.0-zap.20260813.486974e1a11b
           sha256: ${{ matrix.zoltSha256 }}
 
       - name: Sync managed Java
@@ -128,8 +128,8 @@ jobs:
         uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
         with:
           channel: zap
-          version: 0.1.0-zap.20260810.e45c94a87776
-          sha256: ca733b6b5579d3393bb729685cf8401e52397e12181ac65fadc125a346cedb40
+          version: 0.1.0-zap.20260813.486974e1a11b
+          sha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
 
       - name: Sync managed Java
         run: zolt toolchain sync
