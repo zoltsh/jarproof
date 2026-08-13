@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:a3c18f5cc85bf79b2541d2f7c96531c711f349328ca75a9b2c28c4ae3345dc6f"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:5043e85517a28c3dac7a38b61be9fbb2d4fa6469f3a25a0b8b271352b4466111", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:1bd82e114ab73b7711125f056b6578dd5a0d26f92f1e5a9a81c5064f02e7b403"
+projectResolutionFingerprint = "sha256:8a1ad1195d92472f0e05cedf46b09c17c17e169ac599b103f9fe496978f12345"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:42c70cf209b484cc9dca6a3c28b6d13013b3221809f152934110afc64a73c0d7", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:9ec97fdb2f65c1443f266de0971589ef92ee8ce7100f9fec5bc1b66f3ba8ecd9"
 
 [[package]]
 id = "args4j:args4j"
@@ -161,27 +161,27 @@ dependencies = []
 
 [[package]]
 id = "io.netty:netty-buffer"
-version = "4.1.118.Final"
+version = "4.2.17.Final"
 source = "maven-central"
 scope = "test"
 direct = true
-jar = "io/netty/netty-buffer/4.1.118.Final/netty-buffer-4.1.118.Final.jar"
-pom = "io/netty/netty-buffer/4.1.118.Final/netty-buffer-4.1.118.Final.pom"
-jarSha256 = "0eea4e8666a9636a28722661d8ba5fa8564477e75fec6dd2ff3e324e361f8b3c"
-pomSha256 = "95cbe6e3e341ee49bcffd3257cf78fa5785e465b77a734bcfc2f93509d43fe64"
+jar = "io/netty/netty-buffer/4.2.17.Final/netty-buffer-4.2.17.Final.jar"
+pom = "io/netty/netty-buffer/4.2.17.Final/netty-buffer-4.2.17.Final.pom"
+jarSha256 = "0d249178ec0204b35a6ad3e5ac8a6c2ecb3eb496c6cdae40b8eca4fa3cb6a0c7"
+pomSha256 = "658f517dd49e6d39c1bed350096d781a25cc0f252d1e3e90f63a3ba0bedd2f5d"
 members = ["apps/jarproof"]
-dependencies = ["io.netty:netty-common:4.1.118.Final:jar:test"]
+dependencies = ["io.netty:netty-common:4.2.17.Final:jar:test"]
 
 [[package]]
 id = "io.netty:netty-common"
-version = "4.1.118.Final"
+version = "4.2.17.Final"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.jar"
-pom = "io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.pom"
-jarSha256 = "65cce901ecf0f9d6591cc7750772614ab401a84415dc9aec9da4d046f0f9a77c"
-pomSha256 = "34290415e3f7961b196f7637c82a617d1038112291b31cbbc47200d1da326e82"
+jar = "io/netty/netty-common/4.2.17.Final/netty-common-4.2.17.Final.jar"
+pom = "io/netty/netty-common/4.2.17.Final/netty-common-4.2.17.Final.pom"
+jarSha256 = "502aae2a6680e9bca3558a3fa098f06dc4d87340b8b714e925a6d690871c092a"
+pomSha256 = "0100816f2f163d16d0c035181d6fb46d745f6deed759c25767afe61bebd785f4"
 members = ["apps/jarproof"]
 dependencies = []
 

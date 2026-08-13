@@ -59,9 +59,11 @@ final class HealthyCorpusTest {
      * or disagree with rather than an unexplained integer.
      *
      * What they are today, which is why the shape is worth pinning at all. Application scope sees only
-     * advisories: twenty-one artifacts in the closure mix bytecode levels (JP3005), which is ordinary in
-     * released and repackaged jars and says nothing about linkage. Inspecting every library origin adds
-     * warnings and no errors, and they are the textbook cases DESIGN section 4 exists for — Netty's
+     * advisories: twenty-three artifacts in the closure mix bytecode levels (JP3005), which is ordinary in
+     * released and repackaged jars and says nothing about linkage. Netty 4.2 contributes two of those
+     * artifacts: its buffer and common jars both include Java 9 module metadata beside older classes.
+     * Inspecting every library origin adds warnings and no errors, and they are the textbook cases DESIGN
+     * section 4 exists for — Netty's
      * optional log4j2 integration references a logging API nobody put on this classpath, and JUnit's
      * Kotlin-facing helpers reference the Kotlin runtime they only need for Kotlin callers. Neither executes
      * here, which is exactly why library-only evidence is warning-level and errors stay at zero.
@@ -71,11 +73,11 @@ final class HealthyCorpusTest {
      * releases like the rest, and they contribute the same kind of optional-dependency evidence.
      */
     private static final SeverityTally APPLICATION_ORIGIN =
-            SeverityTally.pinning(0, 0, 21, Map.of("JP3005 info", 21));
-    private static final SeverityTally EVERY_ORIGIN = SeverityTally.pinning(0, 41, 21, Map.of(
+            SeverityTally.pinning(0, 0, 23, Map.of("JP3005 info", 23));
+    private static final SeverityTally EVERY_ORIGIN = SeverityTally.pinning(0, 41, 23, Map.of(
             "JP1001 warnings", 34,
             "JP1003 warnings", 7,
-            "JP3005 info", 21));
+            "JP3005 info", 23));
 
     @TempDir
     static Path workspace;
