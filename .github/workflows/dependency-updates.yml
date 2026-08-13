@@ -29,7 +29,7 @@ jobs:
 
       - name: Update dependencies
         id: updates
-        uses: zoltsh/update-dependencies@b4d167f1519162bfdf8aef555fd213e3ebe36f21 # v0.1.0-preview.2
+        uses: zoltsh/update-dependencies@bd142554268d2acb3f15ebe50463263e18ba3ec5 # workspace-root platforms
         with:
           workspace: "true"
           update-ceiling: minor
