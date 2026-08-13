@@ -9,7 +9,7 @@ central = "https://repo.maven.apache.org/maven2"
 
 [dependencies]
 "sh.zolt:jarproof-api" = { workspace = "modules/jarproof-api" }
-"org.ow2.asm:asm" = "9.9"
+"org.ow2.asm:asm" = "9.10.1"
 
 [test.dependencies]
 "org.junit.jupiter:junit-jupiter" = {}

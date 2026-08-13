@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:6c65b97888d291732cae8422d314fd6348bf884c092f2232b6d623f27c665810"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:c77455d8d799d0b5280b6b25ac79c484368a1642245888c9b9e7ae3d089ce31e", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:5043e85517a28c3dac7a38b61be9fbb2d4fa6469f3a25a0b8b271352b4466111", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:3b7a91d7082aca61b8b421851b140e4d40c4c103d8b3e30a455c9f4e0920f7b1"
+projectResolutionFingerprint = "sha256:a3c18f5cc85bf79b2541d2f7c96531c711f349328ca75a9b2c28c4ae3345dc6f"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:5043e85517a28c3dac7a38b61be9fbb2d4fa6469f3a25a0b8b271352b4466111", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:1bd82e114ab73b7711125f056b6578dd5a0d26f92f1e5a9a81c5064f02e7b403"
 
 [[package]]
 id = "args4j:args4j"
@@ -235,7 +235,7 @@ pom = "org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.pom"
 jarSha256 = "28abbf0eea5a08e4f24097f2fbac663ca17c341c25c3a04d90d6cd325943c995"
 pomSha256 = "7b75bae2c1779af544369833afe1d68f5a3955e91d166cb19dff886534b1ad6c"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
-dependencies = ["org.ow2.asm:asm-commons:9.9:jar:tool-coverage", "org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9.9:jar:tool-coverage"]
+dependencies = ["org.ow2.asm:asm-commons:9.9:jar:tool-coverage", "org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9.10.1:jar:tool-coverage"]
 
 [[package]]
 id = "org.jacoco:org.jacoco.report"
@@ -419,7 +419,7 @@ pom = "org/ow2/asm/asm-commons/9.9/asm-commons-9.9.pom"
 jarSha256 = "db2f6f26150bbe7c126606b4a1151836bcc22a1e05a423b3585698bece995ff8"
 pomSha256 = "18a5d3ef1377e7544b3ca3210f261396b987f6010ef591d3872adae63119ee43"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
-dependencies = ["org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9.9:jar:tool-coverage"]
+dependencies = ["org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9.10.1:jar:tool-coverage"]
 
 [[package]]
 id = "org.ow2.asm:asm-tree"
@@ -432,31 +432,31 @@ pom = "org/ow2/asm/asm-tree/9.9/asm-tree-9.9.pom"
 jarSha256 = "42178f3775c9c63f9e5e1446747d29b4eca4d91bd6e75e5c43cfa372a47d38c6"
 pomSha256 = "d01788ed8e6e8e24acaf6cb4a7bdcc2733416252faa00232959e3e2e9df1bf44"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
-dependencies = ["org.ow2.asm:asm:9.9:jar:tool-coverage"]
+dependencies = ["org.ow2.asm:asm:9.10.1:jar:tool-coverage"]
 
 [[package]]
 id = "org.ow2.asm:asm"
-version = "9.9"
+version = "9.10.1"
 source = "maven-central"
 scope = "compile"
 direct = true
-jar = "org/ow2/asm/asm/9.9/asm-9.9.jar"
-pom = "org/ow2/asm/asm/9.9/asm-9.9.pom"
-jarSha256 = "03d99a74ad1ee5c71334ef67437f4ef4fe3488caa7c96d8645abc73c8e2017d4"
-pomSha256 = "cf861ef1e745d57154af79ae14df340ed5341e5dcd0157cefcd2eb7f1aa05c57"
+jar = "org/ow2/asm/asm/9.10.1/asm-9.10.1.jar"
+pom = "org/ow2/asm/asm/9.10.1/asm-9.10.1.pom"
+jarSha256 = "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb"
+pomSha256 = "e1b1c3832ca3ac0a9e563c405f4c760118b5556a4920daee14058886197e094d"
 members = ["modules/jarproof-engine"]
 dependencies = []
 
 [[package]]
 id = "org.ow2.asm:asm"
-version = "9.9"
+version = "9.10.1"
 source = "maven-central"
 scope = "tool-coverage"
 direct = false
-jar = "org/ow2/asm/asm/9.9/asm-9.9.jar"
-pom = "org/ow2/asm/asm/9.9/asm-9.9.pom"
-jarSha256 = "03d99a74ad1ee5c71334ef67437f4ef4fe3488caa7c96d8645abc73c8e2017d4"
-pomSha256 = "cf861ef1e745d57154af79ae14df340ed5341e5dcd0157cefcd2eb7f1aa05c57"
+jar = "org/ow2/asm/asm/9.10.1/asm-9.10.1.jar"
+pom = "org/ow2/asm/asm/9.10.1/asm-9.10.1.pom"
+jarSha256 = "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb"
+pomSha256 = "e1b1c3832ca3ac0a9e563c405f4c760118b5556a4920daee14058886197e094d"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
 dependencies = []
 
@@ -491,7 +491,7 @@ direct = true
 workspace = "modules/jarproof-engine"
 workspaceOutput = "target/classes"
 members = ["apps/jarproof"]
-dependencies = ["org.ow2.asm:asm:9.9:jar:compile"]
+dependencies = ["org.ow2.asm:asm:9.10.1:jar:compile"]
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-class-to-interface-api-v1"
@@ -580,6 +580,55 @@ workspace = "fixtures/static-instance-flip-api-v1"
 workspaceOutput = "target/classes"
 members = ["fixtures/static-instance-flip-consumer"]
 dependencies = []
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.ow2.asm:asm"
+requested = "9.9"
+source = "org.jacoco:org.jacoco.core:0.8.14"
+policy = "workspace-mediation: org.ow2.asm:asm requested 9.9 -> 9.10.1"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.ow2.asm:asm"
+requested = "9.9"
+source = "org.ow2.asm:asm-commons:9.9"
+policy = "workspace-mediation: org.ow2.asm:asm requested 9.9 -> 9.10.1"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.ow2.asm:asm"
+requested = "9.9"
+source = "org.ow2.asm:asm-tree:9.9"
+policy = "workspace-mediation: org.ow2.asm:asm requested 9.9 -> 9.10.1"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.ow2.asm:asm"
+requested = "9.9"
+source = "workspace member apps/jarproof"
+policy = "workspace-mediation: org.ow2.asm:asm requested 9.9 -> 9.10.1"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.ow2.asm:asm"
+requested = "9.9"
+source = "workspace member guardrails/jarproof-architecture-tests"
+policy = "workspace-mediation: org.ow2.asm:asm requested 9.9 -> 9.10.1"
+
+[[policy]]
+kind = "workspace-mediation"
+id = "org.ow2.asm:asm"
+requested = "9.9"
+source = "workspace member modules/jarproof-api"
+policy = "workspace-mediation: org.ow2.asm:asm requested 9.9 -> 9.10.1"
+
+[[conflict]]
+id = "org.ow2.asm:asm"
+members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
+selected = "9.10.1"
+requested = ["9.9", "9.10.1"]
+reason = "selected materialized graph wins"
 
 [[toolchain.java]]
 id = "java-graalvm-community-25-native-image"
