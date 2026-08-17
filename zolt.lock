@@ -1,7 +1,7 @@
 version = 5
-projectResolutionFingerprint = "sha256:8a1ad1195d92472f0e05cedf46b09c17c17e169ac599b103f9fe496978f12345"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:42c70cf209b484cc9dca6a3c28b6d13013b3221809f152934110afc64a73c0d7", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:9ec97fdb2f65c1443f266de0971589ef92ee8ce7100f9fec5bc1b66f3ba8ecd9"
+projectResolutionFingerprint = "sha256:d6a04706efe73022cbaf1290129726a18c117b713898d2002f0ff596c9dd6999"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:18f2ab476cd41e19fa0353598da0474f1ff5a8b484c9cda700563d466e9d96df", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
+workspaceResolutionInputFingerprint = "sha256:fd69b964663a35dace95e6d72aa9fc3191ed644c50bd05acd97b76efd3804e30"
 
 [[package]]
 id = "args4j:args4j"
@@ -31,29 +31,29 @@ dependencies = []
 
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-core"
-version = "2.22.1"
+version = "2.22.2"
 source = "maven-central"
 scope = "test"
 direct = false
-jar = "com/fasterxml/jackson/core/jackson-core/2.22.1/jackson-core-2.22.1.jar"
-pom = "com/fasterxml/jackson/core/jackson-core/2.22.1/jackson-core-2.22.1.pom"
-jarSha256 = "941ff029bcdb93e83d209ce516c1a7fb8bbac07d0a2fa122f5bf194b2cd7b4f4"
-pomSha256 = "34551c6c8d72a4a2215fd05fdcf2f4e693eff99e6e54632bd57cf2674478e293"
+jar = "com/fasterxml/jackson/core/jackson-core/2.22.2/jackson-core-2.22.2.jar"
+pom = "com/fasterxml/jackson/core/jackson-core/2.22.2/jackson-core-2.22.2.pom"
+jarSha256 = "ff167a6317be15895706c26668f45b898efe40ab8780970658210fe1393d52a6"
+pomSha256 = "d2829cfef4c30d200e04d7f65009b4b112a46382aadf4534a30dd7f90cb164e5"
 members = ["apps/jarproof"]
 dependencies = []
 
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-databind"
-version = "2.22.1"
+version = "2.22.2"
 source = "maven-central"
 scope = "test"
 direct = true
-jar = "com/fasterxml/jackson/core/jackson-databind/2.22.1/jackson-databind-2.22.1.jar"
-pom = "com/fasterxml/jackson/core/jackson-databind/2.22.1/jackson-databind-2.22.1.pom"
-jarSha256 = "7dcd7e53bec1f56c7ad278bd1ca0840bebcc595d61ce44d6a8439abb75b965b2"
-pomSha256 = "0bc8f98c7bd7232bc90324fc63c2f56f7ae92dee2bf0dc303669f4e2de8c1f69"
+jar = "com/fasterxml/jackson/core/jackson-databind/2.22.2/jackson-databind-2.22.2.jar"
+pom = "com/fasterxml/jackson/core/jackson-databind/2.22.2/jackson-databind-2.22.2.pom"
+jarSha256 = "d0da14c12b16b5d54719aa172d83b542ff4abeb8b0fb7db476fde8ceece760ca"
+pomSha256 = "a903aac4221725783341c8c7d30ccee43c1b5af67ff01325d2c5bc886d00941f"
 members = ["apps/jarproof"]
-dependencies = ["com.fasterxml.jackson.core:jackson-annotations:2.22:jar:test", "com.fasterxml.jackson.core:jackson-core:2.22.1:jar:test"]
+dependencies = ["com.fasterxml.jackson.core:jackson-annotations:2.22:jar:test", "com.fasterxml.jackson.core:jackson-core:2.22.2:jar:test"]
 
 [[package]]
 id = "com.google.errorprone:error_prone_annotations"
