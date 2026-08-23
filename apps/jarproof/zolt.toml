@@ -1,49 +1,37 @@
 [project]
 name = "jarproof-cli"
-version = "0.0.1-SNAPSHOT"
-group = "sh.zolt"
-java = "17"
+java = 17
 main = "sh.zolt.jarproof.cli.Main"
 
-[repositories]
-central = "https://repo.maven.apache.org/maven2"
-
 [dependencies]
-"sh.zolt:jarproof-api" = { workspace = "modules/jarproof-api" }
-"sh.zolt:jarproof-engine" = { workspace = "modules/jarproof-engine" }
+"sh.zolt:jarproof-api" = { workspace = true }
+"sh.zolt:jarproof-engine" = { workspace = true }
 "info.picocli:picocli" = "4.7.7"
 
 # Picocli builds its command model from annotations at runtime, and native-image keeps no
 # annotation or reflective member it was not told about: without this processor the native
 # binary fails every invocation while the JVM build stays green. The processor emits the
 # reflection metadata for exactly the annotated commands, so the config cannot drift from them.
-[annotationProcessors]
+[dependencies.processor]
 "info.picocli:picocli-codegen" = "4.7.7"
 
-[test.dependencies]
-"org.junit.jupiter:junit-jupiter" = {}
-"org.junit.platform:junit-platform-console" = {}
+[dependencies.test]
+"org.junit.jupiter:junit-jupiter" = { managed = true }
+"org.junit.platform:junit-platform-console" = { managed = true }
 "com.google.guava:guava" = "33.6.0-jre"
 "com.fasterxml.jackson.core:jackson-databind" = "2.22.1"
 "io.netty:netty-buffer" = "4.2.17.Final"
 
-[dependencyPolicy.licenses]
+[dependencies.policy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
 unknown = "fail"
 
-[build]
-source = "src/main/java"
-test = "src/test/java"
-output = "target/classes"
-testOutput = "target/test-classes"
-
 [package]
-mode = "uber"
+mode = "uber-jar"
 
 # picocli-codegen unconditionally emits an EMPTY proxy-config.json, and GraalVM 25 deprecates
 # that resource format with a warning the native gate rightly refuses. Excluding the one empty
 # file silences nothing real; the generated reflect-config stays load-bearing and pinned by test.
 [native]
-imageName = "jarproof"
-output = "target/native"
+name = "jarproof"
 args = ["--no-fallback", "--exclude-config", ".*", "META-INF/native-image/picocli-generated/proxy-config\\.json"]

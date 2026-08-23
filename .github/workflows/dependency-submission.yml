@@ -27,6 +27,6 @@ jobs:
           persist-credentials: false
 
       - name: Submit dependency snapshot
-        uses: zoltsh/submit-dependencies@485d4ab3d85599aacafaf76098b9f1d32fc4289c # v0.1.0
+        uses: zoltsh/submit-dependencies@597d83804f23381928015eafbd3f5cc214033653 # v0.2.0
         with:
           workspace: "true"

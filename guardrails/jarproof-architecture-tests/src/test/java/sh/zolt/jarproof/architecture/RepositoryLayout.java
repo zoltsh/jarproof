@@ -12,9 +12,11 @@ import java.util.stream.Stream;
 
 final class RepositoryLayout {
     private static final String FIXTURE_MEMBER_PREFIX = "fixtures/";
-    private static final Pattern MEMBER_BLOCK = Pattern.compile("members\\s*=\\s*\\[(.*?)]", Pattern.DOTALL);
+    private static final Pattern MEMBER_BLOCK = Pattern.compile("include\\s*=\\s*\\[(.*?)]", Pattern.DOTALL);
+    private static final Pattern PROJECT_NAME = Pattern.compile("(?m)^name\\s*=\\s*\"([^\"]+)\"");
     private static final Pattern QUOTED_VALUE = Pattern.compile("\"([^\"]+)\"");
-    private static final Pattern WORKSPACE_DEPENDENCY = Pattern.compile("workspace\\s*=\\s*\"([^\"]+)\"");
+    private static final Pattern WORKSPACE_DEPENDENCY = Pattern.compile(
+            "(?m)^\"([^\"]+)\"\\s*=\\s*\\{\\s*workspace\\s*=\\s*true\\s*}");
 
     private RepositoryLayout() {
     }
@@ -23,7 +25,7 @@ final class RepositoryLayout {
         Path candidate = Path.of("").toAbsolutePath().normalize();
         while (candidate != null) {
             Path manifest = candidate.resolve("zolt.toml");
-            if (Files.isRegularFile(manifest) && text(manifest).contains("name = \"jarproof\"")) {
+            if (Files.isRegularFile(manifest) && text(manifest).contains("[workspace.members]")) {
                 return candidate;
             }
             candidate = candidate.getParent();
@@ -88,7 +90,9 @@ final class RepositoryLayout {
     }
 
     static Set<String> workspaceDependencies(String member) {
-        return matches(dependencySection(member), WORKSPACE_DEPENDENCY);
+        return matches(dependencySection(member), WORKSPACE_DEPENDENCY).stream()
+                .map(RepositoryLayout::workspaceMemberForCoordinate)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
     static Set<String> dependencyCoordinates(String member) {
@@ -103,6 +107,23 @@ final class RepositoryLayout {
         }
         int end = manifest.indexOf("\n[", start + 1);
         return end < 0 ? manifest.substring(start) : manifest.substring(start, end);
+    }
+
+    private static String workspaceMemberForCoordinate(String coordinate) {
+        int separator = coordinate.indexOf(':');
+        String projectName = separator < 0 ? coordinate : coordinate.substring(separator + 1);
+        return workspaceMembers().stream()
+                .filter(member -> memberProjectName(member).equals(projectName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No workspace member provides " + coordinate));
+    }
+
+    private static String memberProjectName(String member) {
+        Matcher projectName = PROJECT_NAME.matcher(text(root().resolve(member).resolve("zolt.toml")));
+        if (!projectName.find()) {
+            throw new IllegalStateException("Workspace member has no project name: " + member);
+        }
+        return projectName.group(1);
     }
 
     static String text(Path path) {

@@ -1,6 +1,9 @@
 [workspace]
 name = "jarproof"
-members = [
+
+[workspace.members]
+default = ["apps/jarproof"]
+include = [
     "modules/jarproof-api",
     "modules/jarproof-engine",
     "apps/jarproof",
@@ -36,27 +39,27 @@ members = [
     "fixtures/static-instance-flip-api-v2",
     "fixtures/static-instance-flip-consumer",
 ]
-defaultMembers = ["apps/jarproof"]
 
-[repositories]
-central = "https://repo.maven.apache.org/maven2"
+[workspace.project]
+group = "sh.zolt"
+version = "0.0.1-SNAPSHOT"
 
 [platforms]
 "org.junit:junit-bom" = "5.14.4"
 
 [toolchain.zolt]
-version = "0.1.0-zap.20260813.486974e1a11b"
+version = "0.1.0-zap.20260823.0ea7fe1473b4"
 
 [toolchain.java]
-version = "25"
+version = 25
 distribution = "graalvm-community"
 features = ["native-image"]
 policy = "require-managed"
 
 [coverage]
-minLine = 90.0
-minBranch = 80.0
+line = 90
+branch = 80
 
-[commands.tasks.check]
+[tasks.repository-check]
 description = "Run the complete Jarproof repository gate"
-cmd = ["scripts/check"]
+run = ["scripts/check"]

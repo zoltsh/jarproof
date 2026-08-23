@@ -25,16 +25,16 @@ jobs:
         include:
           - runner: ubuntu-24.04
             platform: linux-x64
-            zoltSha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
+            zoltSha256: 11c55e4117d55d1776c5eddca801b8e5f65cc9b16f2c5a8313b9f473547fdd57
           - runner: ubuntu-24.04-arm
             platform: linux-arm64
-            zoltSha256: 4e8b7f380f0191128fd284aebb9715604f611deab20061412227dbce5cc2339f
+            zoltSha256: bf8a49aab74d2cc05f01f044b15d7b6b8f8263dc8aefe9168fbd827c3a6253c4
           - runner: macos-15-intel
             platform: macos-x64
-            zoltSha256: 38011ee0dd7eda2cbbb1d23821ec4352c9dd02555532dc14e5c70bba8dd74cdd
+            zoltSha256: 1e5dc1502ebd3c4dc5672db1fd5e557cae7c894ae28dd5dc30b1569ccd47b41f
           - runner: macos-15
             platform: macos-arm64
-            zoltSha256: 2d3921173cb6262f156e1a0a1e758ac1fe322425415b1e93796b15e1a36188ed
+            zoltSha256: 7bca990eea0f22a4f4b354c22ac3109d89818ed969781d43e0cc6442b428d661
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     permissions:
@@ -58,17 +58,22 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           set -eu
-          declared=$(grep -m1 '^version' apps/jarproof/zolt.toml | cut -d'"' -f2)
+          declared=$(awk '
+            $0 == "[workspace.project]" { in_project = 1; next }
+            in_project && /^\[/ { exit }
+            in_project && /^version = "/ { gsub(/"/, "", $3); print $3; exit }
+          ' zolt.toml)
+          test -n "$declared"
           test "${GITHUB_REF_NAME#v}" = "$declared" || {
             echo "tag $GITHUB_REF_NAME does not match the declared project version $declared"
             exit 1
           }
 
       - name: Set up Zolt
-        uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
+        uses: zoltsh/setup-zolt@28512f86f5c1ce10d6f90849930b0eb3b81fc98b # v1.0.3
         with:
           channel: zap
-          version: 0.1.0-zap.20260813.486974e1a11b
+          version: 0.1.0-zap.20260823.0ea7fe1473b4
           sha256: ${{ matrix.zoltSha256 }}
 
       - name: Sync managed Java
@@ -125,11 +130,11 @@ jobs:
           persist-credentials: false
 
       - name: Set up Zolt
-        uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
+        uses: zoltsh/setup-zolt@28512f86f5c1ce10d6f90849930b0eb3b81fc98b # v1.0.3
         with:
           channel: zap
-          version: 0.1.0-zap.20260813.486974e1a11b
-          sha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
+          version: 0.1.0-zap.20260823.0ea7fe1473b4
+          sha256: 11c55e4117d55d1776c5eddca801b8e5f65cc9b16f2c5a8313b9f473547fdd57
 
       - name: Sync managed Java
         run: zolt toolchain sync

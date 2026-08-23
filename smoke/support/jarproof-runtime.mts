@@ -17,12 +17,12 @@ export interface JarproofRuntime {
 export async function packagedJarproof(t: SmokeContext): Promise<JarproofRuntime> {
   const root = t.repoRoot();
   const java = await t.tools.java({ minVersion: 17 });
-  const jar = await memberJar(root.path("apps", "jarproof"));
+  const jar = await memberJar(root, root.path("apps", "jarproof"));
   return { command: java.command, jar, root };
 }
 
 export async function fixtureJar(runtime: JarproofRuntime, member: string): Promise<string> {
-  return await memberJar(runtime.root.path("fixtures", member));
+  return await memberJar(runtime.root, runtime.root.path("fixtures", member));
 }
 
 export async function runJarproof(
@@ -54,14 +54,24 @@ export async function missingMethodArgs(
   ];
 }
 
-async function memberJar(member: string): Promise<string> {
+async function memberJar(root: PathRef, member: string): Promise<string> {
   const manifest = await readFile(join(member, "zolt.toml"), "utf8");
   const name = /^name = "([^"]+)"/mu.exec(manifest)?.[1];
-  const version = /^version = "([^"]+)"/mu.exec(manifest)?.[1];
+  const workspace = await readFile(root.path("zolt.toml"), "utf8");
+  const sharedProject = manifestSection(workspace, "workspace.project");
+  const version = /^version = "([^"]+)"/mu.exec(sharedProject)?.[1];
   if (name === undefined || version === undefined) {
-    throw new Error(`Could not read the project identity from ${join(member, "zolt.toml")}`);
+    throw new Error(`Could not read the shared project identity for ${join(member, "zolt.toml")}`);
   }
   const jar = join(member, "target", `${name}-${version}.jar`);
   await access(jar);
   return jar;
+}
+
+function manifestSection(manifest: string, name: string): string {
+  const start = manifest.indexOf(`[${name}]`);
+  if (start < 0) return "";
+  const content = manifest.slice(start + name.length + 2);
+  const end = content.indexOf("\n[");
+  return end < 0 ? content : content.slice(0, end);
 }

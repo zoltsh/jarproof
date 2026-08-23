@@ -31,11 +31,11 @@ jobs:
           node-version: 24
 
       - name: Set up Zolt
-        uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
+        uses: zoltsh/setup-zolt@28512f86f5c1ce10d6f90849930b0eb3b81fc98b # v1.0.3
         with:
           channel: zap
-          version: 0.1.0-zap.20260813.486974e1a11b
-          sha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
+          version: 0.1.0-zap.20260823.0ea7fe1473b4
+          sha256: 11c55e4117d55d1776c5eddca801b8e5f65cc9b16f2c5a8313b9f473547fdd57
 
       - name: Sync managed Java
         run: zolt toolchain sync
@@ -59,11 +59,11 @@ jobs:
           persist-credentials: false
 
       - name: Set up Zolt
-        uses: zoltsh/setup-zolt@daaac64a8f2b58dd8ee0ab53b16085a64e20a0ad # v1.0.2
+        uses: zoltsh/setup-zolt@28512f86f5c1ce10d6f90849930b0eb3b81fc98b # v1.0.3
         with:
           channel: zap
-          version: 0.1.0-zap.20260813.486974e1a11b
-          sha256: 905f1046e60b63f674e9ca7e9912f3c47136a313dff3b1df58fe4461fe30f9d3
+          version: 0.1.0-zap.20260823.0ea7fe1473b4
+          sha256: 11c55e4117d55d1776c5eddca801b8e5f65cc9b16f2c5a8313b9f473547fdd57
 
       - name: Sync managed Java
         run: zolt toolchain sync
