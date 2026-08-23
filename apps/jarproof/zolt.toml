@@ -34,5 +34,4 @@ mode = "uber-jar"
 # file silences nothing real; the generated reflect-config stays load-bearing and pinned by test.
 [native]
 name = "jarproof"
-output = "target/native"
 args = ["--no-fallback", "--exclude-config", ".*", "META-INF/native-image/picocli-generated/proxy-config\\.json"]
