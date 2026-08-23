@@ -50,14 +50,15 @@ final class RepositoryPolicyArchitectureTest {
     /**
      * The version the product reports must be the version the build declares: {@code --version},
      * the JSON envelope, and the SARIF driver all read {@code ProductIdentity.VERSION}, while
-     * artifact names come from the member manifest — releasing with the two out of step ships
+     * artifact names come from the shared workspace version — releasing with the two out of step ships
      * binaries that misreport themselves with a green test suite.
      */
     @Test
-    void reportedVersionMatchesTheDeclaredMemberVersion() {
-        String declared = RepositoryLayout.text(RepositoryLayout.root().resolve("apps/jarproof/zolt.toml"));
-        Matcher version = Pattern.compile("(?m)^version = \"([^\"]+)\"").matcher(declared);
-        assertTrue(version.find(), "apps/jarproof/zolt.toml declares no version");
+    void reportedVersionMatchesTheSharedWorkspaceVersion() {
+        String declared = RepositoryLayout.text(RepositoryLayout.root().resolve("zolt.toml"));
+        Matcher version = Pattern.compile("(?ms)^\\[workspace\\.project]\\s*$.*?^version = \"([^\"]+)\"$")
+                .matcher(declared);
+        assertTrue(version.find(), "zolt.toml declares no shared workspace project version");
         String identity = RepositoryLayout.text(RepositoryLayout.root()
                 .resolve("apps/jarproof/src/main/java/sh/zolt/jarproof/cli/ProductIdentity.java"));
         assertTrue(identity.contains("\"" + version.group(1) + "\""),
@@ -120,8 +121,10 @@ final class RepositoryPolicyArchitectureTest {
             assertFalse(manifest.contains("junit-platform-console-standalone"), member);
             assertFalse(literalJUnit.matcher(manifest).find(), member);
             if (RepositoryLayout.coreMembers().contains(member)) {
-                assertTrue(manifest.contains("\"org.junit.jupiter:junit-jupiter\" = {}"), member);
-                assertTrue(manifest.contains("\"org.junit.platform:junit-platform-console\" = {}"), member);
+                assertTrue(manifest.contains(
+                        "\"org.junit.jupiter:junit-jupiter\" = { managed = true }"), member);
+                assertTrue(manifest.contains(
+                        "\"org.junit.platform:junit-platform-console\" = { managed = true }"), member);
             }
         }
     }

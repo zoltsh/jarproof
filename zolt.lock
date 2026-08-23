@@ -1,16 +1,198 @@
-version = 5
-projectResolutionFingerprint = "sha256:8a1ad1195d92472f0e05cedf46b09c17c17e169ac599b103f9fe496978f12345"
-projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:42c70cf209b484cc9dca6a3c28b6d13013b3221809f152934110afc64a73c0d7", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:c41965c38d94cf655f518cb53f00195dfc234005ffdba352c937430ea8f66339", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:dcc5f3af1b99c8072c1647da662789806a8f0d81dbdb0428ac7ffde8a95ad172", "schema=sha256:40b669a1a6a7815062385f7fc502e7d61bc67947596fd4e7df7790f8759762d5"]
-workspaceResolutionInputFingerprint = "sha256:9ec97fdb2f65c1443f266de0971589ef92ee8ce7100f9fec5bc1b66f3ba8ecd9"
+version = 7
+projectResolutionFingerprint = "sha256:a34e106caea27b9fbbb6e83605a9f3cb80875abc5a757f216be64b165622a7cf"
+projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:42c70cf209b484cc9dca6a3c28b6d13013b3221809f152934110afc64a73c0d7", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:8462392284aca9a993f307d98a9e0668e42e65ceb7dff32664c9be95aadc39cf", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:88b6d27a47e6ce5382b8066f0daeab659ce6023fae6c23129100a3317eec328e", "schema=sha256:7bca14c4122d16529ae895991b9707030c97969b297b70b9cf7dce415dbefb6c"]
+workspaceResolutionInputFingerprint = "sha256:99a871ad1ee67de55522c2ef6bea1c0009768b47e216f8f19e6ab92a4100eed7"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "info.picocli:picocli"
+version = "4.7.7"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "sh.zolt:jarproof-api"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "sh.zolt:jarproof-engine"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "com.fasterxml.jackson.core:jackson-databind"
+version = "2.22.1"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "com.google.guava:guava"
+version = "33.6.0-jre"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "io.netty:netty-buffer"
+version = "4.2.17.Final"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "org.junit.jupiter:junit-jupiter"
+version = "5.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "org.junit.platform:junit-platform-console"
+version = "1.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "apps/jarproof"
+id = "info.picocli:picocli-codegen"
+version = "4.7.7"
+lane = "processor"
+resolvedScope = "processor"
+
+[[dependencyRoot]]
+member = "fixtures/bad-service-provider"
+id = "sh.zolt:jarproof-fixture-service-api"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/class-to-interface-consumer"
+id = "sh.zolt:jarproof-fixture-class-to-interface-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/inaccessible-consumer"
+id = "sh.zolt:jarproof-fixture-inaccessible-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/lambda-target-consumer"
+id = "sh.zolt:jarproof-fixture-lambda-target-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/missing-class-consumer"
+id = "sh.zolt:jarproof-fixture-missing-class-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/missing-field-consumer"
+id = "sh.zolt:jarproof-fixture-missing-field-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/missing-method-consumer"
+id = "sh.zolt:jarproof-fixture-missing-method-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "fixtures/static-instance-flip-consumer"
+id = "sh.zolt:jarproof-fixture-static-instance-flip-api-v1"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "guardrails/jarproof-architecture-tests"
+id = "org.junit.jupiter:junit-jupiter"
+version = "5.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "guardrails/jarproof-architecture-tests"
+id = "org.junit.platform:junit-platform-console"
+version = "1.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "guardrails/jarproof-architecture-tests"
+id = "sh.zolt:jarproof-api"
+version = "0.0.1-SNAPSHOT"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "modules/jarproof-api"
+id = "org.junit.jupiter:junit-jupiter"
+version = "5.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "modules/jarproof-api"
+id = "org.junit.platform:junit-platform-console"
+version = "1.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "modules/jarproof-engine"
+id = "org.ow2.asm:asm"
+version = "9.10.1"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "modules/jarproof-engine"
+id = "sh.zolt:jarproof-api"
+version = "0.0.1-SNAPSHOT"
+lane = "implementation"
+resolvedScope = "compile"
+
+[[dependencyRoot]]
+member = "modules/jarproof-engine"
+id = "org.junit.jupiter:junit-jupiter"
+version = "5.14.4"
+lane = "test"
+resolvedScope = "test"
+
+[[dependencyRoot]]
+member = "modules/jarproof-engine"
+id = "org.junit.platform:junit-platform-console"
+version = "1.14.4"
+lane = "test"
+resolvedScope = "test"
 
 [[package]]
 id = "args4j:args4j"
 version = "2.0.28"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "args4j/args4j/2.0.28/args4j-2.0.28.jar"
-pom = "args4j/args4j/2.0.28/args4j-2.0.28.pom"
+jar = "blobs/v2/sha256/11b029a602e787e2bc08eb3b77eda1a4f5e8b263d22e3c5d6220cd5c51f30b18/args4j-2.0.28.jar"
+pom = "blobs/v2/sha256/1f821c93660b7fa573692c305ca97092eab647cefeccfcb3f54771117c3737d3/args4j-2.0.28.pom"
 jarSha256 = "11b029a602e787e2bc08eb3b77eda1a4f5e8b263d22e3c5d6220cd5c51f30b18"
 pomSha256 = "1f821c93660b7fa573692c305ca97092eab647cefeccfcb3f54771117c3737d3"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -19,11 +201,11 @@ dependencies = []
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-annotations"
 version = "2.22"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "com/fasterxml/jackson/core/jackson-annotations/2.22/jackson-annotations-2.22.jar"
-pom = "com/fasterxml/jackson/core/jackson-annotations/2.22/jackson-annotations-2.22.pom"
+jar = "blobs/v2/sha256/21ddb598807d3a51a876704eb979d9296e1c6a6f47ab1826ff88c6d6a127a2d0/jackson-annotations-2.22.jar"
+pom = "blobs/v2/sha256/38c3ba52a0eade3e3eacc5b13499d56e1038ccbad8ec4bb79426dc21432b46d0/jackson-annotations-2.22.pom"
 jarSha256 = "21ddb598807d3a51a876704eb979d9296e1c6a6f47ab1826ff88c6d6a127a2d0"
 pomSha256 = "38c3ba52a0eade3e3eacc5b13499d56e1038ccbad8ec4bb79426dc21432b46d0"
 members = ["apps/jarproof"]
@@ -32,11 +214,11 @@ dependencies = []
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-core"
 version = "2.22.1"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "com/fasterxml/jackson/core/jackson-core/2.22.1/jackson-core-2.22.1.jar"
-pom = "com/fasterxml/jackson/core/jackson-core/2.22.1/jackson-core-2.22.1.pom"
+jar = "blobs/v2/sha256/941ff029bcdb93e83d209ce516c1a7fb8bbac07d0a2fa122f5bf194b2cd7b4f4/jackson-core-2.22.1.jar"
+pom = "blobs/v2/sha256/34551c6c8d72a4a2215fd05fdcf2f4e693eff99e6e54632bd57cf2674478e293/jackson-core-2.22.1.pom"
 jarSha256 = "941ff029bcdb93e83d209ce516c1a7fb8bbac07d0a2fa122f5bf194b2cd7b4f4"
 pomSha256 = "34551c6c8d72a4a2215fd05fdcf2f4e693eff99e6e54632bd57cf2674478e293"
 members = ["apps/jarproof"]
@@ -45,11 +227,11 @@ dependencies = []
 [[package]]
 id = "com.fasterxml.jackson.core:jackson-databind"
 version = "2.22.1"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = true
-jar = "com/fasterxml/jackson/core/jackson-databind/2.22.1/jackson-databind-2.22.1.jar"
-pom = "com/fasterxml/jackson/core/jackson-databind/2.22.1/jackson-databind-2.22.1.pom"
+jar = "blobs/v2/sha256/7dcd7e53bec1f56c7ad278bd1ca0840bebcc595d61ce44d6a8439abb75b965b2/jackson-databind-2.22.1.jar"
+pom = "blobs/v2/sha256/0bc8f98c7bd7232bc90324fc63c2f56f7ae92dee2bf0dc303669f4e2de8c1f69/jackson-databind-2.22.1.pom"
 jarSha256 = "7dcd7e53bec1f56c7ad278bd1ca0840bebcc595d61ce44d6a8439abb75b965b2"
 pomSha256 = "0bc8f98c7bd7232bc90324fc63c2f56f7ae92dee2bf0dc303669f4e2de8c1f69"
 members = ["apps/jarproof"]
@@ -58,11 +240,11 @@ dependencies = ["com.fasterxml.jackson.core:jackson-annotations:2.22:jar:test", 
 [[package]]
 id = "com.google.errorprone:error_prone_annotations"
 version = "2.47.0"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "com/google/errorprone/error_prone_annotations/2.47.0/error_prone_annotations-2.47.0.jar"
-pom = "com/google/errorprone/error_prone_annotations/2.47.0/error_prone_annotations-2.47.0.pom"
+jar = "blobs/v2/sha256/5364bc6f22e72e98195e406a58d3ba1c09ffa11dea0729592cb870dc2de4056d/error_prone_annotations-2.47.0.jar"
+pom = "blobs/v2/sha256/d80c889a4a6f711f6945fbee79e05ec247b178a567e9d5abf58eb26ebf0a0752/error_prone_annotations-2.47.0.pom"
 jarSha256 = "5364bc6f22e72e98195e406a58d3ba1c09ffa11dea0729592cb870dc2de4056d"
 pomSha256 = "d80c889a4a6f711f6945fbee79e05ec247b178a567e9d5abf58eb26ebf0a0752"
 members = ["apps/jarproof"]
@@ -71,11 +253,11 @@ dependencies = []
 [[package]]
 id = "com.google.guava:failureaccess"
 version = "1.0.3"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar"
-pom = "com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.pom"
+jar = "blobs/v2/sha256/cbfc3906b19b8f55dd7cfd6dfe0aa4532e834250d7f080bd8d211a3e246b59cb/failureaccess-1.0.3.jar"
+pom = "blobs/v2/sha256/c54beff37f6d42d43e14722d54a522c9ad51ef97fc5b79277e62a3ebf882f3bb/failureaccess-1.0.3.pom"
 jarSha256 = "cbfc3906b19b8f55dd7cfd6dfe0aa4532e834250d7f080bd8d211a3e246b59cb"
 pomSha256 = "c54beff37f6d42d43e14722d54a522c9ad51ef97fc5b79277e62a3ebf882f3bb"
 members = ["apps/jarproof"]
@@ -84,11 +266,11 @@ dependencies = []
 [[package]]
 id = "com.google.guava:guava"
 version = "33.6.0-jre"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = true
-jar = "com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.jar"
-pom = "com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.pom"
+jar = "blobs/v2/sha256/dc573e1fca4fd5454f4a5fd3d7da2df03002876a4175bafc14a95980dd7713b3/guava-33.6.0-jre.jar"
+pom = "blobs/v2/sha256/b45b78944280054311c53da9270809fb40dcabc408ce66ce55730099b4f57d32/guava-33.6.0-jre.pom"
 jarSha256 = "dc573e1fca4fd5454f4a5fd3d7da2df03002876a4175bafc14a95980dd7713b3"
 pomSha256 = "b45b78944280054311c53da9270809fb40dcabc408ce66ce55730099b4f57d32"
 members = ["apps/jarproof"]
@@ -97,11 +279,11 @@ dependencies = ["com.google.errorprone:error_prone_annotations:2.47.0:jar:test",
 [[package]]
 id = "com.google.guava:listenablefuture"
 version = "9999.0-empty-to-avoid-conflict-with-guava"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
-pom = "com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.pom"
+jar = "blobs/v2/sha256/b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
+pom = "blobs/v2/sha256/18d4b1db26153d4e55079ce1f76bb1fe05cdb862ef9954a88cbcc4ff38b8679b/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.pom"
 jarSha256 = "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99"
 pomSha256 = "18d4b1db26153d4e55079ce1f76bb1fe05cdb862ef9954a88cbcc4ff38b8679b"
 members = ["apps/jarproof"]
@@ -110,11 +292,11 @@ dependencies = []
 [[package]]
 id = "com.google.j2objc:j2objc-annotations"
 version = "3.1"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.jar"
-pom = "com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.pom"
+jar = "blobs/v2/sha256/84d3a150518485f8140ea99b8a985656749629f6433c92b80c75b36aba3b099b/j2objc-annotations-3.1.jar"
+pom = "blobs/v2/sha256/14570838500034fc1b47c8205ce1c9d6b255c1ccdd2d1afdcdcbf75e89b24a33/j2objc-annotations-3.1.pom"
 jarSha256 = "84d3a150518485f8140ea99b8a985656749629f6433c92b80c75b36aba3b099b"
 pomSha256 = "14570838500034fc1b47c8205ce1c9d6b255c1ccdd2d1afdcdcbf75e89b24a33"
 members = ["apps/jarproof"]
@@ -123,11 +305,11 @@ dependencies = []
 [[package]]
 id = "info.picocli:picocli-codegen"
 version = "4.7.7"
-source = "maven-central"
+source = "central"
 scope = "processor"
 direct = true
-jar = "info/picocli/picocli-codegen/4.7.7/picocli-codegen-4.7.7.jar"
-pom = "info/picocli/picocli-codegen/4.7.7/picocli-codegen-4.7.7.pom"
+jar = "blobs/v2/sha256/6dae68232ce1d152b8e474d5bd1888d100bc8cea2ab9307a4e5aa04e1357d261/picocli-codegen-4.7.7.jar"
+pom = "blobs/v2/sha256/26c800a3f6fb767e300ab2db17aaa1cf536cb84629a3d4756d540b9c1d01c12c/picocli-codegen-4.7.7.pom"
 jarSha256 = "6dae68232ce1d152b8e474d5bd1888d100bc8cea2ab9307a4e5aa04e1357d261"
 pomSha256 = "26c800a3f6fb767e300ab2db17aaa1cf536cb84629a3d4756d540b9c1d01c12c"
 members = ["apps/jarproof"]
@@ -136,11 +318,11 @@ dependencies = ["info.picocli:picocli:4.7.7:jar:processor"]
 [[package]]
 id = "info.picocli:picocli"
 version = "4.7.7"
-source = "maven-central"
+source = "central"
 scope = "compile"
 direct = true
-jar = "info/picocli/picocli/4.7.7/picocli-4.7.7.jar"
-pom = "info/picocli/picocli/4.7.7/picocli-4.7.7.pom"
+jar = "blobs/v2/sha256/f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8/picocli-4.7.7.jar"
+pom = "blobs/v2/sha256/1b18d363134df66631d2b9f7475068d734225ba389cdf9082a1bd8bda90d57d3/picocli-4.7.7.pom"
 jarSha256 = "f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8"
 pomSha256 = "1b18d363134df66631d2b9f7475068d734225ba389cdf9082a1bd8bda90d57d3"
 members = ["apps/jarproof"]
@@ -149,11 +331,11 @@ dependencies = []
 [[package]]
 id = "info.picocli:picocli"
 version = "4.7.7"
-source = "maven-central"
+source = "central"
 scope = "processor"
 direct = false
-jar = "info/picocli/picocli/4.7.7/picocli-4.7.7.jar"
-pom = "info/picocli/picocli/4.7.7/picocli-4.7.7.pom"
+jar = "blobs/v2/sha256/f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8/picocli-4.7.7.jar"
+pom = "blobs/v2/sha256/1b18d363134df66631d2b9f7475068d734225ba389cdf9082a1bd8bda90d57d3/picocli-4.7.7.pom"
 jarSha256 = "f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8"
 pomSha256 = "1b18d363134df66631d2b9f7475068d734225ba389cdf9082a1bd8bda90d57d3"
 members = ["apps/jarproof"]
@@ -162,11 +344,11 @@ dependencies = []
 [[package]]
 id = "io.netty:netty-buffer"
 version = "4.2.17.Final"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = true
-jar = "io/netty/netty-buffer/4.2.17.Final/netty-buffer-4.2.17.Final.jar"
-pom = "io/netty/netty-buffer/4.2.17.Final/netty-buffer-4.2.17.Final.pom"
+jar = "blobs/v2/sha256/0d249178ec0204b35a6ad3e5ac8a6c2ecb3eb496c6cdae40b8eca4fa3cb6a0c7/netty-buffer-4.2.17.Final.jar"
+pom = "blobs/v2/sha256/658f517dd49e6d39c1bed350096d781a25cc0f252d1e3e90f63a3ba0bedd2f5d/netty-buffer-4.2.17.Final.pom"
 jarSha256 = "0d249178ec0204b35a6ad3e5ac8a6c2ecb3eb496c6cdae40b8eca4fa3cb6a0c7"
 pomSha256 = "658f517dd49e6d39c1bed350096d781a25cc0f252d1e3e90f63a3ba0bedd2f5d"
 members = ["apps/jarproof"]
@@ -175,11 +357,11 @@ dependencies = ["io.netty:netty-common:4.2.17.Final:jar:test"]
 [[package]]
 id = "io.netty:netty-common"
 version = "4.2.17.Final"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "io/netty/netty-common/4.2.17.Final/netty-common-4.2.17.Final.jar"
-pom = "io/netty/netty-common/4.2.17.Final/netty-common-4.2.17.Final.pom"
+jar = "blobs/v2/sha256/502aae2a6680e9bca3558a3fa098f06dc4d87340b8b714e925a6d690871c092a/netty-common-4.2.17.Final.jar"
+pom = "blobs/v2/sha256/0100816f2f163d16d0c035181d6fb46d745f6deed759c25767afe61bebd785f4/netty-common-4.2.17.Final.pom"
 jarSha256 = "502aae2a6680e9bca3558a3fa098f06dc4d87340b8b714e925a6d690871c092a"
 pomSha256 = "0100816f2f163d16d0c035181d6fb46d745f6deed759c25767afe61bebd785f4"
 members = ["apps/jarproof"]
@@ -188,11 +370,11 @@ dependencies = []
 [[package]]
 id = "org.apiguardian:apiguardian-api"
 version = "1.1.2"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar"
-pom = "org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.pom"
+jar = "blobs/v2/sha256/b509448ac506d607319f182537f0b35d71007582ec741832a1f111e5b5b70b38/apiguardian-api-1.1.2.jar"
+pom = "blobs/v2/sha256/32355081d109095c3d5d374d5a43b4f4c1b75d549e983ef50723e2772e5302a0/apiguardian-api-1.1.2.pom"
 jarSha256 = "b509448ac506d607319f182537f0b35d71007582ec741832a1f111e5b5b70b38"
 pomSha256 = "32355081d109095c3d5d374d5a43b4f4c1b75d549e983ef50723e2772e5302a0"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -201,11 +383,11 @@ dependencies = []
 [[package]]
 id = "org.jacoco:org.jacoco.agent"
 version = "0.8.14"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar"
-pom = "org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14.pom"
+jar = "blobs/v2/sha256/3fb76eea65f81bd9415202bab34b6571728841dff1ab8e6bbe81adc2e299face/org.jacoco.agent-0.8.14-runtime.jar"
+pom = "blobs/v2/sha256/943e77ed5ccb99aeeb3fe5643fea5a636f6f828e3958f8605f426ddc9afab8c9/org.jacoco.agent-0.8.14.pom"
 jarSha256 = "3fb76eea65f81bd9415202bab34b6571728841dff1ab8e6bbe81adc2e299face"
 pomSha256 = "943e77ed5ccb99aeeb3fe5643fea5a636f6f828e3958f8605f426ddc9afab8c9"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -214,11 +396,11 @@ dependencies = []
 [[package]]
 id = "org.jacoco:org.jacoco.cli"
 version = "0.8.14"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14.jar"
-pom = "org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14.pom"
+jar = "blobs/v2/sha256/12d5d78351c638efeea71ac840f6a5cf7bcff89001ddb05eb89f956d1079a2c6/org.jacoco.cli-0.8.14.jar"
+pom = "blobs/v2/sha256/240a1cdc87a5510fde23fbe14067589823b6b057d88e17a8b6fb984a4f54fbdd/org.jacoco.cli-0.8.14.pom"
 jarSha256 = "12d5d78351c638efeea71ac840f6a5cf7bcff89001ddb05eb89f956d1079a2c6"
 pomSha256 = "240a1cdc87a5510fde23fbe14067589823b6b057d88e17a8b6fb984a4f54fbdd"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -227,11 +409,11 @@ dependencies = ["args4j:args4j:2.0.28:jar:tool-coverage", "org.jacoco:org.jacoco
 [[package]]
 id = "org.jacoco:org.jacoco.core"
 version = "0.8.14"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.jar"
-pom = "org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.pom"
+jar = "blobs/v2/sha256/28abbf0eea5a08e4f24097f2fbac663ca17c341c25c3a04d90d6cd325943c995/org.jacoco.core-0.8.14.jar"
+pom = "blobs/v2/sha256/7b75bae2c1779af544369833afe1d68f5a3955e91d166cb19dff886534b1ad6c/org.jacoco.core-0.8.14.pom"
 jarSha256 = "28abbf0eea5a08e4f24097f2fbac663ca17c341c25c3a04d90d6cd325943c995"
 pomSha256 = "7b75bae2c1779af544369833afe1d68f5a3955e91d166cb19dff886534b1ad6c"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -240,11 +422,11 @@ dependencies = ["org.ow2.asm:asm-commons:9.9:jar:tool-coverage", "org.ow2.asm:as
 [[package]]
 id = "org.jacoco:org.jacoco.report"
 version = "0.8.14"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/jacoco/org.jacoco.report/0.8.14/org.jacoco.report-0.8.14.jar"
-pom = "org/jacoco/org.jacoco.report/0.8.14/org.jacoco.report-0.8.14.pom"
+jar = "blobs/v2/sha256/a3e2026060ab8b8d5c650706406234bb4c033dfd5376afeb8b1666e8ed27c453/org.jacoco.report-0.8.14.jar"
+pom = "blobs/v2/sha256/e2ebf2c580f86afa7f75f43a28109dd894c42463928bc9911777e35275108e58/org.jacoco.report-0.8.14.pom"
 jarSha256 = "a3e2026060ab8b8d5c650706406234bb4c033dfd5376afeb8b1666e8ed27c453"
 pomSha256 = "e2ebf2c580f86afa7f75f43a28109dd894c42463928bc9911777e35275108e58"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -253,11 +435,11 @@ dependencies = ["org.jacoco:org.jacoco.core:0.8.14:jar:tool-coverage"]
 [[package]]
 id = "org.jspecify:jspecify"
 version = "1.0.0"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar"
-pom = "org/jspecify/jspecify/1.0.0/jspecify-1.0.0.pom"
+jar = "blobs/v2/sha256/1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab/jspecify-1.0.0.jar"
+pom = "blobs/v2/sha256/cdab929a3b95211f43d2090c5e2d0dfe8465960e378bc32b35841dab324433a6/jspecify-1.0.0.pom"
 jarSha256 = "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
 pomSha256 = "cdab929a3b95211f43d2090c5e2d0dfe8465960e378bc32b35841dab324433a6"
 members = ["apps/jarproof"]
@@ -266,11 +448,11 @@ dependencies = []
 [[package]]
 id = "org.junit.jupiter:junit-jupiter-api"
 version = "5.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/jupiter/junit-jupiter-api/5.14.4/junit-jupiter-api-5.14.4.jar"
-pom = "org/junit/jupiter/junit-jupiter-api/5.14.4/junit-jupiter-api-5.14.4.pom"
+jar = "blobs/v2/sha256/aa1ae085fd92dfdbf85d867e60e59adc599bac183b46fc7e0698198bf426ad3f/junit-jupiter-api-5.14.4.jar"
+pom = "blobs/v2/sha256/4c175189fd774dcd90cb23cfcab2ce9dbf2f5d0a16d7ef3702e7cfcd6411a762/junit-jupiter-api-5.14.4.pom"
 jarSha256 = "aa1ae085fd92dfdbf85d867e60e59adc599bac183b46fc7e0698198bf426ad3f"
 pomSha256 = "4c175189fd774dcd90cb23cfcab2ce9dbf2f5d0a16d7ef3702e7cfcd6411a762"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -279,11 +461,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.pla
 [[package]]
 id = "org.junit.jupiter:junit-jupiter-engine"
 version = "5.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/jupiter/junit-jupiter-engine/5.14.4/junit-jupiter-engine-5.14.4.jar"
-pom = "org/junit/jupiter/junit-jupiter-engine/5.14.4/junit-jupiter-engine-5.14.4.pom"
+jar = "blobs/v2/sha256/e1e35cf651ae1635638d431ea4412d5c65938be54150444f07ba659586042b11/junit-jupiter-engine-5.14.4.jar"
+pom = "blobs/v2/sha256/12329741c655ff5010a3d4758bb34b98e57ac8f971a6fa0fb872c6d60ab87e84/junit-jupiter-engine-5.14.4.pom"
 jarSha256 = "e1e35cf651ae1635638d431ea4412d5c65938be54150444f07ba659586042b11"
 pomSha256 = "12329741c655ff5010a3d4758bb34b98e57ac8f971a6fa0fb872c6d60ab87e84"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -292,11 +474,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.jup
 [[package]]
 id = "org.junit.jupiter:junit-jupiter-params"
 version = "5.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/jupiter/junit-jupiter-params/5.14.4/junit-jupiter-params-5.14.4.jar"
-pom = "org/junit/jupiter/junit-jupiter-params/5.14.4/junit-jupiter-params-5.14.4.pom"
+jar = "blobs/v2/sha256/28f2a8dab5b9d259b18fa6b0ba5a6f302cbc70dd875f42032ea9e3afea09a870/junit-jupiter-params-5.14.4.jar"
+pom = "blobs/v2/sha256/ab1a2b4bb5b74a4aeac1fd220ccf3ad60f279bb7a153b6b0b8232cd3ed81f62b/junit-jupiter-params-5.14.4.pom"
 jarSha256 = "28f2a8dab5b9d259b18fa6b0ba5a6f302cbc70dd875f42032ea9e3afea09a870"
 pomSha256 = "ab1a2b4bb5b74a4aeac1fd220ccf3ad60f279bb7a153b6b0b8232cd3ed81f62b"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -305,11 +487,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.jup
 [[package]]
 id = "org.junit.jupiter:junit-jupiter"
 version = "5.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = true
-jar = "org/junit/jupiter/junit-jupiter/5.14.4/junit-jupiter-5.14.4.jar"
-pom = "org/junit/jupiter/junit-jupiter/5.14.4/junit-jupiter-5.14.4.pom"
+jar = "blobs/v2/sha256/a573c9a99af73e1889d1d3ed7e12067c85cff6a821b96a1916e5ccccc375ae58/junit-jupiter-5.14.4.jar"
+pom = "blobs/v2/sha256/474487daaef15e3bf6a0a80b8388ed102ab6e6aa08432cb453d13d75968039d6/junit-jupiter-5.14.4.pom"
 jarSha256 = "a573c9a99af73e1889d1d3ed7e12067c85cff6a821b96a1916e5ccccc375ae58"
 pomSha256 = "474487daaef15e3bf6a0a80b8388ed102ab6e6aa08432cb453d13d75968039d6"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -319,11 +501,11 @@ dependencies = ["org.junit.jupiter:junit-jupiter-api:5.14.4:jar:test", "org.juni
 [[package]]
 id = "org.junit.platform:junit-platform-commons"
 version = "1.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/platform/junit-platform-commons/1.14.4/junit-platform-commons-1.14.4.jar"
-pom = "org/junit/platform/junit-platform-commons/1.14.4/junit-platform-commons-1.14.4.pom"
+jar = "blobs/v2/sha256/55c8a0c069ac1bc4e1f8bbb26b5eae95cbd10e4ff1b23248441ab61a607381e1/junit-platform-commons-1.14.4.jar"
+pom = "blobs/v2/sha256/d77be81708cf9836db7a09908e6d9e4d94c527e090bd594cc4af06711b9d853d/junit-platform-commons-1.14.4.pom"
 jarSha256 = "55c8a0c069ac1bc4e1f8bbb26b5eae95cbd10e4ff1b23248441ab61a607381e1"
 pomSha256 = "d77be81708cf9836db7a09908e6d9e4d94c527e090bd594cc4af06711b9d853d"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -332,11 +514,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test"]
 [[package]]
 id = "org.junit.platform:junit-platform-console"
 version = "1.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = true
-jar = "org/junit/platform/junit-platform-console/1.14.4/junit-platform-console-1.14.4.jar"
-pom = "org/junit/platform/junit-platform-console/1.14.4/junit-platform-console-1.14.4.pom"
+jar = "blobs/v2/sha256/8fba295a9aaced613062b7a8486758b71418e1545a3775de8df9ed76cc062383/junit-platform-console-1.14.4.jar"
+pom = "blobs/v2/sha256/c9b4f431a7590f6b3c3969fbf45c275708645c3016263106beb69e82e8c02a2d/junit-platform-console-1.14.4.pom"
 jarSha256 = "8fba295a9aaced613062b7a8486758b71418e1545a3775de8df9ed76cc062383"
 pomSha256 = "c9b4f431a7590f6b3c3969fbf45c275708645c3016263106beb69e82e8c02a2d"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -346,11 +528,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.pla
 [[package]]
 id = "org.junit.platform:junit-platform-engine"
 version = "1.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/platform/junit-platform-engine/1.14.4/junit-platform-engine-1.14.4.jar"
-pom = "org/junit/platform/junit-platform-engine/1.14.4/junit-platform-engine-1.14.4.pom"
+jar = "blobs/v2/sha256/3c7f3f84a6747aef0db6bd5fdd2a6c8fe37132e653c939bd67387377af66d91c/junit-platform-engine-1.14.4.jar"
+pom = "blobs/v2/sha256/180af15472ac69c91902fbbd210566e78a82fd6d34e63d3fbada687f51614e64/junit-platform-engine-1.14.4.pom"
 jarSha256 = "3c7f3f84a6747aef0db6bd5fdd2a6c8fe37132e653c939bd67387377af66d91c"
 pomSha256 = "180af15472ac69c91902fbbd210566e78a82fd6d34e63d3fbada687f51614e64"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -359,11 +541,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.pla
 [[package]]
 id = "org.junit.platform:junit-platform-launcher"
 version = "1.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/platform/junit-platform-launcher/1.14.4/junit-platform-launcher-1.14.4.jar"
-pom = "org/junit/platform/junit-platform-launcher/1.14.4/junit-platform-launcher-1.14.4.pom"
+jar = "blobs/v2/sha256/768d62f1b2a523713b702db53609c230af62bbd645fc2c07a7d794df4da32228/junit-platform-launcher-1.14.4.jar"
+pom = "blobs/v2/sha256/1197a74ac2b4d71172f56cb9c4b09e54c001e6ae89f46a7873b38c6e6b608bd5/junit-platform-launcher-1.14.4.pom"
 jarSha256 = "768d62f1b2a523713b702db53609c230af62bbd645fc2c07a7d794df4da32228"
 pomSha256 = "1197a74ac2b4d71172f56cb9c4b09e54c001e6ae89f46a7873b38c6e6b608bd5"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -372,11 +554,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.pla
 [[package]]
 id = "org.junit.platform:junit-platform-reporting"
 version = "1.14.4"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/junit/platform/junit-platform-reporting/1.14.4/junit-platform-reporting-1.14.4.jar"
-pom = "org/junit/platform/junit-platform-reporting/1.14.4/junit-platform-reporting-1.14.4.pom"
+jar = "blobs/v2/sha256/4a1d32f0f09d29f046ca51a81b8bfbc0f829392892672ea2e2cd530cd9c4b212/junit-platform-reporting-1.14.4.jar"
+pom = "blobs/v2/sha256/351620364b21758391b24824f0061f000bb696974350279f3a61b0d72c726df8/junit-platform-reporting-1.14.4.pom"
 jarSha256 = "4a1d32f0f09d29f046ca51a81b8bfbc0f829392892672ea2e2cd530cd9c4b212"
 pomSha256 = "351620364b21758391b24824f0061f000bb696974350279f3a61b0d72c726df8"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -385,11 +567,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test", "org.junit.pla
 [[package]]
 id = "org.opentest4j.reporting:open-test-reporting-tooling-spi"
 version = "0.2.3"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/opentest4j/reporting/open-test-reporting-tooling-spi/0.2.3/open-test-reporting-tooling-spi-0.2.3.jar"
-pom = "org/opentest4j/reporting/open-test-reporting-tooling-spi/0.2.3/open-test-reporting-tooling-spi-0.2.3.pom"
+jar = "blobs/v2/sha256/f0d54b46fb9e503b22abc65c45a48025aad16051903aaed11f6d974129f74252/open-test-reporting-tooling-spi-0.2.3.jar"
+pom = "blobs/v2/sha256/6d04814f58e754b695141930cd08ab270c3811afd7049ed17813ed62c0522cd3/open-test-reporting-tooling-spi-0.2.3.pom"
 jarSha256 = "f0d54b46fb9e503b22abc65c45a48025aad16051903aaed11f6d974129f74252"
 pomSha256 = "6d04814f58e754b695141930cd08ab270c3811afd7049ed17813ed62c0522cd3"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -398,11 +580,11 @@ dependencies = ["org.apiguardian:apiguardian-api:1.1.2:jar:test"]
 [[package]]
 id = "org.opentest4j:opentest4j"
 version = "1.3.0"
-source = "maven-central"
+source = "central"
 scope = "test"
 direct = false
-jar = "org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar"
-pom = "org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.pom"
+jar = "blobs/v2/sha256/48e2df636cab6563ced64dcdff8abb2355627cb236ef0bf37598682ddf742f1b/opentest4j-1.3.0.jar"
+pom = "blobs/v2/sha256/9bf7cffc410f3e8372c2522578df9ca56d9d43bd937e30948706c232a943b355/opentest4j-1.3.0.pom"
 jarSha256 = "48e2df636cab6563ced64dcdff8abb2355627cb236ef0bf37598682ddf742f1b"
 pomSha256 = "9bf7cffc410f3e8372c2522578df9ca56d9d43bd937e30948706c232a943b355"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -411,11 +593,11 @@ dependencies = []
 [[package]]
 id = "org.ow2.asm:asm-commons"
 version = "9.9"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/ow2/asm/asm-commons/9.9/asm-commons-9.9.jar"
-pom = "org/ow2/asm/asm-commons/9.9/asm-commons-9.9.pom"
+jar = "blobs/v2/sha256/db2f6f26150bbe7c126606b4a1151836bcc22a1e05a423b3585698bece995ff8/asm-commons-9.9.jar"
+pom = "blobs/v2/sha256/18a5d3ef1377e7544b3ca3210f261396b987f6010ef591d3872adae63119ee43/asm-commons-9.9.pom"
 jarSha256 = "db2f6f26150bbe7c126606b4a1151836bcc22a1e05a423b3585698bece995ff8"
 pomSha256 = "18a5d3ef1377e7544b3ca3210f261396b987f6010ef591d3872adae63119ee43"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -424,11 +606,11 @@ dependencies = ["org.ow2.asm:asm-tree:9.9:jar:tool-coverage", "org.ow2.asm:asm:9
 [[package]]
 id = "org.ow2.asm:asm-tree"
 version = "9.9"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/ow2/asm/asm-tree/9.9/asm-tree-9.9.jar"
-pom = "org/ow2/asm/asm-tree/9.9/asm-tree-9.9.pom"
+jar = "blobs/v2/sha256/42178f3775c9c63f9e5e1446747d29b4eca4d91bd6e75e5c43cfa372a47d38c6/asm-tree-9.9.jar"
+pom = "blobs/v2/sha256/d01788ed8e6e8e24acaf6cb4a7bdcc2733416252faa00232959e3e2e9df1bf44/asm-tree-9.9.pom"
 jarSha256 = "42178f3775c9c63f9e5e1446747d29b4eca4d91bd6e75e5c43cfa372a47d38c6"
 pomSha256 = "d01788ed8e6e8e24acaf6cb4a7bdcc2733416252faa00232959e3e2e9df1bf44"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]
@@ -437,11 +619,11 @@ dependencies = ["org.ow2.asm:asm:9.10.1:jar:tool-coverage"]
 [[package]]
 id = "org.ow2.asm:asm"
 version = "9.10.1"
-source = "maven-central"
+source = "central"
 scope = "compile"
 direct = true
-jar = "org/ow2/asm/asm/9.10.1/asm-9.10.1.jar"
-pom = "org/ow2/asm/asm/9.10.1/asm-9.10.1.pom"
+jar = "blobs/v2/sha256/ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb/asm-9.10.1.jar"
+pom = "blobs/v2/sha256/e1b1c3832ca3ac0a9e563c405f4c760118b5556a4920daee14058886197e094d/asm-9.10.1.pom"
 jarSha256 = "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb"
 pomSha256 = "e1b1c3832ca3ac0a9e563c405f4c760118b5556a4920daee14058886197e094d"
 members = ["modules/jarproof-engine"]
@@ -450,11 +632,11 @@ dependencies = []
 [[package]]
 id = "org.ow2.asm:asm"
 version = "9.10.1"
-source = "maven-central"
+source = "central"
 scope = "tool-coverage"
 direct = false
-jar = "org/ow2/asm/asm/9.10.1/asm-9.10.1.jar"
-pom = "org/ow2/asm/asm/9.10.1/asm-9.10.1.pom"
+jar = "blobs/v2/sha256/ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb/asm-9.10.1.jar"
+pom = "blobs/v2/sha256/e1b1c3832ca3ac0a9e563c405f4c760118b5556a4920daee14058886197e094d/asm-9.10.1.pom"
 jarSha256 = "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb"
 pomSha256 = "e1b1c3832ca3ac0a9e563c405f4c760118b5556a4920daee14058886197e094d"
 members = ["apps/jarproof", "guardrails/jarproof-architecture-tests", "modules/jarproof-api", "modules/jarproof-engine"]

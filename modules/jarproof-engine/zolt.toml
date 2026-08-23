@@ -1,26 +1,15 @@
 [project]
 name = "jarproof-engine"
-version = "0.0.1-SNAPSHOT"
-group = "sh.zolt"
-java = "17"
-
-[repositories]
-central = "https://repo.maven.apache.org/maven2"
+java = 17
 
 [dependencies]
-"sh.zolt:jarproof-api" = { workspace = "modules/jarproof-api" }
+"sh.zolt:jarproof-api" = { workspace = true }
 "org.ow2.asm:asm" = "9.10.1"
 
-[test.dependencies]
-"org.junit.jupiter:junit-jupiter" = {}
-"org.junit.platform:junit-platform-console" = {}
+[dependencies.test]
+"org.junit.jupiter:junit-jupiter" = { managed = true }
+"org.junit.platform:junit-platform-console" = { managed = true }
 
-[dependencyPolicy.licenses]
+[dependencies.policy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
 unknown = "fail"
-
-[build]
-source = "src/main/java"
-test = "src/test/java"
-output = "target/classes"
-testOutput = "target/test-classes"

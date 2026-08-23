@@ -1,24 +1,10 @@
 [project]
 name = "jarproof-fixture-service-api"
-version = "0.0.1-SNAPSHOT"
-group = "sh.zolt"
-java = "17"
-
-[repositories]
-central = "https://repo.maven.apache.org/maven2"
+java = 17
 
 [dependencies]
 
 
-[dependencyPolicy.licenses]
+[dependencies.policy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
 unknown = "fail"
-
-[build]
-source = "src/main/java"
-test = "src/test/java"
-output = "target/classes"
-testOutput = "target/test-classes"
-
-[resources]
-main = ["src/main/resources"]

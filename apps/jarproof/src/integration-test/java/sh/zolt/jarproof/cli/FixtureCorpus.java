@@ -24,7 +24,7 @@ import java.util.List;
  */
 final class FixtureCorpus {
     private static final String MANIFEST = "zolt.toml";
-    private static final String WORKSPACE_DECLARATION = "name = \"jarproof\"";
+    private static final String WORKSPACE_DECLARATION = "[workspace.members]";
     private static final String FIXTURES = "fixtures";
     private static final String APPLICATION_DIRECTORY = "apps/jarproof";
     private static final String TARGET = "target";

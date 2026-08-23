@@ -1,25 +1,14 @@
 [project]
 name = "jarproof-architecture-tests"
-version = "0.0.1-SNAPSHOT"
-group = "sh.zolt"
-java = "21"
-
-[repositories]
-central = "https://repo.maven.apache.org/maven2"
+java = 21
 
 [dependencies]
 
-[test.dependencies]
-"sh.zolt:jarproof-api" = { workspace = "modules/jarproof-api" }
-"org.junit.jupiter:junit-jupiter" = {}
-"org.junit.platform:junit-platform-console" = {}
+[dependencies.test]
+"sh.zolt:jarproof-api" = { workspace = true }
+"org.junit.jupiter:junit-jupiter" = { managed = true }
+"org.junit.platform:junit-platform-console" = { managed = true }
 
-[dependencyPolicy.licenses]
+[dependencies.policy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
 unknown = "fail"
-
-[build]
-source = "src/main/java"
-test = "src/test/java"
-output = "target/classes"
-testOutput = "target/test-classes"
