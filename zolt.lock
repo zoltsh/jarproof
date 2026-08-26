@@ -830,6 +830,7 @@ layout.executables.java = "bin/java"
 layout.executables.javac = "bin/javac"
 layout.executables.jar = "bin/jar"
 layout.executables.nativeImage = "lib/svm/bin/native-image"
+
 [[toolchain.java]]
 id = "java-graalvm-community-25-native-image"
 request.version = "25"
