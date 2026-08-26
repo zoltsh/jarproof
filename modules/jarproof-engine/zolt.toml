@@ -1,6 +1,19 @@
 [project]
 name = "jarproof-engine"
 java = 17
+description = "Jarproof engine for deterministic Java artifact compatibility analysis."
+url = "https://github.com/zoltsh/jarproof"
+issues = "https://github.com/zoltsh/jarproof/issues"
+
+[project.scm]
+url = "https://github.com/zoltsh/jarproof"
+connection = "scm:git:https://github.com/zoltsh/jarproof.git"
+
+[project.developers.zolt-maintainers]
+name = "Zolt Maintainers"
+email = "zolt@zolt.sh"
+organization = "Zolt"
+url = "https://zolt.sh"
 
 [dependencies]
 "sh.zolt:jarproof-api" = { workspace = true }
@@ -13,3 +26,16 @@ java = 17
 [dependencies.policy.licenses]
 allow = ["Apache-2.0", "BSD-3-Clause", "EPL-2.0"]
 unknown = "fail"
+
+[package]
+sources = true
+javadoc = true
+
+[publish.signing]
+method = "gpg"
+keyId = "83D886E387461DDA405630E61CC0F4A47A5EC1B7"
+
+[publish.central]
+tokenEnv = "ZOLT_CENTRAL_TOKEN"
+mode = "automatic"
+name = "Jarproof release"

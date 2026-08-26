@@ -2,6 +2,19 @@
 name = "jarproof-cli"
 java = 17
 main = "sh.zolt.jarproof.cli.Main"
+description = "Command-line verifier that finds Java artifact incompatibilities before production."
+url = "https://github.com/zoltsh/jarproof"
+issues = "https://github.com/zoltsh/jarproof/issues"
+
+[project.scm]
+url = "https://github.com/zoltsh/jarproof"
+connection = "scm:git:https://github.com/zoltsh/jarproof.git"
+
+[project.developers.zolt-maintainers]
+name = "Zolt Maintainers"
+email = "zolt@zolt.sh"
+organization = "Zolt"
+url = "https://zolt.sh"
 
 [dependencies]
 "sh.zolt:jarproof-api" = { workspace = true }
@@ -28,6 +41,17 @@ unknown = "fail"
 
 [package]
 mode = "uber-jar"
+sources = true
+javadoc = true
+
+[publish.signing]
+method = "gpg"
+keyId = "83D886E387461DDA405630E61CC0F4A47A5EC1B7"
+
+[publish.central]
+tokenEnv = "ZOLT_CENTRAL_TOKEN"
+mode = "automatic"
+name = "Jarproof release"
 
 # picocli-codegen unconditionally emits an EMPTY proxy-config.json, and GraalVM 25 deprecates
 # that resource format with a warning the native gate rightly refuses. Excluding the one empty
