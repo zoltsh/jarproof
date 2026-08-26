@@ -7,7 +7,7 @@ fi
 
 if [ "${JARPROOF_SMOKE_PREBUILT:-}" != "1" ]; then
     zolt resolve --workspace --locked
-    zolt package --workspace --all
+    zolt "-Djava.home=$JAVA_HOME" package --workspace --all
 fi
 
 NPM_CONFIG_CACHE="${NPM_CONFIG_CACHE:-/tmp/jarproof-smoque-npm-cache}"

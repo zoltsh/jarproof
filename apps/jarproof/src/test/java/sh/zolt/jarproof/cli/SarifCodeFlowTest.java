@@ -47,7 +47,7 @@ final class SarifCodeFlowTest {
                       "tool": {
                         "driver": {
                           "name": "jarproof",
-                          "version": "0.0.1-SNAPSHOT",
+                          "version": "0.0.1-alpha.1",
                           "rules": [
                             {
                               "id": "JP1003",
