@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.objectweb.asm.Opcodes;
 import sh.zolt.jarproof.api.Finding;
+import sh.zolt.jarproof.api.Remediation;
 import sh.zolt.jarproof.api.Severity;
 
 final class BytecodeLevelCheckTest {
@@ -32,6 +33,12 @@ final class BytecodeLevelCheckTest {
         assertEquals(
                 List.of("class file version 52 appears 1 times", "class file version 61 appears 2 times"),
                 EngineFixture.evidence(finding));
+        assertEquals(
+                List.of(
+                        "No action is required when every reported class file version is supported by the"
+                                + " target Java runtime. If the mix was accidental, rebuild from clean output;"
+                                + " use a multi-release JAR only for deliberate release-specific variants."),
+                finding.remediation().stream().map(Remediation::action).toList());
     }
 
     @Test
