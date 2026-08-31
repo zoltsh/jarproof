@@ -32,7 +32,7 @@ url = "https://zolt.sh"
 "org.junit.jupiter:junit-jupiter" = { managed = true }
 "org.junit.platform:junit-platform-console" = { managed = true }
 "com.google.guava:guava" = "33.6.0-jre"
-"com.fasterxml.jackson.core:jackson-databind" = "2.22.1"
+"com.fasterxml.jackson.core:jackson-databind" = "2.22.2"
 "io.netty:netty-buffer" = "4.2.17.Final"
 
 [dependencies.policy.licenses]
