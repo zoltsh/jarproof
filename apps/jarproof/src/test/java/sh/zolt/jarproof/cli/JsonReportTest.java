@@ -29,7 +29,7 @@ final class JsonReportTest {
                   "jarproofJsonVersion": "1",
                   "tool": {
                     "name": "jarproof",
-                    "version": "0.0.1-SNAPSHOT"
+                    "version": "0.0.1-alpha.1"
                   },
                   "request": {
                     "targetJava": 17,

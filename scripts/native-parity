@@ -11,10 +11,15 @@
 # both engines must produce; a scenario that stops reporting is a failure, not a pass.
 set -eu
 
+if [ "${JARPROOF_MANAGED_TOOLCHAIN:-}" != "1" ]; then
+    exec zolt exec -- env JARPROOF_MANAGED_TOOLCHAIN=1 scripts/native-parity "$@"
+fi
+
 WORK=target/native-parity
 DUPLICATES=$WORK/duplicates
 NATIVE=apps/jarproof/target/native/jarproof
 TARGET_JAVA=17
+VERSION=$(awk -F'"' '/^version = "/ { print $2; exit }' zolt.toml)
 failures=0
 scenarios=0
 
@@ -23,13 +28,10 @@ fail() {
     failures=$((failures + 1))
 }
 
-# The member's own artifact, found without spelling its version. Supplemental artifacts are
-# skipped by classifier so enabling sources or Javadoc jars cannot quietly redirect this.
+# Select the current workspace version explicitly so stale jars from a previous version cannot
+# quietly become the JVM side of the parity comparison. The suffix also excludes classifiers.
 member_jar() {
-    for candidate in "$1"/target/*.jar; do
-        case $candidate in
-        *-sources.jar | *-javadoc.jar) continue ;;
-        esac
+    for candidate in "$1"/target/*-"$VERSION".jar; do
         if [ -f "$candidate" ]; then
             printf '%s\n' "$candidate"
             return 0
@@ -188,16 +190,16 @@ fi
 
 if ! ls apps/jarproof/target/jarproof-cli-*.jar >/dev/null 2>&1; then
     printf '%s\n' 'native-parity: packaging the workspace first'
-    zolt package --workspace --all
+    zolt "-Djava.home=$JAVA_HOME" package --workspace --all
 fi
 
-zolt native --workspace --member apps/jarproof
+zolt "-Djava.home=$JAVA_HOME" native --workspace --member apps/jarproof
 
 # `zolt native` leaves a thin jar in place of the member's uber jar -- same file name, no mention of
 # it in the output, `[package] mode` ignored. Packaging after the native build is what puts the
 # published artifact back, and the order matters: reversed, this script would compare a native
 # binary against a jar that cannot even start.
-zolt package --workspace --member apps/jarproof
+zolt "-Djava.home=$JAVA_HOME" package --workspace --member apps/jarproof
 
 JAVA=$(managed_java)
 UBER=$(member_jar apps/jarproof)

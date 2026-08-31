@@ -49,7 +49,7 @@ final class MainTest {
         Invocation invocation = CliFixture.invoke("--version");
 
         assertEquals(0, invocation.exitCode());
-        assertEquals("jarproof 0.0.1-SNAPSHOT\n", invocation.out());
+        assertEquals("jarproof 0.0.1-alpha.1\n", invocation.out());
     }
 
     /**
