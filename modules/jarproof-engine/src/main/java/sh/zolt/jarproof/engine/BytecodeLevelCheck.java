@@ -66,7 +66,9 @@ final class BytecodeLevelCheck {
                         .map(level -> new Evidence(
                                 "class file version " + level.getKey() + " appears " + level.getValue() + " times"))
                         .toList(),
-                List.of(new Remediation("Compile the artifact against a single release so its runtime"
-                        + " requirement is stated once and obvious.")));
+                List.of(new Remediation("No action is required when every reported class file version is"
+                        + " supported by the target Java runtime. If the mix was accidental, rebuild from"
+                        + " clean output; use a multi-release JAR only for deliberate release-specific"
+                        + " variants.")));
     }
 }

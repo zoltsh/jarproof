@@ -13,7 +13,7 @@ final class ProductIdentity {
     static final String TOOL_NAME = "jarproof";
 
     /** The release this build reports. */
-    static final String VERSION = "0.0.1-SNAPSHOT";
+    static final String VERSION = "0.0.1-alpha.1";
 
     /** What {@code --version} prints. A constant expression, so annotations can use it. */
     static final String VERSION_BANNER = TOOL_NAME + " " + VERSION;

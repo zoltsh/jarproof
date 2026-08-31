@@ -1,7 +1,7 @@
 version = 7
 projectResolutionFingerprint = "sha256:bbdb2a4ecce4814b3a49126e4a756b5ec0e2bf03143642fc1806d673a189f5fb"
 projectResolutionInputFingerprints = ["dependencies.compile.workspace=sha256:9f3dc632662d9dd2d8d02897640477a46405bcd873ca89a6b4da7b58b435faef", "dependencies.compile=sha256:3609c66ea9ae0200a47c116512e1ff4f661e0a4606d2792f31b7ceeb67404188", "dependencies.processor=sha256:619b872323dcd53f7edc3303ae33e1c7381ea3eb68d5eab5836f7995539f16ca", "dependencies.test.workspace=sha256:9fc2d1e7c8f27ced91d0c34c2192c6ead83f195b9bd01f3e73ae014d956abbb9", "dependencies.test=sha256:18f2ab476cd41e19fa0353598da0474f1ff5a8b484c9cda700563d466e9d96df", "framework.quarkus=sha256:e447fbb929f622fe6ee07267964cac8f31c0b3380d4a50b4733eba2ce094aab7", "framework.springBoot.native=sha256:eca2c053afaa9daa892c9a7dcb80c431439356de3724b3841f7ee18500069c37", "java=sha256:9e5c4096782117d2b8139207fa4fdf9e80b92d5ed9179ce0bfe3bf52419ef67f", "package=sha256:8462392284aca9a993f307d98a9e0668e42e65ceb7dff32664c9be95aadc39cf", "platforms=sha256:d3167aa556b6809253fc04ff42658b908120900eda68f2da1287d87c40265059", "repositories=sha256:88b6d27a47e6ce5382b8066f0daeab659ce6023fae6c23129100a3317eec328e", "schema=sha256:7bca14c4122d16529ae895991b9707030c97969b297b70b9cf7dce415dbefb6c"]
-workspaceResolutionInputFingerprint = "sha256:693cefdb960e840e635e9be280d0435b328ebefd52f30b6f1345e3586bd98640"
+workspaceResolutionInputFingerprint = "sha256:7a45db097ace39054e2b9a86c8e85f42b5006c98beed54e6a8cb1d79fca6f309"
 
 [[dependencyRoot]]
 member = "apps/jarproof"
@@ -13,14 +13,14 @@ resolvedScope = "compile"
 [[dependencyRoot]]
 member = "apps/jarproof"
 id = "sh.zolt:jarproof-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "apps/jarproof"
 id = "sh.zolt:jarproof-engine"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
@@ -69,56 +69,56 @@ resolvedScope = "processor"
 [[dependencyRoot]]
 member = "fixtures/bad-service-provider"
 id = "sh.zolt:jarproof-fixture-service-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/class-to-interface-consumer"
 id = "sh.zolt:jarproof-fixture-class-to-interface-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/inaccessible-consumer"
 id = "sh.zolt:jarproof-fixture-inaccessible-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/lambda-target-consumer"
 id = "sh.zolt:jarproof-fixture-lambda-target-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/missing-class-consumer"
 id = "sh.zolt:jarproof-fixture-missing-class-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/missing-field-consumer"
 id = "sh.zolt:jarproof-fixture-missing-field-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/missing-method-consumer"
 id = "sh.zolt:jarproof-fixture-missing-method-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
 [[dependencyRoot]]
 member = "fixtures/static-instance-flip-consumer"
 id = "sh.zolt:jarproof-fixture-static-instance-flip-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
@@ -139,7 +139,7 @@ resolvedScope = "test"
 [[dependencyRoot]]
 member = "guardrails/jarproof-architecture-tests"
 id = "sh.zolt:jarproof-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "test"
 resolvedScope = "test"
 
@@ -167,7 +167,7 @@ resolvedScope = "compile"
 [[dependencyRoot]]
 member = "modules/jarproof-engine"
 id = "sh.zolt:jarproof-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 lane = "implementation"
 resolvedScope = "compile"
 
@@ -644,7 +644,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -655,7 +655,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "test"
 direct = true
@@ -666,7 +666,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-engine"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -677,7 +677,7 @@ dependencies = ["org.ow2.asm:asm:9.10.1:jar:compile"]
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-class-to-interface-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -688,7 +688,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-inaccessible-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -699,7 +699,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-lambda-target-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -710,7 +710,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-missing-class-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -721,7 +721,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-missing-field-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -732,7 +732,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-missing-method-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -743,7 +743,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-service-api"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true
@@ -754,7 +754,7 @@ dependencies = []
 
 [[package]]
 id = "sh.zolt:jarproof-fixture-static-instance-flip-api-v1"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1-alpha.1"
 source = "workspace"
 scope = "compile"
 direct = true

@@ -44,7 +44,7 @@ final class BaselineCorpusTest {
     private static final String WROTE_ONE = "wrote 1 accepted finding to ";
     private static final String FINGERPRINTS = "fingerprints";
     private static final String RECORDED = "JP1003|fixtures/missing-method-consumer/target/"
-            + "jarproof-fixture-missing-method-consumer-0.0.1-SNAPSHOT.jar"
+            + "jarproof-fixture-missing-method-consumer-0.0.1-alpha.1.jar"
             + "|sh/zolt/jarproof/fixtures/missingmethod/consumer/OrderReport.class"
             + "|sh/zolt/jarproof/fixtures/missingmethod/OrderPolicy#describe(Ljava/lang/String;I)Ljava/lang/String;";
 
