@@ -17,7 +17,7 @@ url = "https://zolt.sh"
 
 [dependencies]
 "sh.zolt:jarproof-api" = { workspace = true }
-"org.ow2.asm:asm" = "9.10.1"
+"org.ow2.asm:asm" = "9.11.1"
 
 [dependencies.test]
 "org.junit.jupiter:junit-jupiter" = { managed = true }
